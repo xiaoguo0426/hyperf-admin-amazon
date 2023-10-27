@@ -8,3 +8,4 @@ parameters:
   ignoreErrors:
     - '#Static call to instance method Hyperf\\HttpServer\\Router\\Router::[a-zA-Z0-9\\_]+\(\)#'
     - '#Static call to instance method Hyperf\\DbConnection\\Db::[a-zA-Z0-9\\_]+\(\)#'
+    - '#Static call to instance method AmazonPHP\\SellingPartner\\Marketplace::[a-zA-Z0-9\\_]+\(\)#'

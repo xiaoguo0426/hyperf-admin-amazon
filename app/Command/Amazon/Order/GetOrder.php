@@ -268,7 +268,7 @@ class GetOrder extends HyperfCommand
                             $errors = $body['errors'];
                             foreach ($errors as $error) {
                                 if ($error['code'] !== 'QuotaExceeded') {
-                                    $console->warning(sprintf('merchant_id:%s merchant_store_id:%s Page:%s code:%s message:%s', $merchant_id, $merchant_store_id, $page, $error['code'], $error['message']));
+                                    $console->warning(sprintf('merchant_id:%s merchant_store_id:%s code:%s message:%s', $merchant_id, $merchant_store_id, $error['code'], $error['message']));
                                     break 2;
                                 }
                             }
@@ -277,12 +277,12 @@ class GetOrder extends HyperfCommand
 
                     --$retry;
                     if ($retry > 0) {
-                        $console->warning(sprintf('merchant_id:%s merchant_store_id:%s Page:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $page, $retry));
+                        $console->warning(sprintf('merchant_id:%s merchant_store_id:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $retry));
                         sleep(3);
                         continue;
                     }
 
-                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s Page:%s 重试次数已用完', $merchant_id, $merchant_store_id, $page));
+                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s 重试次数已用完', $merchant_id, $merchant_store_id));
                     break;
                 } catch (InvalidArgumentException $e) {
                     $console->error(sprintf('merchant_id:%s merchant_store_id:%s InvalidArgumentException %s %s', $merchant_id, $merchant_store_id, $e->getCode(), $e->getMessage()));

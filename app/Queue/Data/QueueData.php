@@ -12,6 +12,10 @@ namespace App\Queue\Data;
 
 abstract class QueueData implements QueueDataInterface
 {
+    public function __construct()
+    {
+    }
+
     /**
      * 重试次数.
      */
