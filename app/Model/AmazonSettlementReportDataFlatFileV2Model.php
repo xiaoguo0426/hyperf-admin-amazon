@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Model;
 
 /**
- *  * @property $id
+ * @property $id
  * @property $merchant_id
  * @property $merchant_store_id
  * @property $date

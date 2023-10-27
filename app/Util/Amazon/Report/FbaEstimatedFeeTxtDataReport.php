@@ -55,7 +55,8 @@ class FbaEstimatedFeeTxtDataReport extends ReportBase
             foreach ($currency_items as $currency_item) {
                 $currency = $currency_item['currency'];
                 $currency_item['product_name'] = preg_replace('/[^a-zA-Z0-9 ]/i', '', $currency_item['product_name']);
-                $model = AmazonReportFbaEstimatedFeeModel::where('merchant_id', $merchant_id)
+                $model = AmazonReportFbaEstimatedFeeModel::query()
+                    ->where('merchant_id', $merchant_id)
                     ->where('merchant_store_id', $merchant_store_id)
                     ->where('currency', $currency)
                     ->where('asin', $asin)->first();

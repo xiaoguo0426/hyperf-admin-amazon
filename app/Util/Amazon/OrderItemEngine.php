@@ -393,7 +393,7 @@ class OrderItemEngine implements EngineInterface
                 }
                 if (! empty($list)) {
                     foreach ($list as $item) {
-                        $create = AmazonOrderItemModel::create($item);
+                        $create = AmazonOrderItemModel::insert($item);
                     }
                 }
             }

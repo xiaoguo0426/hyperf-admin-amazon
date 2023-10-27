@@ -111,7 +111,8 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
                 $amount_description = $item['amount_description'];
                 $sku = $item['sku'];
 
-                $model = AmazonSettlementReportDataFlatFileV2Model::where('merchant_id', $merchant_id)
+                $model = AmazonSettlementReportDataFlatFileV2Model::query()
+                    ->where('merchant_id', $merchant_id)
                     ->where('merchant_store_id', $merchant_store_id)
                     ->where('settlement_id', $settlement_id)
                     ->where('order_id', $order_id)

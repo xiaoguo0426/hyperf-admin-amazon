@@ -27,9 +27,6 @@ use Monolog\Level;
 use Monolog\Logger;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Client\ClientExceptionInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LogLevel;
 
 class AmazonSDK
 {

@@ -12,14 +12,12 @@ namespace App\Queue\Data;
 
 abstract class QueueData implements QueueDataInterface
 {
-    public function __construct()
-    {
-    }
-
     /**
      * 重试次数.
      */
     protected int $retry = 0;
+
+    public function __construct() {}
 
     public function getRetry(): int
     {
