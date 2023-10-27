@@ -21,25 +21,19 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
 class GetMarketplaceParticipation extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:sellers:get-marketplace-participation');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -50,26 +44,22 @@ class GetMarketplaceParticipation extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws JsonException
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function handle()
+    public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonSellerGetMarketplaceParticipationLog::class);
 
             $retry = 10;
 
             while (true) {
-
                 try {
-                    //https://developer-docs.amazon.com/sp-api/docs/sales-api-v1-reference
+                    // https://developer-docs.amazon.com/sp-api/docs/sales-api-v1-reference
                     $response = $sdk->sellers()->getMarketplaceParticipations($accessToken, $region);
                     $marketplaceParticipationList = $response->getPayload();
                     if (is_null($marketplaceParticipationList)) {
@@ -105,7 +95,6 @@ class GetMarketplaceParticipation extends HyperfCommand
                     }
 
                     break;
-
                 } catch (ApiException $e) {
                     --$retry;
                     if ($retry > 0) {

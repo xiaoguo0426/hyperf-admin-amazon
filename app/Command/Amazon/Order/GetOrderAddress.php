@@ -22,7 +22,5 @@ class GetOrderAddress extends HyperfCommand
         parent::__construct('amazon:order:get-order-address');
     }
 
-    public function handle()
-    {
-    }
+    public function handle() {}
 }

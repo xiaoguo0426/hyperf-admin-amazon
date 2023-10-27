@@ -16,22 +16,15 @@ use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 
 #[Command]
 class ListFinancialEventsByGroupId extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:finance:list-financial-events-by-group-id');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -41,8 +34,7 @@ class ListFinancialEventsByGroupId extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {

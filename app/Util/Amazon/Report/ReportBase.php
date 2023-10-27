@@ -114,7 +114,7 @@ abstract class ReportBase implements ReportInterface
         $this->report_start_date = $date ? new Carbon($date, 'UTC') : null;
     }
 
-    public function getReportStartDate(): Carbon|null
+    public function getReportStartDate(): null|Carbon
     {
         return $this->report_start_date;
     }
@@ -128,7 +128,7 @@ abstract class ReportBase implements ReportInterface
         $this->report_end_date = $date ? new Carbon($date, 'UTC') : null;
     }
 
-    public function getReportEndDate(): Carbon|null
+    public function getReportEndDate(): null|Carbon
     {
         return $this->report_end_date;
     }
@@ -163,7 +163,7 @@ abstract class ReportBase implements ReportInterface
         if (! is_dir($dir) && ! mkdir($dir, 0755, true)) {
             try {
                 ApplicationContext::getContainer()->get(AmazonReportLog::class)->error(sprintf('Get Directory "%s" was not created', $dir));
-            } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+            } catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
             }
         }
 

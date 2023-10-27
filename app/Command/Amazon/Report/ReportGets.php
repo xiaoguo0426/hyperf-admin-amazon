@@ -30,17 +30,11 @@ use Psr\Container\NotFoundExceptionInterface;
 #[Command]
 class ReportGets extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:report:gets');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -50,11 +44,10 @@ class ReportGets extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @return void
      */
     public function handle(): void
     {
-        AmazonApp::process(static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
+        AmazonApp::each(static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
             $logger = ApplicationContext::getContainer()->get(AmazonReportLog::class);
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
@@ -84,7 +77,7 @@ class ReportGets extends HyperfCommand
 
                         foreach ($reports as $report) {
                             $report_type = $report->getReportType();
-//                            $marketplace_ids = $report->getMarketplaceIds();
+                            //                            $marketplace_ids = $report->getMarketplaceIds();
                             $data_start_time = $report->getDataStartTime();
                             $data_end_time = $report->getDataEndTime();
                             $report_schedule_id = $report->getReportScheduleId();

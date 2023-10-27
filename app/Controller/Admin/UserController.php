@@ -12,6 +12,4 @@ namespace App\Controller\Admin;
 
 use App\Controller\AbstractController;
 
-class UserController extends AbstractController
-{
-}
+class UserController extends AbstractController {}

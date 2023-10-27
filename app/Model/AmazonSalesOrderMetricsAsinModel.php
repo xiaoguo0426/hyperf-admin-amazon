@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Model;
 
 /**
- * Class AmazonSalesOrderMetricsAsinModel
+ * Class AmazonSalesOrderMetricsAsinModel.
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id
@@ -31,10 +31,9 @@ namespace App\Model;
  */
 class AmazonSalesOrderMetricsAsinModel extends Model
 {
-    protected ?string $table = 'amazon_sales_order_metrics_asin';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
 
+    protected ?string $table = 'amazon_sales_order_metrics_asin';
 }

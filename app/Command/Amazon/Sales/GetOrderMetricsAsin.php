@@ -27,25 +27,19 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\ModelNotFoundException;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
 class GetOrderMetricsAsin extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:sales:get-order-metrics-asin');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -56,10 +50,8 @@ class GetOrderMetricsAsin extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws JsonException
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
@@ -67,12 +59,11 @@ class GetOrderMetricsAsin extends HyperfCommand
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonSalesGetOrderMetricsLog::class);
 
             $interval = sprintf('%s--%s', Carbon::now('UTC')->subDays(7)->format('Y-m-d\T00:00:00+00:00'), Carbon::yesterday('UTC')->format('Y-m-d\T23:59:59+00:00'));
-//            $interval = '2023-01-01T00:00:00+00:00--2023-09-08T23:59:59+00:00';
+            //            $interval = '2023-01-01T00:00:00+00:00--2023-09-08T23:59:59+00:00';
             $granularity = AmazonConstants::INTERVAL_TYPE_DAY;
             $granularity_time_zone = 'UTC';
             $now = Carbon::now()->format('Y-m-d H:i:s');
@@ -90,7 +81,6 @@ class GetOrderMetricsAsin extends HyperfCommand
             foreach ($amazonInventoryCollections as $amazonInventoryCollection) {
                 $asin = $amazonInventoryCollection->asin;
                 foreach ($marketplace_ids as $marketplace_id) {
-
                     $console->info(sprintf('interval:%s asin:%s marketplace_id:%s merchant_id:%s merchant_store_id:%s', $interval, $asin, $marketplace_id, $merchant_id, $merchant_store_id));
 
                     $collections = new Collection();
@@ -98,9 +88,8 @@ class GetOrderMetricsAsin extends HyperfCommand
                     $retry = 10;
 
                     while (true) {
-
                         try {
-                            //https://developer-docs.amazon.com/sp-api/docs/sales-api-v1-reference
+                            // https://developer-docs.amazon.com/sp-api/docs/sales-api-v1-reference
                             $response = $sdk->sales()->getOrderMetrics($accessToken, $region, [$marketplace_id], $interval, $granularity, $granularity_time_zone, 'All', null, 'monday', $asin);
                             $payload = $response->getPayload();
                             if ($payload === null) {
@@ -108,7 +97,6 @@ class GetOrderMetricsAsin extends HyperfCommand
                             }
 
                             foreach ($payload as $orderMetricsInterval) {
-
                                 $interval_new = str_replace('T', ' ', mb_substr($orderMetricsInterval->getInterval(), 0, 16));
 
                                 try {
@@ -155,10 +143,8 @@ class GetOrderMetricsAsin extends HyperfCommand
                                 $model->total_sales_amount = $orderMetricsInterval->getTotalSales()->getAmount();
 
                                 $model->save();
-
                             }
                             break;
-
                         } catch (ApiException $e) {
                             --$retry;
                             if ($retry > 0) {
@@ -187,7 +173,6 @@ class GetOrderMetricsAsin extends HyperfCommand
                     }
 
                     AmazonSalesOrderMetricsAsinModel::insert($collections->all());
-
                 }
             }
 

@@ -2,14 +2,12 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  *
  * @author   xiaoguo0426
  * @contact  740644717@qq.com
  * @license  MIT
  */
-
 use Swoole\Process as SwooleProcess;
 use Symfony\Component\Process\Exception\ProcessSignaledException;
 use Symfony\Component\Process\Process;

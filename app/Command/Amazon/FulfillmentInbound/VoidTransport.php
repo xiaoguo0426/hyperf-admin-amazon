@@ -17,7 +17,6 @@ use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Model\AmazonShipmentModel;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
-use App\Util\Log\AmazonFulfillmentInboundGetLabelsLog;
 use App\Util\Log\AmazonFulfillmentInboundVoidTransportLog;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
@@ -30,17 +29,11 @@ use Symfony\Component\Console\Input\InputArgument;
 #[Command]
 class VoidTransport extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:fulfillment-inbound:void-transport');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -54,7 +47,6 @@ class VoidTransport extends HyperfCommand
      * @throws ApiException
      * @throws ClientExceptionInterface
      * @throws \JsonException
-     * @return void
      */
     public function handle(): void
     {
@@ -62,7 +54,6 @@ class VoidTransport extends HyperfCommand
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundVoidTransportLog::class);
 
@@ -76,7 +67,6 @@ class VoidTransport extends HyperfCommand
             }
 
             foreach ($amazonShipmentsCollections as $amazonShipmentsCollection) {
-
                 $shipment_id = $amazonShipmentsCollection->shipment_id;
                 try {
                     $voidTransportResponse = $sdk->fulfillmentInbound()->voidTransport($accessToken, $region, $shipment_id);

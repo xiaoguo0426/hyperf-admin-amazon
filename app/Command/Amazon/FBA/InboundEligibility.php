@@ -22,7 +22,5 @@ class InboundEligibility extends HyperfCommand
         parent::__construct('amazon:fba:inbound-eligibility');
     }
 
-    public function handle()
-    {
-    }
+    public function handle() {}
 }

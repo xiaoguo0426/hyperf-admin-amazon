@@ -11,25 +11,16 @@ declare(strict_types=1);
 namespace App\Command\Amazon\Order;
 
 use AmazonPHP\SellingPartner\AccessToken;
-use AmazonPHP\SellingPartner\Exception\ApiException;
-use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
-use AmazonPHP\SellingPartner\Model\Orders\Order;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
-use App\Model\AmazonOrderItemModel;
 use App\Util\Amazon\OrderItemCreator;
 use App\Util\Amazon\OrderItemEngine;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
-use App\Util\Constants;
-use App\Util\Log\AmazonOrdersLog;
-use Carbon\Carbon;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -46,10 +37,8 @@ class GetOrderItems extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws JsonException
-     * @throws ClientExceptionInterface
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
@@ -59,7 +48,6 @@ class GetOrderItems extends HyperfCommand
         $amazon_order_ids = explode(',', $amazon_order_ids);
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
-
             $orderItemCreator = new OrderItemCreator();
             $orderItemCreator->setAmazonOrderIds($amazon_order_ids);
 

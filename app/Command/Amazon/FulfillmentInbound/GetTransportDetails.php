@@ -22,25 +22,19 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
 class GetTransportDetails extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:fulfillment-inbound:get-transport-details');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -51,10 +45,8 @@ class GetTransportDetails extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws JsonException
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
@@ -62,10 +54,8 @@ class GetTransportDetails extends HyperfCommand
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetTransportDetailsLog::class);
-
 
             $amazonShipmentsCollections = AmazonShipmentModel::query()
                 ->where('merchant_id', $merchant_id)
@@ -76,7 +66,6 @@ class GetTransportDetails extends HyperfCommand
                 return true;
             }
             foreach ($amazonShipmentsCollections as $amazonShipmentsCollection) {
-
                 $shipment_id = $amazonShipmentsCollection->shipment_id;
                 try {
                     $getTransportDetailsResponse = $sdk->fulfillmentInbound()->getTransportDetails($accessToken, $region, $shipment_id);
@@ -143,7 +132,7 @@ class GetTransportDetails extends HyperfCommand
                                 ],
                                 'weight' => [
                                     'unit' => $weight_unit,
-                                    'value' => $weight_value
+                                    'value' => $weight_value,
                                 ],
                                 'carrier_name' => $carrier_name,
                                 'tracking_id' => $tracking_id,
@@ -215,7 +204,7 @@ class GetTransportDetails extends HyperfCommand
                                 ],
                                 'weight' => [
                                     'unit' => $weight_unit,
-                                    'value' => $weight_value
+                                    'value' => $weight_value,
                                 ],
                                 'is_stacked' => $is_stacked,
                             ];
@@ -237,7 +226,7 @@ class GetTransportDetails extends HyperfCommand
                         if (! is_null($sellerDeclaredValue)) {
                             $seller_declare_value = [
                                 'currency' => $sellerDeclaredValue->getCurrencyCode(),
-                                'value' => $sellerDeclaredValue->getValue()
+                                'value' => $sellerDeclaredValue->getValue(),
                             ];
                         }
 
@@ -246,7 +235,7 @@ class GetTransportDetails extends HyperfCommand
                         if (! is_null($amazonCalculatedValue)) {
                             $amazon_calculated_value = [
                                 'currency' => $amazonCalculatedValue->getCurrencyCode(),
-                                'value' => $amazonCalculatedValue->getValue()
+                                'value' => $amazonCalculatedValue->getValue(),
                             ];
                         }
 
@@ -320,7 +309,6 @@ class GetTransportDetails extends HyperfCommand
                             'partnered_estimate' => $partnered_estimate,
                             'carrier_name' => $carrier_name,
                         ];
-
                     }
 
                     $nonPartneredLtlData = $transportDetails->getNonPartneredLtlData();
@@ -328,7 +316,7 @@ class GetTransportDetails extends HyperfCommand
                     if (! is_null($nonPartneredLtlData)) {
                         $non_partnered_ltl_data = [
                             'carrier_name' => $nonPartneredLtlData->getCarrierName() ?? '',
-                            'pro_number' => $nonPartneredLtlData->getProNumber() ?? ''
+                            'pro_number' => $nonPartneredLtlData->getProNumber() ?? '',
                         ];
                     }
 
@@ -348,7 +336,6 @@ class GetTransportDetails extends HyperfCommand
                     var_dump($transport_status);
                     var_dump($error_code);
                     var_dump($error_description);
-
                 } catch (ApiException $exception) {
                     $console->error(sprintf('merchant_id:%s merchant_store_id:%s shipment_id:%s %s', $merchant_id, $merchant_store_id, $shipment_id, $exception->getMessage()));
                 } catch (InvalidArgumentException $exception) {

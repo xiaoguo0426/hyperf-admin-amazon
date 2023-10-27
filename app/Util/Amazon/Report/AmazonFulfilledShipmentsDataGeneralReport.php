@@ -22,7 +22,6 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
 {
     public function run(string $report_id, string $file): bool
     {
-
         $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
         $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
@@ -54,7 +53,7 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
                     if ($val === '') {
                         $val = null;
                     }
-                } else if (in_array($value, ['item_price', 'item_tax', 'shipping_price', 'shipping_tax', 'gift_wrap_price', 'gift_wrap_tax'])) {
+                } elseif (in_array($value, ['item_price', 'item_tax', 'shipping_price', 'shipping_tax', 'gift_wrap_price', 'gift_wrap_tax'])) {
                     if ($val === '') {
                         $val = 0.00;
                     }
@@ -70,7 +69,6 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
 
         $collection = new Collection();
         foreach ($data as $item) {
-
             $amazon_order_id = $item['amazon_order_id'];
             $shipment_id = $item['shipment_id'];
 
@@ -87,7 +85,7 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
             }
 
             $model->merchant_order_id = $item['merchant_order_id'];
-//            $model->shipment_id = $item['shipment_id'];
+            //            $model->shipment_id = $item['shipment_id'];
             $model->shipment_item_id = $item['shipment_item_id'];
             $model->amazon_order_item_id = $item['amazon_order_item_id'];
             $model->purchase_date = $item['purchase_date'];

@@ -15,5 +15,6 @@ class Constants
     public const STATUS_ACTIVE = 1;
 
     public const YES = 1;
+
     public const NO = 0;
 }

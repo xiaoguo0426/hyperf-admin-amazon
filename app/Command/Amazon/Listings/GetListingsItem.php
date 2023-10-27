@@ -24,8 +24,9 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Stringable\Str;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -48,9 +49,8 @@ class GetListingsItem extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws \JsonException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
@@ -59,7 +59,6 @@ class GetListingsItem extends HyperfCommand
         $asin = (string) $this->input->getOption('asin');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($asin) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonSalesGetOrderMetricsLog::class);
 
@@ -82,10 +81,9 @@ class GetListingsItem extends HyperfCommand
                 $country_ids = $amazonInventoryCollection->country_ids;
 
                 foreach ($marketplace_ids as $marketplace_id) {
-
-//                    if ($marketplace_id !== Marketplace::US()->id()) {
-//                        continue;
-//                    }
+                    //                    if ($marketplace_id !== Marketplace::US()->id()) {
+                    //                        continue;
+                    //                    }
 
                     while (true) {
                         $console->info(sprintf('GetListingsItem merchant_id:%s merchant_store_id:%s marketplace_id:%s asin:%s', $merchant_id, $merchant_store_id, $marketplace_id, $asin));
@@ -112,14 +110,14 @@ class GetListingsItem extends HyperfCommand
                                         $height = $itemImage->getHeight();
                                         $width = $itemImage->getWidth();
                                     }
-//                                    var_dump($asin);
-//                                    var_dump($product_type);
-//                                    var_dump($condition_type);
-//                                    var_dump($status);
-//                                    var_dump($fn_sku);
-//                                    var_dump($item_name);
-//                                    var_dump($created_date);
-//                                    var_dump($last_updated_date);
+                                    //                                    var_dump($asin);
+                                    //                                    var_dump($product_type);
+                                    //                                    var_dump($condition_type);
+                                    //                                    var_dump($status);
+                                    //                                    var_dump($fn_sku);
+                                    //                                    var_dump($item_name);
+                                    //                                    var_dump($created_date);
+                                    //                                    var_dump($last_updated_date);
 
                                     $country_id = Marketplace::fromId($marketplace_id)->countryCode();
                                     if (! Str::contains($country_ids, $country_id)) {
@@ -139,14 +137,13 @@ class GetListingsItem extends HyperfCommand
                                     break 2;
                                 }
                             }
-//                            var_dump($response->getAttributes());
-//                            var_dump($response->getIssues());
-//                            var_dump($response->getOffers());
-//                            var_dump($response->getFulfillmentAvailability());
-//                            var_dump($response->getProcurement());
+                            //                            var_dump($response->getAttributes());
+                            //                            var_dump($response->getIssues());
+                            //                            var_dump($response->getOffers());
+                            //                            var_dump($response->getFulfillmentAvailability());
+                            //                            var_dump($response->getProcurement());
 
                             break;
-
                         } catch (ApiException $e) {
                             if (! is_null($e->getResponseBody())) {
                                 $body = json_decode($e->getResponseBody(), true, 512, JSON_THROW_ON_ERROR);
@@ -190,5 +187,4 @@ class GetListingsItem extends HyperfCommand
             return true;
         });
     }
-
 }

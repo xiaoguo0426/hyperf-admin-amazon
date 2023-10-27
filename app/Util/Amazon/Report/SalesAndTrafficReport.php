@@ -102,7 +102,7 @@ class SalesAndTrafficReport extends ReportBase
             try {
                 $logger = ApplicationContext::getContainer()->get(AmazonReportActionLog::class);
                 $logger->error(sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $this->report_type, $merchant_id, $merchant_store_id));
-            } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+            } catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
             }
             return true;
         }
@@ -116,7 +116,7 @@ class SalesAndTrafficReport extends ReportBase
             $parentAsin = $salesAndTraffic['parentAsin'];
             $childAsin = $salesAndTraffic['childAsin'];
 
-            $salesByAsin = $salesAndTraffic['salesByAsin'];//销量
+            $salesByAsin = $salesAndTraffic['salesByAsin']; // 销量
 
             $unitsOrdered = $salesByAsin['unitsOrdered'];
             $unitsOrderedB2B = $salesByAsin['unitsOrderedB2B'] ?? 0;
@@ -135,7 +135,7 @@ class SalesAndTrafficReport extends ReportBase
             $totalOrderItems = $salesByAsin['totalOrderItems'];
             $totalOrderItemsB2B = $salesByAsin['totalOrderItemsB2B'] ?? 0;
 
-            $trafficByAsin = $salesAndTraffic['trafficByAsin'];//流量
+            $trafficByAsin = $salesAndTraffic['trafficByAsin']; // 流量
             $browserSessions = $trafficByAsin['browserSessions'] ?? 0;
             $browserSessionsB2B = $trafficByAsin['browserSessionsB2B'] ?? 0;
             $mobileAppSessions = $trafficByAsin['mobileAppSessions'] ?? 0;

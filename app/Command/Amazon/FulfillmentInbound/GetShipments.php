@@ -25,25 +25,19 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
 class GetShipments extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:fulfillment-inbound:get-shipments');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -53,17 +47,14 @@ class GetShipments extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws JsonException
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFinanceLog::class);
 
@@ -80,13 +71,12 @@ class GetShipments extends HyperfCommand
                 'DELIVERED',
                 'CHECKED_IN',
             ];
-//            $last_updated_after = (new \DateTime('2023-01-01', new \DateTimeZone('UTC')));
-//            $last_updated_before = (new \DateTime('2023-09-01', new \DateTimeZone('UTC')));
+            //            $last_updated_after = (new \DateTime('2023-01-01', new \DateTimeZone('UTC')));
+            //            $last_updated_before = (new \DateTime('2023-09-01', new \DateTimeZone('UTC')));
             $last_updated_after = null;
             $last_updated_before = null;
 
             $now = Carbon::now()->format('Y-m-d H:i:s');
-
 
             $runtimeCalculator = new RuntimeCalculator();
             $runtimeCalculator->start();
@@ -124,34 +114,34 @@ class GetShipments extends HyperfCommand
                             'address_line2' => $shipmentFromAddress->getAddressLine2() ?? '',
                             'district_or_county' => $shipmentFromAddress->getDistrictOrCounty() ?? '',
                             'city' => $shipmentFromAddress->getCity() ?? '',
-//                                'state_or_province_code' => $shipmentFromAddress->getStateOrProvinceCode() ?? '',
+                            //                                'state_or_province_code' => $shipmentFromAddress->getStateOrProvinceCode() ?? '',
                             'country_code' => $shipmentFromAddress->getCountryCode() ?? '',
                             'postal_code' => $shipmentFromAddress->getPostalCode() ?? '',
                         ];
 
-                        $destination_fulfillment_center_id = $inboundShipment->getDestinationFulfillmentCenterId() ?? '';//由Amazon创建的Amazon履行中心标识符
-                        $shipmentStatus = $inboundShipment->getShipmentStatus();//发货状态
+                        $destination_fulfillment_center_id = $inboundShipment->getDestinationFulfillmentCenterId() ?? ''; // 由Amazon创建的Amazon履行中心标识符
+                        $shipmentStatus = $inboundShipment->getShipmentStatus(); // 发货状态
                         $shipment_status = '';
                         if (! is_null($shipmentStatus)) {
                             $shipment_status = $shipmentStatus->toString();
                         }
-                        $labelPrepType = $inboundShipment->getLabelPrepType();//货件所需的标签准备类型。NO_LABEL无标签,SELLER_LABEL卖方标签,AMAZON_LABEL标签
+                        $labelPrepType = $inboundShipment->getLabelPrepType(); // 货件所需的标签准备类型。NO_LABEL无标签,SELLER_LABEL卖方标签,AMAZON_LABEL标签
                         $label_prep_type = '';
                         if (! is_null($labelPrepType)) {
                             $label_prep_type = $labelPrepType->toString();
                         }
-                        $are_cases_required = $inboundShipment->getAreCasesRequired() ?? false;//指明入站货件是否包含装箱。对于入站货件，当AreCasesRequired = true时，入站货件中的所有项目都必须装箱。
-                        $confirmedNeedByDate = $inboundShipment->getConfirmedNeedByDate();//货件必须到达亚马逊履行中心的日期，以避免预购商品的交付承诺被打破。
+                        $are_cases_required = $inboundShipment->getAreCasesRequired() ?? false; // 指明入站货件是否包含装箱。对于入站货件，当AreCasesRequired = true时，入站货件中的所有项目都必须装箱。
+                        $confirmedNeedByDate = $inboundShipment->getConfirmedNeedByDate(); // 货件必须到达亚马逊履行中心的日期，以避免预购商品的交付承诺被打破。
                         $confirmed_need_by_date = '';
                         if (! is_null($confirmedNeedByDate)) {
                             $confirmed_need_by_date = $confirmedNeedByDate->format('Y-m-d H:i:s');
                         }
-                        $boxContentsSource = $inboundShipment->getBoxContentsSource();//卖方提供了装运货物的包装箱内容信息。
+                        $boxContentsSource = $inboundShipment->getBoxContentsSource(); // 卖方提供了装运货物的包装箱内容信息。
                         $box_contents_source = '';
                         if (! is_null($boxContentsSource)) {
                             $box_contents_source = $boxContentsSource->toString();
                         }
-                        $estimatedBoxContentsFee = $inboundShipment->getEstimatedBoxContentsFee();//亚马逊对没有盒子内容信息的盒子收取的人工处理费的估计。仅当BoxContentsSource为NONE时才返回此值
+                        $estimatedBoxContentsFee = $inboundShipment->getEstimatedBoxContentsFee(); // 亚马逊对没有盒子内容信息的盒子收取的人工处理费的估计。仅当BoxContentsSource为NONE时才返回此值
                         $total_units = 0;
                         $fee_per_unit_currency = '';
                         $fee_per_unit_value = 0.00;
@@ -175,7 +165,7 @@ class GetShipments extends HyperfCommand
                         $collections->offsetSet($shipment_id, [
                             'merchant_id' => $merchant_id,
                             'merchant_store_id' => $merchant_store_id,
-//                            'marketplace_id' => $marketplace_id,
+                            //                            'marketplace_id' => $marketplace_id,
                             'marketplace_id' => '',
                             'shipment_id' => $shipment_id,
                             'shipment_name' => $shipment_name,
@@ -200,7 +190,7 @@ class GetShipments extends HyperfCommand
                     if (is_null($next_token)) {
                         break;
                     }
-                    $query_type = 'NEXT_TOKEN';//如果有下一页，需要把query_type设置为NEXT_TOKEN
+                    $query_type = 'NEXT_TOKEN'; // 如果有下一页，需要把query_type设置为NEXT_TOKEN
                     $retry = 10;
                 } catch (ApiException $e) {
                     --$retry;
@@ -233,17 +223,17 @@ class GetShipments extends HyperfCommand
                     if ($collections->offsetExists($exist_shipment_id)) {
                         $collection = $collections->offsetGet($exist_shipment_id);
 
-//                        $existShipment->destination_fulfillment_center_id = $collection['destination_fulfillment_center_id'];
+                        //                        $existShipment->destination_fulfillment_center_id = $collection['destination_fulfillment_center_id'];
                         $existShipment->shipment_status = $collection['shipment_status'];
-//                        $existShipment->label_prep_type = $collection['label_prep_type'];
-//                        $existShipment->are_cases_required = $collection['are_cases_required'];
-//                        $existShipment->confirmed_need_by_date = $collection['confirmed_need_by_date'];
-//                        $existShipment->box_contents_source = $collection['box_contents_source'];
-//                        $existShipment->total_units = $collection['total_units'];
-//                        $existShipment->fee_per_unit_currency = $collection['fee_per_unit_currency'];
-//                        $existShipment->fee_per_unit_value = $collection['fee_per_unit_value'];
-//                        $existShipment->total_fee_currency = $collection['total_fee_currency'];
-//                        $existShipment->total_fee_value = $collection['total_fee_value'];
+                        //                        $existShipment->label_prep_type = $collection['label_prep_type'];
+                        //                        $existShipment->are_cases_required = $collection['are_cases_required'];
+                        //                        $existShipment->confirmed_need_by_date = $collection['confirmed_need_by_date'];
+                        //                        $existShipment->box_contents_source = $collection['box_contents_source'];
+                        //                        $existShipment->total_units = $collection['total_units'];
+                        //                        $existShipment->fee_per_unit_currency = $collection['fee_per_unit_currency'];
+                        //                        $existShipment->fee_per_unit_value = $collection['fee_per_unit_value'];
+                        //                        $existShipment->total_fee_currency = $collection['total_fee_currency'];
+                        //                        $existShipment->total_fee_value = $collection['total_fee_value'];
 
                         $existShipment->save();
                     } else {
@@ -255,12 +245,11 @@ class GetShipments extends HyperfCommand
             }
 
             if (! $collections->isEmpty()) {
-                //需要新增的部分
+                // 需要新增的部分
                 AmazonShipmentModel::insert($collections->toArray());
             }
 
             $console->notice(sprintf('FulfillmentInbound merchant_id:%s merchant_store_id:%s 完成处理，耗时:%s. 更新:%s 新增:%s', $merchant_id, $merchant_store_id, $runtimeCalculator->stop(), $existShipments->count(), $collections->count()));
-
 
             return true;
         });

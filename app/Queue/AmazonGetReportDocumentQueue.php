@@ -40,13 +40,11 @@ class AmazonGetReportDocumentQueue extends Queue
     }
 
     /**
-     * @param QueueDataInterface $queueData
      * @throws ApiException
      * @throws ClientExceptionInterface
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws \JsonException
-     * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
@@ -155,7 +153,6 @@ class AmazonGetReportDocumentQueue extends Queue
 
             return true;
         });
-
     }
 
     public function safetyLine(): int

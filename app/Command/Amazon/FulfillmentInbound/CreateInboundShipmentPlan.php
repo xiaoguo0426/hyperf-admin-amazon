@@ -28,7 +28,5 @@ class CreateInboundShipmentPlan extends HyperfCommand
         $this->setDescription('Amazon Fulfillment Inbound Get Inbound Guidance Command');
     }
 
-    public function handle(): void
-    {
-    }
+    public function handle(): void {}
 }

@@ -35,7 +35,6 @@ class AmazonActionReportQueue extends Queue
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws \Exception
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {

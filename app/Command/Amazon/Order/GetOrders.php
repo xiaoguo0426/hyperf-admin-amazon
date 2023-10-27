@@ -11,20 +11,17 @@ declare(strict_types=1);
 namespace App\Command\Amazon\Order;
 
 use AmazonPHP\SellingPartner\AccessToken;
-use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Model\AmazonOrderModel;
 use App\Util\Amazon\OrderCreator;
 use App\Util\Amazon\OrderEngine;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
-use DateInterval;
-use DateTimeZone;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -36,10 +33,6 @@ class GetOrders extends HyperfCommand
         parent::__construct('amazon:order:get-orders');
     }
 
-
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -51,10 +44,8 @@ class GetOrders extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws JsonException
-     * @throws ClientExceptionInterface
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
@@ -65,7 +56,6 @@ class GetOrders extends HyperfCommand
         $that = $this;
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
-
             $created_after = null;
             if (! is_null($amazon_order_ids)) {
                 $amazon_order_ids = explode(',', $amazon_order_ids);
@@ -76,9 +66,9 @@ class GetOrders extends HyperfCommand
                     ->orderBy('purchase_date', 'DESC')
                     ->value('purchase_date');
                 if (is_null($last_create_date)) {
-                    $created_after = (new \DateTime('-1 year', new DateTimeZone('UTC')))->format('Y-01-01\T00:00:00\Z');
+                    $created_after = (new \DateTime('-1 year', new \DateTimeZone('UTC')))->format('Y-01-01\T00:00:00\Z');
                 } else {
-                    $created_after = (new \DateTime($last_create_date, new DateTimeZone('UTC')))->sub(new DateInterval('P1D'))->format('Y-m-d\T00:00:00\Z');
+                    $created_after = (new \DateTime($last_create_date, new \DateTimeZone('UTC')))->sub(new \DateInterval('P1D'))->format('Y-m-d\T00:00:00\Z');
                 }
             }
 
@@ -96,6 +86,5 @@ class GetOrders extends HyperfCommand
 
             return true;
         });
-
     }
 }

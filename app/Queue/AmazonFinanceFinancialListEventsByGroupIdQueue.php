@@ -58,7 +58,8 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Dag\Dag;
 use Hyperf\Dag\Vertex;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class AmazonFinanceFinancialListEventsByGroupIdQueue extends Queue
 {
@@ -73,9 +74,8 @@ class AmazonFinanceFinancialListEventsByGroupIdQueue extends Queue
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws \JsonException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {

@@ -13,7 +13,6 @@ namespace App\Command\Amazon\FBA;
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
-use AmazonPHP\SellingPartner\Marketplace;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Model\AmazonInventoryModel;
 use App\Util\AmazonApp;
@@ -25,27 +24,20 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Stringable\Str;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
 class Inventory extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:fba:inventory');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -55,12 +47,9 @@ class Inventory extends HyperfCommand
             ->setDescription('Amazon FBA Inventory Command');
     }
 
-
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws JsonException
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
@@ -72,19 +61,19 @@ class Inventory extends HyperfCommand
             $logger = ApplicationContext::getContainer()->get(AmazonFbaInventoryLog::class);
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
-//            $startDate = new \DateTime();
-//            $startDate->setDate(2023, 01, 01)->setTime(00, 00, 00);
+            //            $startDate = new \DateTime();
+            //            $startDate->setDate(2023, 01, 01)->setTime(00, 00, 00);
             $startDate = null;
 
             if (! is_null($seller_skus)) {
-                $seller_skus = explode(',', $seller_skus);// 最多50个
+                $seller_skus = explode(',', $seller_skus); // 最多50个
                 $seller_skus_count = count($seller_skus);
                 if (count($seller_skus) > 50) {
                     $console->info(sprintf('seller_skus 数量最多为50个. 当前 %s 个', $seller_skus_count));
                     return true;
                 }
             }
-//            $seller_skus = null;
+            //            $seller_skus = null;
             $granularity_type = 'Marketplace';
 
             $now = Carbon::now()->format('Y-m-d H:i:s');
@@ -93,9 +82,9 @@ class Inventory extends HyperfCommand
                 $retry = 30;
                 $nextToken = null;
 
-//                if ($marketplace_id !== Marketplace::US()->id()) {
-//                    continue;
-//                }
+                //                if ($marketplace_id !== Marketplace::US()->id()) {
+                //                    continue;
+                //                }
 
                 $country_code = $amazonSDK->fetchCountryFromMarketplaceId($marketplace_id);
 
@@ -118,7 +107,7 @@ class Inventory extends HyperfCommand
                                 $errors[] = [
                                     'code' => $error->getCode(),
                                     'message' => $error->getMessage() ?? '',
-                                    'details' => $error->getDetails() ?? ''
+                                    'details' => $error->getDetails() ?? '',
                                 ];
                             }
                             $console->error(sprintf('merchant_id:%s merchant_store_id:%s 处理 %s 市场数据发生错误 %s', $merchant_id, $merchant_store_id, $country_code, json_encode($errors, JSON_THROW_ON_ERROR)));
@@ -241,7 +230,7 @@ class Inventory extends HyperfCommand
                                 'expired_quantity' => $expired_quantity,
                                 'last_updated_time' => $last_updated_time,
                                 'total_quantity' => $total_quantity,
-//                                'country_ids' => $amazonSDK->fetchCountryFromMarketplaceId($marketplace_id),
+                                //                                'country_ids' => $amazonSDK->fetchCountryFromMarketplaceId($marketplace_id),
                                 'created_at' => $now,
                             ]);
                             $asin_list[] = $asin;

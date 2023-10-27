@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+
 namespace App\Command\Crontab\Amazon;
 
 use AmazonPHP\SellingPartner\AccessToken;
@@ -14,7 +22,6 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -28,9 +35,6 @@ class RefreshPendingOrder extends HyperfCommand
         parent::__construct('crontab:amazon:refresh-pending-order');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -43,9 +47,8 @@ class RefreshPendingOrder extends HyperfCommand
 
     /**
      * @throws ApiException
-     * @throws JsonException
+     * @throws \JsonException
      * @throws ClientExceptionInterface
-     * @return void
      */
     public function handle(): void
     {
@@ -53,7 +56,6 @@ class RefreshPendingOrder extends HyperfCommand
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
             $orders = AmazonOrderModel::query()
@@ -85,12 +87,9 @@ class RefreshPendingOrder extends HyperfCommand
                 $orderCreator->setAmazonOrderIds($amazon_order_ids);
 
                 \Hyperf\Support\make(OrderEngine::class)->launch($amazonSDK, $sdk, $accessToken, $orderCreator);
-
             });
-
 
             return true;
         });
-
     }
 }

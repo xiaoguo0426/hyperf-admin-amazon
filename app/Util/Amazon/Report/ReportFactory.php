@@ -55,13 +55,13 @@ class ReportFactory
             'GET_CSV_MFN_PRIME_RETURNS_REPORT' => CsvMfnPrimeReturnsReport::class,
             'GET_XML_MFN_SKU_RETURN_ATTRIBUTES_REPORT' => XmlMfnSkuReturnAttributesReport::class,
             'GET_FLAT_FILE_MFN_SKU_RETURN_ATTRIBUTES_REPORT' => FlatFileMfnSkuReturnAttributesReport::class,
-            //Fulfillment by Amazon (FBA) reports
+            // Fulfillment by Amazon (FBA) reports
             'GET_AMAZON_FULFILLED_SHIPMENTS_DATA_GENERAL' => AmazonFulfilledShipmentsDataGeneralReport::class,
             'GET_AMAZON_FULFILLED_SHIPMENTS_DATA_INVOICING',
-//        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
-//        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
-//        'GET_XML_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
-//        'GET_XML_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
+            //        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
+            //        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
+            //        'GET_XML_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
+            //        'GET_XML_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
             'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_SALES_DATA',
             'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_PROMOTION_DATA',
             'GET_FBA_FULFILLMENT_CUSTOMER_TAXES_DATA',

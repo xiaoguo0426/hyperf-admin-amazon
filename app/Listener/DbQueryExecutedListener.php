@@ -14,8 +14,6 @@ use App\Util\Log\SqlLog;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Logger\LoggerFactory;
-use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -39,10 +37,6 @@ class DbQueryExecutedListener implements ListenerInterface
         ];
     }
 
-    /**
-     * @param object $event
-     * @return void
-     */
     public function process(object $event): void
     {
         if ($event instanceof QueryExecuted) {

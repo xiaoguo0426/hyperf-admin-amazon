@@ -34,8 +34,6 @@ class AmazonOrderQueue extends Queue
         $merchant_store_id = $queueData->getMerchantStoreId();
         $order_id = $queueData->getOrderId();
 
-
-
         return true;
     }
 

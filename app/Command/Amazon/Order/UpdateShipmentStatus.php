@@ -22,7 +22,5 @@ class UpdateShipmentStatus extends HyperfCommand
         parent::__construct('amazon:order:update-shipment-status');
     }
 
-    public function handle()
-    {
-    }
+    public function handle() {}
 }

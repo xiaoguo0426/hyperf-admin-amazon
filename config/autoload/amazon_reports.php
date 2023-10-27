@@ -56,13 +56,13 @@ return [
         'GET_XML_MFN_SKU_RETURN_ATTRIBUTES_REPORT',
         'GET_FLAT_FILE_MFN_SKU_RETURN_ATTRIBUTES_REPORT',
 
-        //Fulfillment by Amazon (FBA) reports
+        // Fulfillment by Amazon (FBA) reports
         'GET_AMAZON_FULFILLED_SHIPMENTS_DATA_GENERAL',
         'GET_AMAZON_FULFILLED_SHIPMENTS_DATA_INVOICING',
-//        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
-//        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
-//        'GET_XML_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
-//        'GET_XML_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
+        //        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
+        //        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
+        //        'GET_XML_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
+        //        'GET_XML_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
         'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_SALES_DATA',
         'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_PROMOTION_DATA',
         'GET_FBA_FULFILLMENT_CUSTOMER_TAXES_DATA',
@@ -78,7 +78,7 @@ return [
         'GET_FBA_REIMBURSEMENTS_DATA', // FBA赔偿报告
         'GET_FBA_FULFILLMENT_REMOVAL_ORDER_DETAIL_DATA', // FBA受损货物明细报告
         'GET_SELLER_FEEDBACK_DATA', // 评估卖方表现的买家的负面和中性反馈（一到三颗星）报告
-        'GET_V2_SELLER_PERFORMANCE_REPORT',//店铺绩效 详见 https://blog.csdn.net/qq594865227/article/details/123263007?spm=1001.2101.3001.6650.5&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-123263007-blog-117392280.235%5Ev31%5Epc_relevant_default_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-123263007-blog-117392280.235%5Ev31%5Epc_relevant_default_base3&utm_relevant_index=6
+        'GET_V2_SELLER_PERFORMANCE_REPORT', // 店铺绩效 详见 https://blog.csdn.net/qq594865227/article/details/123263007?spm=1001.2101.3001.6650.5&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-123263007-blog-117392280.235%5Ev31%5Epc_relevant_default_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-123263007-blog-117392280.235%5Ev31%5Epc_relevant_default_base3&utm_relevant_index=6
         //        'GET_COUPON_PERFORMANCE_REPORT'
     ],
     // 周期报告

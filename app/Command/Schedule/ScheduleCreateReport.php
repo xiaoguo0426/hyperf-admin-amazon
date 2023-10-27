@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+
 namespace App\Command\Schedule;
 
 use App\Model\AmazonAppModel;
@@ -13,7 +21,6 @@ use Psr\Container\ContainerInterface;
 #[Command]
 class ScheduleCreateReport extends HyperfCommand
 {
-
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('schedule:report:create');
@@ -26,27 +33,24 @@ class ScheduleCreateReport extends HyperfCommand
         $this->setDescription('定时创建指定报告类型指定时间范围报告');
     }
 
-    /**
-     * @return void
-     */
     public function handle(): void
     {
         $report_schedule_list = [
-            (new ScheduleReportCreator(
+            new ScheduleReportCreator(
                 'GET_SALES_AND_TRAFFIC_REPORT',
                 Carbon::now()->subDays(10),
                 Carbon::now()->subDays(3),
                 true,
                 true
-            ))
+            ),
         ];
 
-        AmazonApp::trigger(function (AmazonAppModel $amazonAppCollection) use ($report_schedule_list) {
+        AmazonApp::single(function (AmazonAppModel $amazonAppCollection) use ($report_schedule_list) {
             $merchant_id = $amazonAppCollection->merchant_id;
             $merchant_store_id = $amazonAppCollection->merchant_store_id;
 
             foreach ($report_schedule_list as $reportScheduleCreator) {
-                /**
+                /*
                  * @var ScheduleReportCreator $reportScheduleCreator
                  */
                 $this->call('amazon:report:create', [
@@ -60,6 +64,5 @@ class ScheduleCreateReport extends HyperfCommand
                 ]);
             }
         });
-
     }
 }

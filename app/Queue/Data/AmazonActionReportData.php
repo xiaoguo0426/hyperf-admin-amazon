@@ -103,22 +103,22 @@ class AmazonActionReportData extends QueueData implements \JsonSerializable
         $this->report_file_path = $report_file_path;
     }
 
-    public function getDataStartTime(): string|null
+    public function getDataStartTime(): null|string
     {
         return $this->data_start_time;
     }
 
-    public function setDataStartTime(string|null $data_start_time): void
+    public function setDataStartTime(null|string $data_start_time): void
     {
         $this->data_start_time = $data_start_time;
     }
 
-    public function getDataEndTime(): string|null
+    public function getDataEndTime(): null|string
     {
         return $this->data_end_time;
     }
 
-    public function setDataEndTime(string|null $data_end_time): void
+    public function setDataEndTime(null|string $data_end_time): void
     {
         $this->data_end_time = $data_end_time;
     }

@@ -16,22 +16,15 @@ use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 
 #[Command]
 class ReportGetDocument extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:report:gets-document');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -41,8 +34,7 @@ class ReportGetDocument extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {

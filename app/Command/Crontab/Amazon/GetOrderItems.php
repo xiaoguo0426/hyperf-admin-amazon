@@ -16,14 +16,13 @@ use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 
 #[Command]
 class GetOrderItems extends HyperfCommand
 {
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('amazon:order:get-order-items');
+        parent::__construct('crontab:amazon:get-order-items');
         // 指令配置
         $this->setDescription('Crontab Amazon Order API Get Order Items Command');
     }
@@ -31,8 +30,7 @@ class GetOrderItems extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {

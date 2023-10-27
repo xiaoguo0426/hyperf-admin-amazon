@@ -22,17 +22,11 @@ use Psr\Container\ContainerInterface;
 #[Command]
 class QueueMonitor extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('monitor:queue');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -40,9 +34,6 @@ class QueueMonitor extends HyperfCommand
         $this->setDescription('Monitor Queue');
     }
 
-    /**
-     * @return void
-     */
     public function handle(): void
     {
         /**

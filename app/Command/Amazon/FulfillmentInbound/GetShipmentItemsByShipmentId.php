@@ -26,25 +26,19 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
 class GetShipmentItemsByShipmentId extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:fulfillment-inbound:get-shipment-items-by-shipment-id');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -55,19 +49,15 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws JsonException
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
-
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
-//        $shipment_id = (int) $this->input->getArgument('shipment_id');
+        //        $shipment_id = (int) $this->input->getArgument('shipment_id');
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetShipmentItemsByShipmentIdLog::class);
 
@@ -82,7 +72,6 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
 
             $retry = 10;
             foreach ($amazonShipmentCollections as $amazonShipmentCollection) {
-
                 $runtimeCalculator = new RuntimeCalculator();
                 $runtimeCalculator->start();
 
@@ -94,9 +83,9 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                 $collections = new Collection();
 
                 $now = Carbon::now()->format('Y-m-d H:i:s');
-//                var_dump($amazonShipmentCollection->shipment_id);
-//                var_dump($amazonShipmentCollection->country_id);
-//                $marketplace_id = $amazonSDK->fetchMarketplaceIdFromCountryId($amazonShipmentCollection->country_id);
+                //                var_dump($amazonShipmentCollection->shipment_id);
+                //                var_dump($amazonShipmentCollection->country_id);
+                //                $marketplace_id = $amazonSDK->fetchMarketplaceIdFromCountryId($amazonShipmentCollection->country_id);
 
                 while (true) {
                     try {
@@ -136,42 +125,42 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                                 }
                             }
 
-//                        try {
-//                            $detailCollection = AmazonShipmentItemsModel::query()
-//                                ->where('merchant_id', $merchant_id)
-//                                ->where('merchant_store_id', $merchant_store_id)
-//                                ->where('shipment_id', $shipment_id)
-//                                ->where('seller_sku', $seller_sku)
-//                                ->firstOrFail();
-//                        } catch (ModelNotFoundException) {
-//                            $collections->push([
-//                                'merchant_id' => $merchant_id,
-//                                'merchant_store_id' => $merchant_store_id,
-//                                'shipment_id' => $shipment_id,
-//                                'seller_sku' => $seller_sku,
-//                                'fulfillment_network_sku' => $fulfillment_network_sku,
-//                                'quantity_shipped' => $quantity_shipped,
-//                                'quantity_received' => $quantity_received,
-//                                'quantity_in_case' => $quantity_in_case,
-//                                'release_date' => $release_date,
-//                                'prep_details_list' => json_encode($pre_details_list, JSON_THROW_ON_ERROR),
-//                                'created_at' => $now
-//                            ]);
-//                            continue;
-//                        }
-//
-////                        $detailCollection->merchant_id = $merchant_id;
-////                        $detailCollection->merchant_store_id = $merchant_store_id;
-////                        $detailCollection->shipment_id = $shipment_id;
-////                        $detailCollection->seller_sku = $seller_sku;
-//                        $detailCollection->fulfillment_network_sku = $fulfillment_network_sku;
-//                        $detailCollection->quantity_shipped = $quantity_shipped;
-//                        $detailCollection->quantity_received = $quantity_received;
-//                        $detailCollection->quantity_in_case = $quantity_in_case;
-//                        $detailCollection->release_date = $release_date;
-//                        $detailCollection->prep_details_list = json_encode($pre_details_list, JSON_THROW_ON_ERROR);
-//
-//                        $detailCollection->save();
+                            //                        try {
+                            //                            $detailCollection = AmazonShipmentItemsModel::query()
+                            //                                ->where('merchant_id', $merchant_id)
+                            //                                ->where('merchant_store_id', $merchant_store_id)
+                            //                                ->where('shipment_id', $shipment_id)
+                            //                                ->where('seller_sku', $seller_sku)
+                            //                                ->firstOrFail();
+                            //                        } catch (ModelNotFoundException) {
+                            //                            $collections->push([
+                            //                                'merchant_id' => $merchant_id,
+                            //                                'merchant_store_id' => $merchant_store_id,
+                            //                                'shipment_id' => $shipment_id,
+                            //                                'seller_sku' => $seller_sku,
+                            //                                'fulfillment_network_sku' => $fulfillment_network_sku,
+                            //                                'quantity_shipped' => $quantity_shipped,
+                            //                                'quantity_received' => $quantity_received,
+                            //                                'quantity_in_case' => $quantity_in_case,
+                            //                                'release_date' => $release_date,
+                            //                                'prep_details_list' => json_encode($pre_details_list, JSON_THROW_ON_ERROR),
+                            //                                'created_at' => $now
+                            //                            ]);
+                            //                            continue;
+                            //                        }
+                            //
+                            // //                        $detailCollection->merchant_id = $merchant_id;
+                            // //                        $detailCollection->merchant_store_id = $merchant_store_id;
+                            // //                        $detailCollection->shipment_id = $shipment_id;
+                            // //                        $detailCollection->seller_sku = $seller_sku;
+                            //                        $detailCollection->fulfillment_network_sku = $fulfillment_network_sku;
+                            //                        $detailCollection->quantity_shipped = $quantity_shipped;
+                            //                        $detailCollection->quantity_received = $quantity_received;
+                            //                        $detailCollection->quantity_in_case = $quantity_in_case;
+                            //                        $detailCollection->release_date = $release_date;
+                            //                        $detailCollection->prep_details_list = json_encode($pre_details_list, JSON_THROW_ON_ERROR);
+                            //
+                            //                        $detailCollection->save();
 
                             $collections->push([
                                 'merchant_id' => $merchant_id,
@@ -184,11 +173,10 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                                 'quantity_in_case' => $quantity_in_case,
                                 'release_date' => $release_date,
                                 'prep_details_list' => json_encode($pre_details_list, JSON_THROW_ON_ERROR),
-                                'created_at' => $now
+                                'created_at' => $now,
                             ]);
 
                             $seller_skus[] = $seller_sku;
-
                         }
 
                         $next_token = $payload->getNextToken();
@@ -196,9 +184,8 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                         if (is_null($next_token)) {
                             break;
                         }
-
                     } catch (ApiException $e) {
-                        $retry--;
+                        --$retry;
                         if ($retry === 0) {
                             break;
                         }
@@ -211,16 +198,12 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                     continue;
                 }
 
-
                 AmazonShipmentItemsModel::insert($collections->all());
 
                 $console->notice(sprintf('FulfillmentInbound getShipmentItemsByShipmentId shipment_id:%s merchant_id:%s merchant_store_id:%s 完成处理. 更新:%s 新增:%s', $shipment_id, $merchant_id, $merchant_store_id, $collections->count(), $collections->count()));
-
             }
 
             return true;
         });
-
-
     }
 }

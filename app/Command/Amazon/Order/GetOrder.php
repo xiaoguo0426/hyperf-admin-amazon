@@ -21,9 +21,9 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -40,10 +40,8 @@ class GetOrder extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws JsonException
-     * @throws ClientExceptionInterface
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
@@ -54,14 +52,12 @@ class GetOrder extends HyperfCommand
         $that = $this;
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($that, $amazon_order_id) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
             $retry = 30;
 
             while (true) {
                 try {
-
                     $response = $sdk->orders()->getOrder($accessToken, $region, $amazon_order_id);
 
                     $order = $response->getPayload();
@@ -72,8 +68,8 @@ class GetOrder extends HyperfCommand
                     $amazon_order_id = $order->getAmazonOrderId();
 
                     $orderTotal = $order->getOrderTotal();
-                    $order_total_currency_code = $orderTotal === null ? '' : ($orderTotal->getCurrencyCode() ?? '');//订单的总费用(货币)
-                    $order_total_amount = $orderTotal === null ? '' : ($orderTotal->getAmount() ?? '');//订单的总费用
+                    $order_total_currency_code = $orderTotal === null ? '' : ($orderTotal->getCurrencyCode() ?? ''); // 订单的总费用(货币)
+                    $order_total_amount = $orderTotal === null ? '' : ($orderTotal->getAmount() ?? ''); // 订单的总费用
 
                     $purchase_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $order->getPurchaseDate())->format('Y-m-d H:i:s');
 
@@ -84,8 +80,8 @@ class GetOrder extends HyperfCommand
                     if ($paymentExecutionDetail) {
                         foreach ($paymentExecutionDetail as $paymentExecutionDetailItem) {
                             $paymentExecutionDetailJson[] = [
-                                $paymentExecutionDetailItem->getPayment(),//订单的货币价值
-                                $paymentExecutionDetailItem->getPaymentMethod()//COD订单的子付款方式。 COD - Cash On Delivery货到付款,GC - Gift Card礼品卡.,PointsAccount - Amazon Points亚马逊积分.
+                                $paymentExecutionDetailItem->getPayment(), // 订单的货币价值
+                                $paymentExecutionDetailItem->getPaymentMethod(), // COD订单的子付款方式。 COD - Cash On Delivery货到付款,GC - Gift Card礼品卡.,PointsAccount - Amazon Points亚马逊积分.
                             ];
                         }
                     }
@@ -133,7 +129,7 @@ class GetOrder extends HyperfCommand
                     $fulfillmentInstructionJson = [];
                     if ($fulfillmentInstruction) {
                         $fulfillmentInstructionJson = [
-                            $fulfillmentInstruction->getFulfillmentSupplySourceId() //Denotes the recommended sourceId where the order should be fulfilled from
+                            $fulfillmentInstruction->getFulfillmentSupplySourceId(), // Denotes the recommended sourceId where the order should be fulfilled from
                         ];
                     }
 
@@ -141,7 +137,7 @@ class GetOrder extends HyperfCommand
                     $shippingAddressJson = [];
                     if ($shippingAddress) {
                         $shippingAddressJson = [
-//                                'name' => $shippingAddress->getName() ?? '',
+                            //                                'name' => $shippingAddress->getName() ?? '',
                             'name' => '',
                             'address_line1' => $shippingAddress->getAddressLine1() ?? '',
                             'address_line2' => $shippingAddress->getAddressLine2() ?? '',
@@ -170,14 +166,14 @@ class GetOrder extends HyperfCommand
                                 foreach ($taxClassifications as $taxClassification) {
                                     $taxClassificationsJson[] = [
                                         'name' => $taxClassification->getName(),
-                                        'value' => $taxClassification->getValue()
+                                        'value' => $taxClassification->getValue(),
                                     ];
                                 }
                             }
                             $buyerInfoTaxInfoJson = [
                                 'companyLegalName' => $buyerInfoTaxInfo->getCompanyLegalName(),
                                 'taxingRegion' => $buyerInfoTaxInfo->getTaxingRegion(),
-                                'taxClassifications' => $taxClassificationsJson
+                                'taxClassifications' => $taxClassificationsJson,
                             ];
                         }
 
@@ -195,7 +191,7 @@ class GetOrder extends HyperfCommand
                         $automatedShippingSettingsJson = [
                             'hasAutomatedShippingSettings' => $automatedShippingSettings->getHasAutomatedShippingSettings() ?? false,
                             'automatedCarrier' => $automatedShippingSettings->getAutomatedCarrier() ?? '',
-                            'automatedShipMethod' => $automatedShippingSettings->getAutomatedShipMethod() ?? ''
+                            'automatedShipMethod' => $automatedShippingSettings->getAutomatedShipMethod() ?? '',
                         ];
                     }
 
@@ -213,7 +209,7 @@ class GetOrder extends HyperfCommand
                             }
                         }
                         $marketplaceTaxInfoJson = [
-                            'tax_classifications' => $taxClassificationsJson
+                            'tax_classifications' => $taxClassificationsJson,
                         ];
                     }
 
@@ -265,9 +261,7 @@ class GetOrder extends HyperfCommand
                     ]]);
 
                     break;
-
                 } catch (ApiException $e) {
-
                     if (! is_null($e->getResponseBody())) {
                         $body = json_decode($e->getResponseBody(), true, 512, JSON_THROW_ON_ERROR);
                         if (isset($body['errors'])) {
@@ -281,7 +275,7 @@ class GetOrder extends HyperfCommand
                         }
                     }
 
-                    $retry--;
+                    --$retry;
                     if ($retry > 0) {
                         $console->warning(sprintf('merchant_id:%s merchant_store_id:%s Page:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $page, $retry));
                         sleep(3);
@@ -298,6 +292,5 @@ class GetOrder extends HyperfCommand
 
             return true;
         });
-
     }
 }

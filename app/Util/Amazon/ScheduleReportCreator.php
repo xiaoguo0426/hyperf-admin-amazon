@@ -1,12 +1,19 @@
 <?php
 
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+
 namespace App\Util\Amazon;
 
 use Carbon\Carbon;
 
 class ScheduleReportCreator implements CreatorInterface
 {
-
     public string $report_type;
 
     public ?Carbon $start_date;
@@ -16,7 +23,6 @@ class ScheduleReportCreator implements CreatorInterface
     public bool $is_range_date = false;
 
     public bool $is_force_create = false;
-
 
     public function __construct(string $report_type, ?Carbon $start_date, ?Carbon $end_date, bool $is_range_date, bool $is_force_create)
     {

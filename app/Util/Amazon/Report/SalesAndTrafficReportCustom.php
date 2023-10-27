@@ -75,7 +75,7 @@ class SalesAndTrafficReportCustom extends ReportBase
             try {
                 $logger = ApplicationContext::getContainer()->get(AmazonReportActionLog::class);
                 $logger->error(sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $this->report_type, $merchant_id, $merchant_store_id));
-            } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+            } catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
             }
             return true;
         }

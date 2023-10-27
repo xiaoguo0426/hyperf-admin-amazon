@@ -18,8 +18,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
-use RuntimeException;
 
 class Queue extends AbstractQueue
 {
@@ -32,7 +30,7 @@ class Queue extends AbstractQueue
     }
 
     /**
-     * @throws RedisException
+     * @throws \RedisException
      */
     public function push(QueueDataInterface $queueData): int
     {
@@ -42,7 +40,7 @@ class Queue extends AbstractQueue
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
+     * @throws \RedisException
      * @throws \Exception
      */
     public function pop(): bool
@@ -78,7 +76,7 @@ class Queue extends AbstractQueue
                     $console->info(sprintf('进程[%s] pid:%s 队列为空，自动退出', cli_get_process_title(), $pid));
                     break;
                 }
-            } catch (RedisException $exception) {
+            } catch (\RedisException $exception) {
                 $this->queueLog->error(sprintf('队列：%s 连接Redis异常.%s', $this->queue_name, $exception->getMessage()));
                 break;
             }
@@ -127,18 +125,18 @@ class Queue extends AbstractQueue
     }
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
-        throw new RuntimeException('请在子类实现 handleQueueData 方法');
+        throw new \RuntimeException('请在子类实现 handleQueueData 方法');
     }
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     public function getQueueDataClass(): string
     {
-        throw new RuntimeException('请在子类实现 getQueueDataClass 方法');
+        throw new \RuntimeException('请在子类实现 getQueueDataClass 方法');
     }
 }

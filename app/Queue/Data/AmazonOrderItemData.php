@@ -13,55 +13,36 @@ namespace App\Queue\Data;
 class AmazonOrderItemData extends QueueData implements \JsonSerializable
 {
     private int $merchant_id;
+
     private int $merchant_store_id;
-    /**
-     * @var string
-     */
+
     private string $order_id;
 
-    /**
-     * @return int
-     */
     public function getMerchantId(): int
     {
         return $this->merchant_id;
     }
 
-    /**
-     * @param int $merchant_id
-     */
     public function setMerchantId(int $merchant_id): void
     {
         $this->merchant_id = $merchant_id;
     }
 
-    /**
-     * @return int
-     */
     public function getMerchantStoreId(): int
     {
         return $this->merchant_store_id;
     }
 
-    /**
-     * @param int $merchant_store_id
-     */
     public function setMerchantStoreId(int $merchant_store_id): void
     {
         $this->merchant_store_id = $merchant_store_id;
     }
 
-    /**
-     * @return array
-     */
     public function getOrderId(): array
     {
         return explode(',', $this->order_id);
     }
 
-    /**
-     * @param array $order_ids
-     */
     public function setOrderId(array $order_ids): void
     {
         $this->order_id = implode(',', $order_ids);
@@ -86,9 +67,7 @@ class AmazonOrderItemData extends QueueData implements \JsonSerializable
     }
 
     /**
-     * @param mixed $json
      * @throws \JsonException
-     * @return AmazonOrderItemData
      */
     public static function fromJson(mixed $json): AmazonOrderItemData
     {

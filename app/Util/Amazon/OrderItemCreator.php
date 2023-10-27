@@ -1,9 +1,14 @@
 <?php
 
-namespace App\Util\Amazon;
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
 
-use AmazonPHP\SellingPartner\Model\Orders\ItemApprovalStatus;
-use AmazonPHP\SellingPartner\Model\Orders\ItemApprovalType;
+namespace App\Util\Amazon;
 
 class OrderItemCreator implements CreatorInterface
 {

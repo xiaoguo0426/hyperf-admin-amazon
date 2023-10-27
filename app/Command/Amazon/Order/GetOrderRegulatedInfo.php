@@ -22,7 +22,5 @@ class GetOrderRegulatedInfo extends HyperfCommand
         parent::__construct('amazon:order:get-order-regulated-info');
     }
 
-    public function handle()
-    {
-    }
+    public function handle() {}
 }

@@ -22,25 +22,19 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
 class GetCatalogItem extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:catalog:get-catalog-items');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -50,9 +44,8 @@ class GetCatalogItem extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws JsonException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
@@ -172,7 +165,7 @@ class GetCatalogItem extends HyperfCommand
                                         'weight' => $package_weight,
                                         'width_unit' => $package_width_unit,
                                         'width' => $package_width,
-                                    ]
+                                    ],
                                 ];
                             }
                         }
@@ -355,7 +348,7 @@ class GetCatalogItem extends HyperfCommand
 
                                         $item_contributors[] = [
                                             'role' => $role,
-                                            'value' => $value
+                                            'value' => $value,
                                         ];
                                     }
                                 }
@@ -432,7 +425,7 @@ class GetCatalogItem extends HyperfCommand
                                     ];
                                 }
 
-                                $replenishment_category = $itemVendorDetailByMarketplace->getReplenishmentCategory() ?? '';//https://developer-docs.amazon.com/sp-api/docs/catalog-items-api-v2022-04-01-reference#replenishmentcategory
+                                $replenishment_category = $itemVendorDetailByMarketplace->getReplenishmentCategory() ?? ''; // https://developer-docs.amazon.com/sp-api/docs/catalog-items-api-v2022-04-01-reference#replenishmentcategory
 
                                 $vendor_details[] = [
                                     'marketplace_id' => $marketplace_id,
@@ -463,7 +456,7 @@ class GetCatalogItem extends HyperfCommand
                         $retry = 10;
                     } catch (ApiException $e) {
                         $message = $e->getMessage();
-                        $retry--;
+                        --$retry;
                         if ($retry > 0) {
                             $console->warning(sprintf('Catalog Items ApiException getCatalogItem Failed. retry:%s merchant_id:%s merchant_store_id:%s asin:%s %s', $retry, $merchant_id, $merchant_store_id, $asin, $message));
                             sleep(10);

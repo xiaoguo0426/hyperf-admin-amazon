@@ -22,7 +22,5 @@ class UpdateVerificationStatus extends HyperfCommand
         parent::__construct('amazon:order:update-verification-status');
     }
 
-    public function handle()
-    {
-    }
+    public function handle() {}
 }

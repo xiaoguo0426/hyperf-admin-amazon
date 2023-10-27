@@ -54,19 +54,18 @@ class GetLabels extends HyperfCommand
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetLabelsLog::class);
 
-            //https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v0-reference#pagetype
-            $page_type = 'PackageLabel_Letter_2';//用于打印标签的页面类型
-            //https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v0-reference#labeltype
-            $label_type = 'BARCODE_2D';//请求的标签类型。
-            $number_of_packages = null;//货件中的包裹数。可选
-            $package_labels_to_print = null;//指定要为其打印包标签的包的标识符列表。最大999
-            $number_of_pallets = null;//货物中托盘的数量。这会为每个托盘返回四个相同的标签。
-            $page_size = 10;//用于在总包裹标签中分页的页面大小。这是非合作LTL运输的必需参数。最大值：1000。
-            $page_start_index = null;//用于对总包裹标签进行分页的页面起始索引。这是非合作LTL Shipments的必需参数。
+            // https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v0-reference#pagetype
+            $page_type = 'PackageLabel_Letter_2'; // 用于打印标签的页面类型
+            // https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v0-reference#labeltype
+            $label_type = 'BARCODE_2D'; // 请求的标签类型。
+            $number_of_packages = null; // 货件中的包裹数。可选
+            $package_labels_to_print = null; // 指定要为其打印包标签的包的标识符列表。最大999
+            $number_of_pallets = null; // 货物中托盘的数量。这会为每个托盘返回四个相同的标签。
+            $page_size = 10; // 用于在总包裹标签中分页的页面大小。这是非合作LTL运输的必需参数。最大值：1000。
+            $page_start_index = null; // 用于对总包裹标签进行分页的页面起始索引。这是非合作LTL Shipments的必需参数。
 
             $amazonShipmentsCollections = AmazonShipmentModel::query()
                 ->where('merchant_id', $merchant_id)
@@ -78,7 +77,6 @@ class GetLabels extends HyperfCommand
             }
 
             foreach ($amazonShipmentsCollections as $amazonShipmentsCollection) {
-
                 $shipment_id = $amazonShipmentsCollection->shipment_id;
                 try {
                     $getLabelsResponse = $sdk->fulfillmentInbound()->getLabels($accessToken, $region, $shipment_id, $page_type, $label_type, $number_of_packages, $package_labels_to_print, $number_of_pallets, $page_size, $page_start_index);

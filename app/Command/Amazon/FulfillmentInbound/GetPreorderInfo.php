@@ -43,7 +43,6 @@ class GetPreorderInfo extends HyperfCommand
             ->setDescription('Amazon Fulfillment Inbound GetPreorderInfo Command');
     }
 
-
     /**
      * @throws ApiException
      * @throws ClientExceptionInterface
@@ -55,7 +54,6 @@ class GetPreorderInfo extends HyperfCommand
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetPreorderInfoLog::class);
 
@@ -69,7 +67,6 @@ class GetPreorderInfo extends HyperfCommand
             }
 
             foreach ($amazonShipmentsCollections as $amazonShipmentsCollection) {
-
                 $shipment_id = $amazonShipmentsCollection->shipment_id;
                 try {
                     $getPreorderInfoResponse = $sdk->fulfillmentInbound()->getPreorderInfo($accessToken, $region, $shipment_id, implode(',', $marketplace_ids));
@@ -124,7 +121,6 @@ class GetPreorderInfo extends HyperfCommand
                         'trace' => $exception->getTraceAsString(),
                     ]);
                 }
-
             }
 
             return true;

@@ -28,10 +28,9 @@ namespace App\Model;
  */
 class AmazonShipmentItemsModel extends Model
 {
-
-    protected ?string $table = 'amazon_shipment_items';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
+
+    protected ?string $table = 'amazon_shipment_items';
 }

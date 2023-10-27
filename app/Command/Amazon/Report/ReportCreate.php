@@ -27,26 +27,20 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
 class ReportCreate extends HyperfCommand
 {
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:report:create');
     }
 
-    /**
-     * @return void
-     */
     public function configure(): void
     {
         parent::configure();
@@ -62,10 +56,8 @@ class ReportCreate extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws JsonException
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {
@@ -86,7 +78,7 @@ class ReportCreate extends HyperfCommand
             $report_end_date = $reportEndDate->format('Y-m-d');
         }
 
-        if (is_null($is_force_create) || '0' === $is_force_create) {
+        if (is_null($is_force_create) || $is_force_create === '0') {
             $is_force_create = '0';
         } else {
             $is_force_create = '1';
@@ -120,16 +112,8 @@ class ReportCreate extends HyperfCommand
     }
 
     /**
-     * @param int $merchant_id
-     * @param int $merchant_store_id
-     * @param string $report_type
-     * @param string $report_start_date
-     * @param string $report_end_date
-     * @param string $is_force_create
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws JsonException
-     * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function fly(int $merchant_id, int $merchant_store_id, string $report_type, string $report_start_date, string $report_end_date, string $is_force_create): void
     {
@@ -156,7 +140,7 @@ class ReportCreate extends HyperfCommand
                 }
                 $dir = $instance->getDir();
 
-                if (('0' === $is_force_create) && $instance->checkReportFile($marketplace_ids)) {
+                if (($is_force_create === '0') && $instance->checkReportFile($marketplace_ids)) {
                     // 文件存在了直接返回
                     $console->warning($instance->getReportFilePath($marketplace_ids) . ' 文件已存在');
                     return true;

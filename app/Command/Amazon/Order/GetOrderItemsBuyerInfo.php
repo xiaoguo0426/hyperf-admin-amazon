@@ -22,7 +22,5 @@ class GetOrderItemsBuyerInfo extends HyperfCommand
         parent::__construct('amazon:order:get-order-items-buyer-info');
     }
 
-    public function handle()
-    {
-    }
+    public function handle() {}
 }
