@@ -121,9 +121,6 @@ class AmazonApp
         });
     }
 
-    /**
-     * 所有Amazon应用配置回调.
-     */
     public static function single(callable $func): bool
     {
         $amazonAppCollections = AmazonAppModel::query()->where('status', Constants::STATUS_ACTIVE)->get();

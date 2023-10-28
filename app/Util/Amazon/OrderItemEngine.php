@@ -327,10 +327,6 @@ class OrderItemEngine implements EngineInterface
                 ];
             }
 
-            if (empty($list)) {
-                continue; // 继续处理下一个order_id
-            }
-
             $amazonOrderItemCollections = AmazonOrderItemModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)

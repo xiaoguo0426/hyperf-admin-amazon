@@ -53,7 +53,7 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
                     if ($val === '') {
                         $val = null;
                     }
-                } elseif (in_array($value, ['item_price', 'item_tax', 'shipping_price', 'shipping_tax', 'gift_wrap_price', 'gift_wrap_tax'])) {
+                } elseif (in_array($value, ['item_price', 'item_tax', 'shipping_price', 'shipping_tax', 'gift_wrap_price', 'gift_wrap_tax'], true)) {
                     if ($val === '') {
                         $val = 0.00;
                     }

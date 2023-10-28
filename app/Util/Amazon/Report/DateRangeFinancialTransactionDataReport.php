@@ -184,9 +184,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
                         }
                     }
 
-                    if (! empty($final)) {
-                        AmazonReportDateRangeFinancialTransactionDataModel::insert($final);
-                    }
+                    AmazonReportDateRangeFinancialTransactionDataModel::insert($final);
                 } catch (\Exception $exception) {
                 }
             });

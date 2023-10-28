@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Model;
 
 /**
- * Class AmazonInventoryModel.
+ * Class AmazonFinancialGroupModel.
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id

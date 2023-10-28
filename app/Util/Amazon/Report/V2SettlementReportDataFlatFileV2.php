@@ -133,9 +133,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
                 }
             }
 
-            if (! empty($final)) {
-                $insert = AmazonSettlementReportDataFlatFileV2Model::insert($final);
-            }
+            $insert = AmazonSettlementReportDataFlatFileV2Model::insert($final);
         });
 
         return true;

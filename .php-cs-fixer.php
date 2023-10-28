@@ -57,6 +57,9 @@ return (new PhpCsFixer\Config())
         'phpdoc_align' => [
             'align' => 'left',
         ],
+        'phpdoc_add_missing_param_annotation' => [
+            'only_untyped' => false
+        ],
         'multiline_whitespace_before_semicolons' => [
             'strategy' => 'no_multi_line',
         ],
@@ -79,6 +82,7 @@ return (new PhpCsFixer\Config())
         'single_quote' => true,
         'standardize_not_equals' => true,
         'multiline_comment_opening_closing' => true,
+        'strict_param' => true,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

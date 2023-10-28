@@ -14,35 +14,34 @@ use App\Util\RegionRefreshTokenConfig;
 
 /**
  * Class AmazonAppModel.
- * @property $id
- * @property $merchant_id
- * @property $merchant_store_id
- * @property $seller_id
- * @property $app_id
- * @property $app_name
- * @property $aws_access_key
- * @property $aws_secret_key
- * @property $user_arn
- * @property $role_arn
- * @property $lwa_client_id
- * @property $lwa_client_id_secret
- * @property $region
- * @property $country_ids
- * @property $refresh_token
- * @property $config
- * @property $status
- * @property $created_at
- * @property $updated_at
+ * @property int $id
+ * @property int $merchant_id
+ * @property int $merchant_store_id
+ * @property string $seller_id
+ * @property string $app_id
+ * @property string $app_name
+ * @property string $aws_access_key
+ * @property string $aws_secret_key
+ * @property string $user_arn
+ * @property string $role_arn
+ * @property string $lwa_client_id
+ * @property string $lwa_client_id_secret
+ * @property string $region
+ * @property string $country_ids
+ * @property string $refresh_token
+ * @property array $config
+ * @property string $status
+ * @property string $created_at
+ * @property string $updated_at
  */
 class AmazonAppModel extends Model
 {
     protected ?string $table = 'amazon_app';
 
     /**
-     * @param mixed $value
      * @throws \JsonException
      */
-    public function getConfigAttribute($value): array
+    public function getConfigAttribute(string $value): array
     {
         //        $data = [];
         //        $decodes = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
@@ -54,16 +53,10 @@ class AmazonAppModel extends Model
     }
 
     /**
-     * @param mixed $configs
      * @throws \JsonException
      */
-    public function setConfigAttribute($configs): void
+    public function setConfigAttribute(array $configs): void
     {
-        //        $data = [];
-        //        foreach ($configs as $region => $config) {
-        //            $data[$region] = json_encode($config, JSON_THROW_ON_ERROR);
-        //        }
-        //        $this->attributes['config'] = json_encode($data, JSON_THROW_ON_ERROR);
         $this->attributes['config'] = json_encode($configs, JSON_THROW_ON_ERROR);
     }
 
