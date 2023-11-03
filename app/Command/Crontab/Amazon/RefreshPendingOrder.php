@@ -11,19 +11,19 @@ declare(strict_types=1);
 namespace App\Command\Crontab\Amazon;
 
 use AmazonPHP\SellingPartner\AccessToken;
-use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Model\AmazonOrderModel;
-use App\Util\Amazon\OrderCreator;
-use App\Util\Amazon\OrderEngine;
+use App\Util\Amazon\Creator\OrderCreator;
+use App\Util\Amazon\Engine\OrderEngine;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -46,9 +46,8 @@ class RefreshPendingOrder extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws \JsonException
-     * @throws ClientExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function handle(): void
     {

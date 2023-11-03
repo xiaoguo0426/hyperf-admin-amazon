@@ -16,48 +16,13 @@ use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Queue\Data\AmazonFinanceListFinancialEventsByGroupIdData;
 use App\Queue\Data\QueueDataInterface;
-use App\Util\Amazon\Finance\AdhocDisbursementEventList;
-use App\Util\Amazon\Finance\AdjustmentEventList;
-use App\Util\Amazon\Finance\AffordabilityExpenseEventList;
-use App\Util\Amazon\Finance\AffordabilityExpenseReversalEventList;
-use App\Util\Amazon\Finance\CapacityReservationBillingEventList;
-use App\Util\Amazon\Finance\ChargebackEventList;
-use App\Util\Amazon\Finance\ChargeRefundEventList;
-use App\Util\Amazon\Finance\CouponPaymentEventList;
-use App\Util\Amazon\Finance\DebtRecoveryEventList;
-use App\Util\Amazon\Finance\FailedAdhocDisbursementEventList;
-use App\Util\Amazon\Finance\FbaLiquidationEventList;
-use App\Util\Amazon\Finance\FinanceFactory;
-use App\Util\Amazon\Finance\GuaranteeClaimEventList;
-use App\Util\Amazon\Finance\ImagingServicesFeeEventList;
-use App\Util\Amazon\Finance\LoanServicingEventList;
-use App\Util\Amazon\Finance\NetworkComminglingTransactionEventList;
-use App\Util\Amazon\Finance\PayWithAmazonEventList;
-use App\Util\Amazon\Finance\ProductAdsPaymentEventList;
-use App\Util\Amazon\Finance\RefundEventList;
-use App\Util\Amazon\Finance\RemovalShipmentAdjustmentEventList;
-use App\Util\Amazon\Finance\RemovalShipmentEventList;
-use App\Util\Amazon\Finance\RentalTransactionEventList;
-use App\Util\Amazon\Finance\RetroChargeEventList;
-use App\Util\Amazon\Finance\SAFETReimbursementEventList;
-use App\Util\Amazon\Finance\SellerDealPaymentEventList;
-use App\Util\Amazon\Finance\SellerReviewEnrollmentPaymentEventList;
-use App\Util\Amazon\Finance\ServiceFeeEventList;
-use App\Util\Amazon\Finance\ServiceProviderCreditEventList;
-use App\Util\Amazon\Finance\ShipmentEventList;
-use App\Util\Amazon\Finance\ShipmentSettleEventList;
-use App\Util\Amazon\Finance\TaxWithholdingEventList;
-use App\Util\Amazon\Finance\TdsReimbursementEventList;
-use App\Util\Amazon\Finance\TrialShipmentEventList;
-use App\Util\Amazon\Finance\ValueAddedServiceChargeEventList;
+use App\Util\Amazon\Action\FinancialEventsAction;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use App\Util\Log\AmazonFinanceLog;
 use App\Util\RuntimeCalculator;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Dag\Dag;
-use Hyperf\Dag\Vertex;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -127,81 +92,7 @@ class AmazonFinanceFinancialListEventsByGroupIdQueue extends Queue
                         break;
                     }
 
-                    $dag = new Dag();
-
-                    $eventList = [
-                        ShipmentEventList::class => $financialEvents->getShipmentEventList(),
-                        ShipmentSettleEventList::class => $financialEvents->getShipmentSettleEventList(),
-                        RefundEventList::class => $financialEvents->getRefundEventList(),
-                        GuaranteeClaimEventList::class => $financialEvents->getGuaranteeClaimEventList(),
-                        ChargebackEventList::class => $financialEvents->getChargebackEventList(),
-                        PayWithAmazonEventList::class => $financialEvents->getPayWithAmazonEventList(),
-                        ServiceProviderCreditEventList::class => $financialEvents->getServiceProviderCreditEventList(),
-                        RetroChargeEventList::class => $financialEvents->getRetrochargeEventList(),
-                        RentalTransactionEventList::class => $financialEvents->getRentalTransactionEventList(),
-                        ProductAdsPaymentEventList::class => $financialEvents->getProductAdsPaymentEventList(),
-                        ServiceFeeEventList::class => $financialEvents->getServiceFeeEventList(),
-                        SellerDealPaymentEventList::class => $financialEvents->getSellerDealPaymentEventList(),
-                        DebtRecoveryEventList::class => $financialEvents->getDebtRecoveryEventList(),
-                        LoanServicingEventList::class => $financialEvents->getLoanServicingEventList(),
-                        AdjustmentEventList::class => $financialEvents->getAdjustmentEventList(),
-                        SAFETReimbursementEventList::class => $financialEvents->getSafetReimbursementEventList(),
-                        SellerReviewEnrollmentPaymentEventList::class => $financialEvents->getSellerReviewEnrollmentPaymentEventList(),
-                        FbaLiquidationEventList::class => $financialEvents->getFbaLiquidationEventList(),
-                        CouponPaymentEventList::class => $financialEvents->getCouponPaymentEventList(),
-                        ImagingServicesFeeEventList::class => $financialEvents->getImagingServicesFeeEventList(),
-                        NetworkComminglingTransactionEventList::class => $financialEvents->getNetworkComminglingTransactionEventList(),
-                        AffordabilityExpenseEventList::class => $financialEvents->getAffordabilityExpenseEventList(),
-                        AffordabilityExpenseReversalEventList::class => $financialEvents->getAffordabilityExpenseReversalEventList(),
-                        RemovalShipmentEventList::class => $financialEvents->getRemovalShipmentEventList(),
-                        RemovalShipmentAdjustmentEventList::class => $financialEvents->getRemovalShipmentAdjustmentEventList(),
-                        TrialShipmentEventList::class => $financialEvents->getTrialShipmentEventList(),
-                        TdsReimbursementEventList::class => $financialEvents->getTdsReimbursementEventList(),
-                        AdhocDisbursementEventList::class => $financialEvents->getAdhocDisbursementEventList(),
-                        TaxWithholdingEventList::class => $financialEvents->getTaxWithholdingEventList(),
-                        ChargeRefundEventList::class => $financialEvents->getChargeRefundEventList(),
-                        CapacityReservationBillingEventList::class => $financialEvents->getCapacityReservationBillingEventList(),
-                    ];
-
-                    foreach ($eventList as $eventName => $financialEventList) {
-                        $dag->addVertex(Vertex::make(static function () use ($merchant_id, $merchant_store_id, $eventName, $financialEventList, $console) {
-                            $finance = FinanceFactory::getInstance($merchant_id, $merchant_store_id, $eventName);
-                            $event = $finance->getEventName();
-                            if (! is_null($financialEventList) && count($financialEventList) > 0) {
-                                $runtimeCalculator = new RuntimeCalculator();
-                                $runtimeCalculator->start();
-
-                                $console->info(sprintf('正在处理财务事件[%s]', $event));
-                                $finance->run($financialEventList);
-                                $console->info(sprintf('财务事件[%s]处理完成,耗时:%s', $event, $runtimeCalculator->stop()));
-                            } else {
-                                $console->warning(sprintf('[%s]没有该指标财务数据', $event));
-                            }
-                        }));
-                    }
-
-                    $eventObjectList = [
-                        FailedAdhocDisbursementEventList::class => $financialEvents->getFailedAdhocDisbursementEventList(),
-                        ValueAddedServiceChargeEventList::class => $financialEvents->getValueAddedServiceChargeEventList(),
-                    ];
-                    foreach ($eventObjectList as $eventName => $eventObject) {
-                        $dag->addVertex(Vertex::make(static function () use ($merchant_id, $merchant_store_id, $eventName, $eventObject, $console) {
-                            $finance = FinanceFactory::getInstance($merchant_id, $merchant_store_id, $eventName);
-                            $event = $finance->getEventName();
-                            if (! is_null($eventObject)) {
-                                $runtimeCalculator = new RuntimeCalculator();
-                                $runtimeCalculator->start();
-
-                                $console->info(sprintf('正在处理财务事件[%s]', $event));
-                                $finance->run($eventObject);
-                                $console->info(sprintf('财务事件[%s]处理完成,耗时:%s', $event, $runtimeCalculator->stop()));
-                            } else {
-                                $console->warning(sprintf('[%s]没有该指标财务数据', $event));
-                            }
-                        }));
-                    }
-
-                    $dag->run();
+                    \Hyperf\Support\make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
 
                     // 如果下一页没有数据，nextToken 会变成null
                     $next_token = $payload->getNextToken();

@@ -8,10 +8,11 @@ declare(strict_types=1);
  * @license  MIT
  */
 
-namespace App\Util\Amazon;
+namespace App\Util\Amazon\Engine;
 
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
+use App\Util\Amazon\Creator\CreatorInterface;
 use App\Util\AmazonSDK;
 
 interface EngineInterface

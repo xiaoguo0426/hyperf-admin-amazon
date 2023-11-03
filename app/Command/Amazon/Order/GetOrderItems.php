@@ -12,8 +12,8 @@ namespace App\Command\Amazon\Order;
 
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
-use App\Util\Amazon\OrderItemCreator;
-use App\Util\Amazon\OrderItemEngine;
+use App\Util\Amazon\Creator\OrderItemCreator;
+use App\Util\Amazon\Engine\OrderItemEngine;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use Hyperf\Command\Annotation\Command;

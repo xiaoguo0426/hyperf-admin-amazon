@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @license  MIT
  */
 
-namespace App\Util\Amazon;
+namespace App\Util\Amazon\Creator;
 
 use Carbon\Carbon;
 

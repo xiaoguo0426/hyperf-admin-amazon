@@ -8,13 +8,15 @@ declare(strict_types=1);
  * @license  MIT
  */
 
-namespace App\Util\Amazon;
+namespace App\Util\Amazon\Engine;
 
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Model\AmazonOrderItemModel;
+use App\Util\Amazon\Creator\CreatorInterface;
+use App\Util\Amazon\Creator\OrderItemCreator;
 use App\Util\AmazonSDK;
 use App\Util\Constants;
 use App\Util\Log\AmazonOrdersLog;

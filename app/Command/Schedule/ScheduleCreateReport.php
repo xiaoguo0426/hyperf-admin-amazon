@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Command\Schedule;
 
 use App\Model\AmazonAppModel;
-use App\Util\Amazon\ScheduleReportCreator;
+use App\Util\Amazon\Creator\ScheduleReportCreator;
 use App\Util\AmazonApp;
 use Carbon\Carbon;
 use Hyperf\Command\Annotation\Command;
