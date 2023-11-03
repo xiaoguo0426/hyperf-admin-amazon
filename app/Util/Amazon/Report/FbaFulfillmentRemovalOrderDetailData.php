@@ -60,4 +60,9 @@ class FbaFulfillmentRemovalOrderDetailData extends ReportBase
         fclose($handle);
         return true;
     }
+
+    public function checkReportDate(): bool
+    {
+        return true;
+    }
 }

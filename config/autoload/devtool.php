@@ -8,6 +8,7 @@ declare(strict_types=1);
  * @license  MIT
  */
 return [
+    'ide' => \Hyperf\Support\env('DEVTOOL_IDE', ''),
     'generator' => [
         'amqp' => [
             'consumer' => [
@@ -25,6 +26,10 @@ return [
         ],
         'controller' => [
             'namespace' => 'App\\Controller',
+        ],
+        'model' => [
+            'namespace' => 'App\\Model',
+            'stub' => BASE_PATH . '/config/stubs/model.stub',
         ],
         'job' => [
             'namespace' => 'App\\Job',

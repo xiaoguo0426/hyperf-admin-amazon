@@ -13,23 +13,13 @@ namespace App\Util\Amazon\Report;
 use App\Model\AmazonReportFbaReimbursementsDataModel;
 use Carbon\Carbon;
 
-class FbaReimbursementsData extends ReportBase
+class FbaStorageFeeChargesDataReport extends ReportBase
 {
     public array $date_list = [];
 
     public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
     {
         parent::__construct($report_type, $merchant_id, $merchant_store_id);
-
-        $last_7days_start_time = Carbon::now('UTC')->subDays(15)->format('Y-m-d 00:00:00'); // 最近7天
-        $last_end_time = Carbon::yesterday('UTC')->format('Y-m-d 23:59:59');
-
-        $this->date_list = [
-            [
-                'start_time' => $last_7days_start_time,
-                'end_time' => $last_end_time,
-            ],
-        ];
     }
 
     public function run(string $report_id, string $file): bool
@@ -110,31 +100,14 @@ class FbaReimbursementsData extends ReportBase
      */
     public function requestReport(array $marketplace_ids, callable $func): void
     {
-        foreach ($this->date_list as $key => $item) {
-            $this->setReportStartDate($item['start_time']);
-            $this->setReportEndDate($item['end_time']);
-
-            foreach ($marketplace_ids as $marketplace_id) {
-                is_callable($func) && $func($this, $this->report_type, $this->buildReportBody($this->report_type, [$marketplace_id]), [$marketplace_id]);
-            }
+        foreach ($marketplace_ids as $marketplace_id) {
+            is_callable($func) && $func($this, $this->report_type, $this->buildReportBody($this->report_type, [$marketplace_id]), [$marketplace_id]);
         }
     }
 
-    /**
-     * 处理报告.
-     * @throws \Exception
-     * @deprecated
-     */
-    public function processReport(callable $func, array $marketplace_ids): void
+    public function getReportFileName(array $marketplace_ids): string
     {
-        foreach ($this->date_list as $key => $item) {
-            $this->setReportStartDate($item['start_time']);
-            $this->setReportEndDate($item['end_time']);
-
-            foreach ($marketplace_ids as $marketplace_id) {
-                is_callable($func) && $func($this, [$marketplace_id]);
-            }
-        }
+        return $this->report_type . '-' . $marketplace_ids[0];
     }
 
     public function checkReportDate(): bool

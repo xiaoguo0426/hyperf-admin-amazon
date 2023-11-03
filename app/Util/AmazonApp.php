@@ -59,7 +59,6 @@ class AmazonApp
             $amazonAppCollection->region = $appHash->region;
             $amazonAppCollection->refresh_token = $appHash->refresh_token;
             $amazonAppCollection->country_ids = $appHash->country_ids;
-            $amazonAppCollection->config = $appHash->config;
             $amazonAppCollection->status = $status;
         } else {
             // 缓存不存在

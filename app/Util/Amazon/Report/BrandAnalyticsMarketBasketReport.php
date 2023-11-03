@@ -65,4 +65,9 @@ class BrandAnalyticsMarketBasketReport extends ReportBase
             is_callable($func) && $func($this, $this->report_type, $this->buildReportBody($this->report_type, [$marketplace_id]), [$marketplace_id]);
         }
     }
+
+    public function checkReportDate(): bool
+    {
+        return true;
+    }
 }

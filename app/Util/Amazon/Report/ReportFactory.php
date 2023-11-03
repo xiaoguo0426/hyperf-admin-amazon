@@ -65,6 +65,9 @@ class ReportFactory
             'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_SALES_DATA',
             'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_PROMOTION_DATA',
             'GET_FBA_FULFILLMENT_CUSTOMER_TAXES_DATA',
+            'GET_FBA_STORAGE_FEE_CHARGES_DATA' => FbaStorageFeeChargesDataReport::class,
+            'GET_FBA_FULFILLMENT_LONGTERM_STORAGE_FEE_CHARGES_DATA' => FbaFulfillmentLongtermStorageFeeChargesDataReport::class,
+            'GET_FBA_OVERAGE_FEE_CHARGES_DATA' => FbaOverageFeeChargesDataReport::class,
             'GET_REMOTE_FULFILLMENT_ELIGIBILITY',
 
             'GET_RESTOCK_INVENTORY_RECOMMENDATIONS_REPORT' => RestockInventoryRecommendationsReport::class,

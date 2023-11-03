@@ -55,4 +55,9 @@ class BrandAnalyticsRepeatPurchaseReport extends ReportBase
             'marketplace_ids' => $marketplace_ids, // 市场标识符列表
         ]);
     }
+
+    public function checkReportDate(): bool
+    {
+        return true;
+    }
 }

@@ -65,4 +65,9 @@ class BrandAnalyticsSearchTermsReport extends ReportBase
         // TODO: Implement run() method.
         return true;
     }
+
+    public function checkReportDate(): bool
+    {
+        return true;
+    }
 }

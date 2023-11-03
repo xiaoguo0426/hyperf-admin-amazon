@@ -14,7 +14,6 @@ use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Configuration;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
-use AmazonPHP\SellingPartner\Extension;
 use AmazonPHP\SellingPartner\Marketplace;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use AmazonPHP\SellingPartner\STSClient;
@@ -259,10 +258,10 @@ class AmazonSDK
 
     /**
      * @throws ApiException
-     * @throws ClientExceptionInterface
      * @throws \JsonException
+     * @throws ClientExceptionInterface
      */
-    public function getSdk(): SellingPartnerSDK
+    public function getSdk(bool $force_refresh = false): SellingPartnerSDK
     {
         $factory = new Psr17Factory();
         $client = new Curl($factory);
@@ -277,20 +276,27 @@ class AmazonSDK
 
         $hash = \Hyperf\Support\make(AmazonSessionTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
         $sessionToken = $hash->sessionToken;
-        if ($sessionToken) {
+
+        $flag = false;
+        $assumeRole = null;
+        if (! $force_refresh && $sessionToken) {
             $assumeRole = new STSClient\Credentials($hash->accessKeyId, $hash->secretAccessKey, $sessionToken, (int) $hash->expiration);
         } else {
+            $flag = true;
+        }
+
+        if ($flag) {
             $assumeRole = $sts->assumeRole(
                 $this->getAwsAccessKey(),
                 $this->getAwsSecretKey(),
                 $this->getRoleArn()
             );
-
             $hash->accessKeyId = $assumeRole->accessKeyId();
             $hash->secretAccessKey = $assumeRole->secretAccessKey();
             $hash->sessionToken = $assumeRole->sessionToken();
-            $hash->expiration = $assumeRole->expiration();
-            $hash->ttl(50 * 60);
+            $expiration = $assumeRole->expiration();
+            $hash->expiration = $expiration;
+            $hash->ttl(40 * 60);
         }
 
         $configuration = Configuration::forIAMRole(
@@ -326,11 +332,14 @@ class AmazonSDK
      * @throws ApiException
      * @throws ClientExceptionInterface
      */
-    public function getToken(string $region): AccessToken
+    public function getToken(string $region, bool $force_refresh = false): AccessToken
     {
         $hash = \Hyperf\Support\make(AmazonAccessTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
         $token = $hash->token;
-        if ($hash->token) {
+
+        $flag = false;
+        $accessToken = null;
+        if (! $force_refresh && $hash->token) {
             $accessToken = new AccessToken(
                 $token,
                 $hash->refreshToken,
@@ -339,6 +348,10 @@ class AmazonSDK
                 $hash->grantType
             );
         } else {
+            $flag = true;
+        }
+
+        if ($flag) {
             $accessToken = $this->sdk->oAuth()->exchangeRefreshToken($this->getRefreshToken());
             $hash->load([
                 'token' => $accessToken->token(),
@@ -347,9 +360,7 @@ class AmazonSDK
                 'expiresIn' => $accessToken->expiresIn(),
                 'grantType' => $accessToken->grantType(),
             ]);
-
-            $ttl = $accessToken->expiresIn() - 120;
-            $hash->ttl($ttl);
+            $hash->ttl(40 * 60);
         }
 
         return $accessToken;

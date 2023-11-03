@@ -385,4 +385,9 @@ class SalesAndTrafficReport extends ReportBase
 
         return true;
     }
+
+    public function checkReportDate(): bool
+    {
+        return true;
+    }
 }

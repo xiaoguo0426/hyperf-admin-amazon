@@ -394,6 +394,7 @@ class ShipmentSettleEventList extends FinanceBase
                 'posted_date' => $posted_date,
             ]);
         }
+        var_dump($collection->toJson());
         return true;
     }
 }

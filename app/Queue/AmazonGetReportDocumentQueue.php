@@ -100,10 +100,10 @@ class AmazonGetReportDocumentQueue extends Queue
 
                         gzclose($handle_gz);
                         fclose($handle);
-                        // 线上环境gz文件解压提取后需要删除
-                        //                        if (! app()->isDebug()) {
-                        //                        unlink($file_path_gz);
-                        //                        }
+                    // 线上环境gz文件解压提取后需要删除
+                    //                        if (! app()->isDebug()) {
+                    //                        unlink($file_path_gz);
+                    //                        }
                     } else {
                         // 下载并保存文件
                         file_put_contents($file_path, file_get_contents($document_url));

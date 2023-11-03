@@ -29,7 +29,6 @@ use App\Util\RegionRefreshTokenConfig;
  * @property string $region
  * @property string $country_ids
  * @property string $refresh_token
- * @property array $config
  * @property string $status
  * @property string $created_at
  * @property string $updated_at
@@ -37,28 +36,6 @@ use App\Util\RegionRefreshTokenConfig;
 class AmazonAppModel extends Model
 {
     protected ?string $table = 'amazon_app';
-
-    /**
-     * @throws \JsonException
-     */
-    public function getConfigAttribute(string $value): array
-    {
-        //        $data = [];
-        //        $decodes = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
-        //        foreach ($decodes as $region => $json) {
-        //            $data[$region] = new RegionRefreshTokenConfig($json['region'], $json['country_ids'], $json['refresh_token']);
-        //        }
-        //        return $data;
-        return json_decode($value, true, 512, JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * @throws \JsonException
-     */
-    public function setConfigAttribute(array $configs): void
-    {
-        $this->attributes['config'] = json_encode($configs, JSON_THROW_ON_ERROR);
-    }
 
     /**
      * @return RegionRefreshTokenConfig[]
