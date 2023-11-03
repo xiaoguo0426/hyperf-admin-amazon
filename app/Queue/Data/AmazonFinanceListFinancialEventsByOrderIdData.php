@@ -10,13 +10,13 @@ declare(strict_types=1);
 
 namespace App\Queue\Data;
 
-class AmazonFinanceListFinancialEventsByGroupIdData extends QueueData
+class AmazonFinanceListFinancialEventsByOrderIdData extends QueueData
 {
     private int $merchant_id;
 
     private int $merchant_store_id;
 
-    private string $financial_event_group_id;
+    private string $order_id;
 
     public function getMerchantId(): int
     {
@@ -38,14 +38,20 @@ class AmazonFinanceListFinancialEventsByGroupIdData extends QueueData
         $this->merchant_store_id = $merchant_store_id;
     }
 
-    public function getFinancialEventGroupId(): string
+    /**
+     * @return string
+     */
+    public function getOrderId(): string
     {
-        return $this->financial_event_group_id;
+        return $this->order_id;
     }
 
-    public function setFinancialEventGroupId(string $financial_event_group_id): void
+    /**
+     * @param string $order_id
+     */
+    public function setOrderId(string $order_id): void
     {
-        $this->financial_event_group_id = $financial_event_group_id;
+        $this->order_id = $order_id;
     }
 
     public function toJson(): string
@@ -53,7 +59,7 @@ class AmazonFinanceListFinancialEventsByGroupIdData extends QueueData
         return json_encode([
             'merchant_id' => $this->merchant_id,
             'merchant_store_id' => $this->merchant_store_id,
-            'financial_event_group_id' => $this->financial_event_group_id,
+            'order_id' => $this->order_id,
         ], JSON_THROW_ON_ERROR);
     }
 
@@ -61,7 +67,7 @@ class AmazonFinanceListFinancialEventsByGroupIdData extends QueueData
     {
         $this->setMerchantId($arr['merchant_id']);
         $this->setMerchantStoreId($arr['merchant_store_id']);
-        $this->setFinancialEventGroupId($arr['financial_event_group_id']);
+        $this->setOrderId($arr['order_id']);
         return $this;
     }
 }
