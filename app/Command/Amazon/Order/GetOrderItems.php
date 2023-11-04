@@ -22,6 +22,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
 class GetOrderItems extends HyperfCommand
@@ -29,10 +30,15 @@ class GetOrderItems extends HyperfCommand
     public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('amazon:order:get-order-items');
+    }
+
+    public function configure(): void
+    {
+        parent::configure();
         // 指令配置
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
-            ->addArgument('order_ids', InputArgument::REQUIRED, 'order_ids集合')
+            ->addOption('order_id', null, InputOption::VALUE_OPTIONAL, 'order_id', null)
             ->setDescription('Amazon Order API Get Order Items');
     }
 

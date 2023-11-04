@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8eefa34a31755e1a8c50da8e3b8fe49e",
+    "content-hash": "913f4896d1568a8bd583d6ca501e2d46",
     "packages": [
         {
             "name": "amazon-php/sp-api-sdk",
@@ -8144,6 +8144,67 @@
                 "source": "https://github.com/hyperf/testing/tree/v3.0.38"
             },
             "time": "2023-09-30T11:21:49+00:00"
+        },
+        {
+            "name": "hyperf/watcher",
+            "version": "v3.0.37",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/watcher.git",
+                "reference": "3e0394d89bd81dc66100b664029d2a6db523687a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/watcher/zipball/3e0394d89bd81dc66100b664029d2a6db523687a",
+                "reference": "3e0394d89bd81dc66100b664029d2a6db523687a",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "ext-posix": "*",
+                "hyperf/codec": "~3.0.0",
+                "hyperf/command": "~3.0.0",
+                "hyperf/di": "~3.0.0",
+                "hyperf/framework": "~3.0.0",
+                "hyperf/support": "~3.0.0",
+                "php": ">=8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                },
+                "hyperf": {
+                    "config": "Hyperf\\Watcher\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Functions.php"
+                ],
+                "psr-4": {
+                    "Hyperf\\Watcher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Hot reload watcher for Hyperf",
+            "keywords": [
+                "hyperf",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/hyperf/watcher/issues",
+                "source": "https://github.com/hyperf/watcher/tree/v3.0.37"
+            },
+            "time": "2023-09-19T01:50:18+00:00"
         },
         {
             "name": "mockery/mockery",
