@@ -28,18 +28,12 @@ use Psr\Container\NotFoundExceptionInterface;
 class ListFinancialEventsByOrderIdEngine implements EngineInterface
 {
     /**
-     * @param AmazonSDK $amazonSDK
-     * @param SellingPartnerSDK $sdk
-     * @param AccessToken $accessToken
-     * @param CreatorInterface $creator
      * @throws \JsonException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {
-
         $merchant_id = $amazonSDK->getMerchantId();
         $merchant_store_id = $amazonSDK->getMerchantStoreId();
 
@@ -127,11 +121,10 @@ class ListFinancialEventsByOrderIdEngine implements EngineInterface
             }
 
             $retry = 30; // 重置重试次数
-            $page++;
+            ++$page;
         }
 
         $console->notice(sprintf('当前订单id:%s 处理完成,耗时:%s  merchant_id:%s merchant_store_id:%s ', $amazon_order_id, $runtimeCalculator->stop(), $merchant_id, $merchant_store_id));
         return true;
-
     }
 }

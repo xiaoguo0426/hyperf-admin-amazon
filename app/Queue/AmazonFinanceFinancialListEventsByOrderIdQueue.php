@@ -47,7 +47,6 @@ class AmazonFinanceFinancialListEventsByOrderIdQueue extends Queue
         $order_id = $queueData->getOrderId();
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($order_id) {
-
             $creator = new ListFinancialEventsByOrderIdCreator();
             $creator->setOrderId($order_id);
             $creator->setMaxResultsPerPage(100);

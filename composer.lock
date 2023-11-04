@@ -1895,16 +1895,16 @@
         },
         {
             "name": "hyperf/database",
-            "version": "v3.0.40",
+            "version": "v3.0.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/database.git",
-                "reference": "78c477ffac2b0c1fcf5c6db970230e63bf6f243d"
+                "reference": "e2f627afc89f6b1b2b883a3e91166f136b06f0c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/database/zipball/78c477ffac2b0c1fcf5c6db970230e63bf6f243d",
-                "reference": "78c477ffac2b0c1fcf5c6db970230e63bf6f243d",
+                "url": "https://api.github.com/repos/hyperf/database/zipball/e2f627afc89f6b1b2b883a3e91166f136b06f0c2",
+                "reference": "e2f627afc89f6b1b2b883a3e91166f136b06f0c2",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1958,7 +1958,7 @@
                 "pull-request": "https://github.com/hyperf/hyperf/pulls",
                 "source": "https://github.com/hyperf/hyperf"
             },
-            "time": "2023-10-17T12:54:04+00:00"
+            "time": "2023-11-02T03:31:42+00:00"
         },
         {
             "name": "hyperf/db-connection",
@@ -2027,16 +2027,16 @@
         },
         {
             "name": "hyperf/di",
-            "version": "v3.0.37",
+            "version": "v3.0.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/di.git",
-                "reference": "86ff03dbbedebd7cc6f4f7f0d67999bbbc4b9358"
+                "reference": "f42252d74c1dc74d75bcd62e218f3be18a4e676e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/di/zipball/86ff03dbbedebd7cc6f4f7f0d67999bbbc4b9358",
-                "reference": "86ff03dbbedebd7cc6f4f7f0d67999bbbc4b9358",
+                "url": "https://api.github.com/repos/hyperf/di/zipball/f42252d74c1dc74d75bcd62e218f3be18a4e676e",
+                "reference": "f42252d74c1dc74d75bcd62e218f3be18a4e676e",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2094,7 +2094,7 @@
                 "pull-request": "https://github.com/hyperf/hyperf/pulls",
                 "source": "https://github.com/hyperf/hyperf"
             },
-            "time": "2023-09-19T01:50:18+00:00"
+            "time": "2023-11-02T09:26:27+00:00"
         },
         {
             "name": "hyperf/dispatcher",

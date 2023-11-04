@@ -52,7 +52,6 @@ class ListFinancialEventsByGroupId extends HyperfCommand
         $group_id = (string) $this->input->getArgument('order_id');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($group_id) {
-
             $creator = new ListFinancialEventsByGroupIdCreator();
             $creator->setGroupId($group_id);
             $creator->setMaxResultsPerPage(100);

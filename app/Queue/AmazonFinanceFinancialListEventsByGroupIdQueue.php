@@ -47,7 +47,6 @@ class AmazonFinanceFinancialListEventsByGroupIdQueue extends Queue
         $financial_event_group_id = $queueData->getFinancialEventGroupId();
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($financial_event_group_id) {
-
             $creator = new ListFinancialEventsByGroupIdCreator();
             $creator->setGroupId($financial_event_group_id);
             $creator->setMaxResultsPerPage(100);

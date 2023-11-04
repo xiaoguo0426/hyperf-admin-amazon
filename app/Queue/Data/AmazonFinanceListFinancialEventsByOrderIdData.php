@@ -38,17 +38,11 @@ class AmazonFinanceListFinancialEventsByOrderIdData extends QueueData
         $this->merchant_store_id = $merchant_store_id;
     }
 
-    /**
-     * @return string
-     */
     public function getOrderId(): string
     {
         return $this->order_id;
     }
 
-    /**
-     * @param string $order_id
-     */
     public function setOrderId(string $order_id): void
     {
         $this->order_id = $order_id;

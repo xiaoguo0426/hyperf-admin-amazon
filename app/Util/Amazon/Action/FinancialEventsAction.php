@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+
 namespace App\Util\Amazon\Action;
 
 use AmazonPHP\SellingPartner\Model\Finances\FinancialEvents;
@@ -45,8 +53,8 @@ use Hyperf\Dag\Vertex;
 
 class FinancialEventsAction implements ActionInterface
 {
-
     private int $merchant_id;
+
     private int $merchant_store_id;
 
     private FinancialEvents $financialEvents;

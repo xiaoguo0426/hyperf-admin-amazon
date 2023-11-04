@@ -35,7 +35,6 @@ class ListFinancialEventsByOrderIdQueue extends HyperfCommand
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws \RedisException
-     * @return void
      */
     public function handle(): void
     {

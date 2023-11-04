@@ -28,17 +28,11 @@ use Psr\Container\NotFoundExceptionInterface;
 class ListFinancialEventsByGroupIdEngine implements EngineInterface
 {
     /**
-     * @param AmazonSDK $amazonSDK
-     * @param SellingPartnerSDK $sdk
-     * @param AccessToken $accessToken
-     * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {
-
         $merchant_id = $amazonSDK->getMerchantId();
         $merchant_store_id = $amazonSDK->getMerchantStoreId();
 
@@ -117,6 +111,5 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
 
         $console->notice(sprintf('当前财务组id:%s 处理完成,耗时:%s  merchant_id:%s merchant_store_id:%s ', $group_id, $runtimeCalculator->stop(), $merchant_id, $merchant_store_id));
         return true;
-
     }
 }

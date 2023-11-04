@@ -23,7 +23,6 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
 class ListFinancialEventsByOrderId extends HyperfCommand
@@ -78,7 +77,6 @@ class ListFinancialEventsByOrderId extends HyperfCommand
                 $creator->setMaxResultsPerPage(100);
 
                 \Hyperf\Support\make(ListFinancialEventsByOrderIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
-
             }
 
             return true;
