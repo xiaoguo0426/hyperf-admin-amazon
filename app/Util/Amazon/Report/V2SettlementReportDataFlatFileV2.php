@@ -21,10 +21,6 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class V2SettlementReportDataFlatFileV2 extends ReportBase
 {
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     public function run(string $report_id, string $file): bool
     {
         $currency_list = [
@@ -37,8 +33,8 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         $merchant_id = $this->merchant_id;
         $merchant_store_id = $this->merchant_store_id;
 
-        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
-        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
+//        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
+//        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $splFileObject = new \SplFileObject($file, 'r');
         $header_line = str_replace("\r\n", '', $splFileObject->fgets());
@@ -54,7 +50,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
 
         $summary_line = str_replace("\r\n", '', $splFileObject->fgets()); // 统计行数据不入库
         foreach ($currency_list as $currency) {
-            if (strpos($summary_line, $currency) !== false) {
+            if (str_contains($summary_line, $currency)) {
                 break;
             }
         }
@@ -69,6 +65,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
                 continue;
             }
             $row = explode("\t", $fgets);
+            $item = [];
             foreach ($map as $index => $value) {
                 $val = trim($row[$index] ?? '');
                 if ($val) {
@@ -98,7 +95,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
             $collection->push($item);
         }
 
-        $collection->chunk(1000)->each(function (Collection $list) {
+        $collection->chunk(1000)->each(static function (Collection $list): void {
             $final = []; // 写入的数据集合
 
             foreach ($list as $item) {
@@ -133,7 +130,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
                 }
             }
 
-            $insert = AmazonSettlementReportDataFlatFileV2Model::insert($final);
+            AmazonSettlementReportDataFlatFileV2Model::insert($final);
         });
 
         return true;

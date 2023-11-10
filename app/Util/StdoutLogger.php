@@ -27,12 +27,11 @@ class StdoutLogger implements StdoutLoggerInterface
     private OutputInterface $output;
 
     private array $tags = [
-        //        'component',
         'context',
         'extra',
     ];
 
-    public function __construct(private ConfigInterface $config, ?OutputInterface $output = null)
+    public function __construct(private readonly ConfigInterface $config, ?OutputInterface $output = null)
     {
         $this->output = $output ?? new ConsoleOutput();
     }
@@ -91,7 +90,7 @@ class StdoutLogger implements StdoutLoggerInterface
                 unset($keys[$k]);
             }
         }
-        $search = array_map(function ($key) {
+        $search = array_map(static function ($key) {
             return \sprintf('{%s}', $key);
         }, $keys);
 

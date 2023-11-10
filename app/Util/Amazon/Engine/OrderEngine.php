@@ -24,16 +24,19 @@ use App\Util\Log\AmazonOrdersLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class OrderEngine implements EngineInterface
 {
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @param \App\Util\AmazonSDK $amazonSDK
+     * @param \AmazonPHP\SellingPartner\SellingPartnerSDK $sdk
+     * @param \AmazonPHP\SellingPartner\AccessToken $accessToken
+     * @param \App\Util\Amazon\Creator\CreatorInterface $creator
      * @throws \JsonException
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \RedisException
+     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {

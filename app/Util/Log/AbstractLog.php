@@ -30,8 +30,6 @@ use Psr\Log\LoggerInterface;
  */
 abstract class AbstractLog
 {
-    public string $channel;
-
     private LoggerInterface $logger;
 
     /**

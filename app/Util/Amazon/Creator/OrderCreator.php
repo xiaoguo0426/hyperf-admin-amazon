@@ -51,14 +51,14 @@ class OrderCreator implements CreatorInterface
     /**
      * @var null|string[]
      */
-    public ?array $electronic_invoice_statuses = null;
+    public ?array $electronic_invoice_statuses;
 
-    public ?string $next_token = null;
+    public ?string $next_token;
 
     /**
      * @var null|string[]
      */
-    public ?array $amazon_order_ids = null;
+    public ?array $amazon_order_ids;
 
     /**
      * @var null|string[]

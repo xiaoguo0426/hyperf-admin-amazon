@@ -249,22 +249,24 @@ class GetOrder extends HyperfCommand
                         'buyerInfoJson',
                         'automatedShippingSettingsJson',
                         'marketplaceTaxInfoJson',
-                    ], [[
-                        'amazon_order_id' => $amazon_order_id,
-                        'order_total_currency_code' => $order_total_currency_code,
-                        'order_total_amount' => $order_total_amount,
-                        'purchase_date' => $purchase_date,
-                        'last_update_date' => $last_update_date,
-                        'paymentExecutionDetailJson' => json_encode($paymentExecutionDetailJson, JSON_THROW_ON_ERROR),
-                        'paymentMethodDetailsJson' => json_encode($paymentMethodDetailsJson, JSON_THROW_ON_ERROR),
-                        'defaultShipFromLocationAddressJson' => json_encode($defaultShipFromLocationAddressJson, JSON_THROW_ON_ERROR),
-                        'buyerTaxInformationJson' => json_encode($buyerTaxInformationJson, JSON_THROW_ON_ERROR),
-                        'fulfillmentInstructionJson' => json_encode($fulfillmentInstructionJson, JSON_THROW_ON_ERROR),
-                        'shippingAddressJson' => json_encode($shippingAddressJson, JSON_THROW_ON_ERROR),
-                        'buyerInfoJson' => json_encode($buyerInfoJson, JSON_THROW_ON_ERROR),
-                        'automatedShippingSettingsJson' => json_encode($automatedShippingSettingsJson, JSON_THROW_ON_ERROR),
-                        'marketplaceTaxInfoJson' => json_encode($marketplaceTaxInfoJson, JSON_THROW_ON_ERROR),
-                    ]]);
+                    ], [
+                            [
+                            'amazon_order_id' => $amazon_order_id,
+                            'order_total_currency_code' => $order_total_currency_code,
+                            'order_total_amount' => $order_total_amount,
+                            'purchase_date' => $purchase_date,
+                            'last_update_date' => $last_update_date,
+                            'paymentExecutionDetailJson' => json_encode($paymentExecutionDetailJson, JSON_THROW_ON_ERROR),
+                            'paymentMethodDetailsJson' => json_encode($paymentMethodDetailsJson, JSON_THROW_ON_ERROR),
+                            'defaultShipFromLocationAddressJson' => json_encode($defaultShipFromLocationAddressJson, JSON_THROW_ON_ERROR),
+                            'buyerTaxInformationJson' => json_encode($buyerTaxInformationJson, JSON_THROW_ON_ERROR),
+                            'fulfillmentInstructionJson' => json_encode($fulfillmentInstructionJson, JSON_THROW_ON_ERROR),
+                            'shippingAddressJson' => json_encode($shippingAddressJson, JSON_THROW_ON_ERROR),
+                            'buyerInfoJson' => json_encode($buyerInfoJson, JSON_THROW_ON_ERROR),
+                            'automatedShippingSettingsJson' => json_encode($automatedShippingSettingsJson, JSON_THROW_ON_ERROR),
+                            'marketplaceTaxInfoJson' => json_encode($marketplaceTaxInfoJson, JSON_THROW_ON_ERROR),
+                        ]
+                    ]);
 
                     break;
                 } catch (ApiException $e) {

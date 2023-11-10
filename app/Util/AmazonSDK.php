@@ -93,7 +93,7 @@ class AmazonSDK
         }
         $this->setMarketplaceIds($marketplace_ids);
 
-        $this->setRefreshToken($amazonAppModel->refresh_token);
+        $this->refresh_token = $amazonAppModel->refresh_token;
     }
 
     public function getId(): int
@@ -251,10 +251,10 @@ class AmazonSDK
         return $this->refresh_token;
     }
 
-    public function setRefreshToken(string $refresh_token): void
-    {
-        $this->refresh_token = $refresh_token;
-    }
+//    public function setRefreshToken(string $refresh_token): void
+//    {
+//        $this->refresh_token = $refresh_token;
+//    }
 
     /**
      * @throws ApiException

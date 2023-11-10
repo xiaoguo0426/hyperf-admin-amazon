@@ -62,10 +62,11 @@ class AmazonAppHash extends AbstractRedisHash
     }
 
     /**
-     * @param mixed $value
+     * @param string $value
      * @throws \JsonException
+     * @return mixed
      */
-    public function getConfigAttr($value)
+    public function getConfigAttr(string $value): mixed
     {
         //        $config = [];
         //        $list = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
@@ -80,11 +81,12 @@ class AmazonAppHash extends AbstractRedisHash
     }
 
     /**
-     * @param mixed $value
+     * @param array $value
      * @throws \JsonException
+     * @return void
      */
-    public function setConfigAttr($value): bool|string
+    public function setConfigAttr(array $value): void
     {
-        return json_encode($value, JSON_THROW_ON_ERROR);
+        json_encode($value, JSON_THROW_ON_ERROR);
     }
 }

@@ -15,7 +15,7 @@ use Hyperf\Server\Exception\ServerException;
 
 class BusinessException extends ServerException
 {
-    public function __construct(int $code = 0, string $message = null, \Throwable $previous = null)
+    public function __construct(int $code, ?string $message, \Throwable $previous = null)
     {
         if (is_null($message)) {
             $message = ErrorCode::getMessage($code);

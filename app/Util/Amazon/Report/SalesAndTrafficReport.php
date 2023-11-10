@@ -89,6 +89,13 @@ class SalesAndTrafficReport extends ReportBase
         return true;
     }
 
+    /**
+     * @param string $report_id
+     * @param string $file
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return bool
+     */
     public function run(string $report_id, string $file): bool
     {
         $merchant_id = $this->merchant_id;
@@ -99,11 +106,8 @@ class SalesAndTrafficReport extends ReportBase
         try {
             $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $jsonException) {
-            try {
-                $logger = ApplicationContext::getContainer()->get(AmazonReportActionLog::class);
-                $logger->error(sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $this->report_type, $merchant_id, $merchant_store_id));
-            } catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
-            }
+            $logger = ApplicationContext::getContainer()->get(AmazonReportActionLog::class);
+            $logger->error(sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $this->report_type, $merchant_id, $merchant_store_id));
             return true;
         }
 

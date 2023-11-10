@@ -22,7 +22,7 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class SalesAndTrafficReportCustom extends ReportBase
 {
-    public array $date_list = [];
+    private array $date_list;
 
     public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
     {
@@ -99,7 +99,7 @@ class SalesAndTrafficReportCustom extends ReportBase
         $diff_days = $diff->days + 1;
 
         // 报告更多参数，请见SalesAndTrafficReport类
-        $data_time = $json['reportSpecification']['dataStartTime'];
+//        $data_time = $json['reportSpecification']['dataStartTime'];
         $marketplace_id = $json['reportSpecification']['marketplaceIds'][0];
         // 目前销量只统计US
         $us_marketplace_id = Marketplace::US()->id();
@@ -161,7 +161,7 @@ class SalesAndTrafficReportCustom extends ReportBase
      */
     public function requestReport(array $marketplace_ids, callable $func): void
     {
-        foreach ($this->date_list as $key => $item) {
+        foreach ($this->date_list as $item) {
             $this->setReportStartDate($item['start_time']);
             $this->setReportEndDate($item['end_time']);
 
@@ -186,7 +186,7 @@ class SalesAndTrafficReportCustom extends ReportBase
             throw new \InvalidArgumentException('Report Start/End Date Required,please check');
         }
 
-        foreach ($this->date_list as $key => $item) {
+        foreach ($this->date_list as $item) {
             $this->setReportStartDate($item['start_time']);
             $this->setReportEndDate($item['end_time']);
 

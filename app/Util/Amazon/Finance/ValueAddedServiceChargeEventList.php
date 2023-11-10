@@ -15,12 +15,14 @@ use Hyperf\Collection\Collection;
 
 class ValueAddedServiceChargeEventList extends FinanceBase
 {
+    /**
+     * @param ValueAddedServiceChargeEventListNew $financialEvents
+     * @return bool
+     */
     public function run($financialEvents): bool
     {
         $collection = new Collection();
-        /**
-         * @var ValueAddedServiceChargeEventListNew $financialEvents
-         */
+
         $transaction_type = $financialEvents->getTransactionType();
         $postedDate = $financialEvents->getPostedDate();
         $posted_date = '';

@@ -15,12 +15,14 @@ use Hyperf\Collection\Collection;
 
 class FbaLiquidationEventList extends FinanceBase
 {
+    /**
+     * @param FBALiquidationEvent $financialEvents
+     * @return bool
+     */
     public function run($financialEvents): bool
     {
         $collection = new Collection();
-        /**
-         * @var FBALiquidationEvent $financialEvent
-         */
+
         foreach ($financialEvents as $financialEvent) {
             $postedDate = $financialEvent->getPostedDate();
             $posted_date = '';

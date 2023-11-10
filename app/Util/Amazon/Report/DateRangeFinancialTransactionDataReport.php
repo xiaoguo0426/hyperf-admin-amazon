@@ -67,7 +67,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
 
         // 处理映射关系
         $explodes = explode(',', str_replace("\r\n", '', fgets($handle)));
-        $headers = array_map(function ($val) {
+        $headers = array_map(static function ($val) {
             return trim(str_replace('"', '', $val));
         }, $explodes);
 
@@ -90,7 +90,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
 
             $row = str_replace(["\r\n", ',,'], ['', ',"",'], trim($fgets));
             $explodes = explode('","', $row);
-            $new = array_map(function ($val) {
+            $new = array_map(static function ($val) {
                 return trim(str_replace('"', '', $val));
             }, $explodes);
             $item = [];
@@ -125,7 +125,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
 
         try {
             // 数据分片处理
-            $collection->chunk(1000)->each(function (Collection $list) use ($merchant_id, $merchant_store_id) {
+            $collection->chunk(1000)->each(static function (Collection $list) use ($merchant_id, $merchant_store_id): void {
                 try {
                     $final = []; // 写入的数据集合
                     foreach ($list as $item) {

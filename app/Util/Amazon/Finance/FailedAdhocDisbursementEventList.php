@@ -15,12 +15,14 @@ use Hyperf\Collection\Collection;
 
 class FailedAdhocDisbursementEventList extends FinanceBase
 {
+    /**
+     * @param FailedAdhocDisbursementEventListNew $financialEvents
+     * @return bool
+     */
     public function run($financialEvents): bool
     {
         $collection = new Collection();
-        /**
-         * @var FailedAdhocDisbursementEventListNew $financialEvents
-         */
+
         $funds_transfers_type = $financialEvents->getFundsTransfersType() ?? '';
         $transfer_id = $financialEvents->getTransferId() ?? '';
         $disbursement_id = $financialEvents->getDisbursementId() ?? '';

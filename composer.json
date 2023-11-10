@@ -48,6 +48,7 @@
         "hyperf/testing": "~3.0.0",
         "hyperf/watcher": "^3.0",
         "mockery/mockery": "^1.0",
+        "nunomaduro/phpinsights": "^2.10",
         "phpstan/phpstan": "^1.0",
         "swoole/ide-helper": "^5.0"
     },
@@ -76,7 +77,8 @@
         "optimize-autoloader": true,
         "sort-packages": true,
         "allow-plugins": {
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "extra": [],

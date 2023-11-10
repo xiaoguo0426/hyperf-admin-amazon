@@ -75,17 +75,17 @@ class AmazonGetReportQueue extends Queue
                 try {
                     $response = $sdk->reports()->getReport($accessToken, $region, $report_id);
 
-                    $marketplace_ids = $response->getMarketplaceIds() ?: [];
+                    $marketplace_ids = $response->getMarketplaceIds() ?? [];
                     $report_id = $response->getReportId();
                     //                    $report_type = $response->getReportType();
                     $dataStartTime = $response->getDataStartTime();
                     $dataEndTime = $response->getDataEndTime();
-                    $report_schedule_id = $response->getReportScheduleId() ?: '';
+                    $report_schedule_id = $response->getReportScheduleId() ?? '';
                     $create_time = $response->getCreatedTime();
                     $processing_status = $response->getProcessingStatus(); // 要判断是否为DONE   CANCELLED报告被取消,DONE报告已完成处理,FATAL报告因致命错误而中止,IN_PROGRESS该报告正在处理中,IN_QUEUE该报告尚未开始处理
                     $processing_start_time = $response->getProcessingStartTime();
                     $processing_end_time = $response->getProcessingEndTime();
-                    $report_document_id = $response->getReportDocumentId() ?: '';
+                    $report_document_id = $response->getReportDocumentId() ?? '';
 
                     if ($processing_status === Report::PROCESSING_STATUS_IN_PROGRESS || $processing_status === Report::PROCESSING_STATUS_IN_QUEUE) {
                         // 重新入队

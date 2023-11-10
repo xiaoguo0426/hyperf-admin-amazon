@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  *
  * @author   xiaoguo0426
@@ -11,6 +12,6 @@ use Hyperf\HttpServer\Router\Router;
 
 Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@index');
 
-Router::get('/favicon.ico', function () {
+Router::get('/favicon.ico', static function () {
     return '';
 });

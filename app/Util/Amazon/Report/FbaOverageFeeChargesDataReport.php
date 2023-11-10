@@ -15,13 +15,6 @@ use Carbon\Carbon;
 
 class FbaOverageFeeChargesDataReport extends ReportBase
 {
-    public array $date_list = [];
-
-    public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
-    {
-        parent::__construct($report_type, $merchant_id, $merchant_store_id);
-    }
-
     public function run(string $report_id, string $file): bool
     {
         $config = $this->header_map;

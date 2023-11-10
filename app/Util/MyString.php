@@ -71,7 +71,7 @@ class MyString
                 $prefix .= $array[$i][$j];
             }
 
-            if (! empty($prefix)) {
+            if ($prefix) {
                 $result[] = $prefix;
             }
         }

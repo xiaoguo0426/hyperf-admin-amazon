@@ -109,7 +109,7 @@ class FinancialEventsAction implements ActionInterface
         $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
         foreach ($eventList as $eventName => $financialEventList) {
-            $dag->addVertex(Vertex::make(static function () use ($merchant_id, $merchant_store_id, $eventName, $financialEventList, $console) {
+            $dag->addVertex(Vertex::make(static function () use ($merchant_id, $merchant_store_id, $eventName, $financialEventList, $console): void {
                 $finance = FinanceFactory::getInstance($merchant_id, $merchant_store_id, $eventName);
                 $event = $finance->getEventName();
                 if (! is_null($financialEventList) && count($financialEventList) > 0) {
@@ -130,7 +130,7 @@ class FinancialEventsAction implements ActionInterface
             ValueAddedServiceChargeEventList::class => $this->financialEvents->getValueAddedServiceChargeEventList(),
         ];
         foreach ($eventObjectList as $eventName => $eventObject) {
-            $dag->addVertex(Vertex::make(static function () use ($merchant_id, $merchant_store_id, $eventName, $eventObject, $console) {
+            $dag->addVertex(Vertex::make(static function () use ($merchant_id, $merchant_store_id, $eventName, $eventObject, $console): void {
                 $finance = FinanceFactory::getInstance($merchant_id, $merchant_store_id, $eventName);
                 $event = $finance->getEventName();
                 if (! is_null($eventObject)) {

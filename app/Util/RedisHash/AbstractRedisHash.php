@@ -40,9 +40,9 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
 
     /**
      * @param mixed $key
-     * @return mixed
      * @throws \JsonException
      * @throws \RedisException
+     * @return mixed
      */
     public function __get($key)
     {
@@ -55,7 +55,7 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
      * @throws \JsonException
      * @throws \RedisException
      */
-    public function __set($name, $value)
+    public function __set($name, $value): void
     {
         $this->setAttr($name, $value);
     }
@@ -64,7 +64,7 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
      * @param mixed $name
      * @throws \RedisException
      */
-    public function __unset($name)
+    public function __unset($name): void
     {
         $this->offsetUnset($name);
     }
@@ -72,8 +72,8 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
     /**
      * 判断属性是否存在.
      * @param mixed $name
-     * @return bool
      * @throws \RedisException
+     * @return bool
      */
     public function __isset($name)
     {
@@ -133,10 +133,12 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
     }
 
     /**
-     * 设置属性.
-     * @param mixed $value
+     * 设置属性
+     * @param string $offset
+     * @param $value
      * @throws \JsonException
      * @throws \RedisException
+     * @return bool
      */
     public function setAttr(string $offset, $value): bool
     {
