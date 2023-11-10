@@ -25,7 +25,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class StdoutLogger implements StdoutLoggerInterface
 {
     private OutputInterface $output;
-
+    /**
+     * @var array|string[]
+     */
     private array $tags = [
         'context',
         'extra',

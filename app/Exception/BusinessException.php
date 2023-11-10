@@ -11,11 +11,10 @@ declare(strict_types=1);
 namespace App\Exception;
 
 use App\Constants\ErrorCode;
-use Hyperf\Server\Exception\ServerException;
 
-class BusinessException extends ServerException
+class BusinessException extends BaseException
 {
-    public function __construct(int $code, ?string $message, \Throwable $previous = null)
+    public function __construct(?string $message, int $code, \Throwable $previous = null)
     {
         if (is_null($message)) {
             $message = ErrorCode::getMessage($code);

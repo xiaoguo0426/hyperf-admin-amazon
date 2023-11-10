@@ -52,7 +52,7 @@ class Queue extends AbstractQueue
         $process_title = $this->queue_name . '-' . $pid;
         cli_set_process_title($process_title);
 
-        $signal_handler = static function ($sig_no) use ($console) {
+        $signal_handler = static function ($sig_no) use ($console): void {
             $pid = posix_getpid();
             $title = cli_get_process_title();
             $console->warning(sprintf('进程[%s] pid:%s 收到 %s 命令，进程退出...', $title, $pid, $sig_no));

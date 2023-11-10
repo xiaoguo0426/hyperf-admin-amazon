@@ -1,5 +1,8 @@
 #!/usr/bin/env php
 <?php
+
+declare(strict_types=1);
+
 /**
  *
  * @author   xiaoguo0426
@@ -19,7 +22,7 @@ date_default_timezone_set('Asia/Shanghai');
 require BASE_PATH . '/vendor/autoload.php';
 
 // Self-called anonymous function that creates its own scope and keep the global namespace clean.
-(static function () {
+(static function (): void {
     Hyperf\Di\ClassLoader::init();
     /** @var Psr\Container\ContainerInterface $container */
     $container = require BASE_PATH . '/config/container.php';

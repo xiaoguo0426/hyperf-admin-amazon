@@ -53,7 +53,7 @@ class SalesAndTrafficReportCustom extends ReportBase
             ],
         ];
 
-        $this->report_type = 'GET_SALES_AND_TRAFFIC_REPORT';
+        $this->setReportType('GET_SALES_AND_TRAFFIC_REPORT');
     }
 
     /**
@@ -61,8 +61,9 @@ class SalesAndTrafficReportCustom extends ReportBase
      */
     public function run(string $report_id, string $file): bool
     {
-        $merchant_id = $this->merchant_id;
-        $merchant_store_id = $this->merchant_store_id;
+        $merchant_id = $this->getMerchantId();
+        $merchant_store_id = $this->getMerchantStoreId();
+        $report_type = $this->getReportType();
 
         $logger = di(AmazonReportActionLog::class);
         //        $console = di(StdoutLoggerInterface::class);
@@ -74,7 +75,7 @@ class SalesAndTrafficReportCustom extends ReportBase
         } catch (\JsonException $jsonException) {
             try {
                 $logger = ApplicationContext::getContainer()->get(AmazonReportActionLog::class);
-                $logger->error(sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $this->report_type, $merchant_id, $merchant_store_id));
+                $logger->error(sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $report_type, $merchant_id, $merchant_store_id));
             } catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
             }
             return true;
@@ -84,11 +85,11 @@ class SalesAndTrafficReportCustom extends ReportBase
         $reportEndDate = $this->getReportEndDate();
 
         if (is_null($reportStartDate)) {
-            $logger->error(sprintf('Action %s 开始时间有误 merchant_id: %s merchant_store_id: %s file:%s', $this->report_type, $merchant_id, $merchant_store_id, $file));
+            $logger->error(sprintf('Action %s 开始时间有误 merchant_id: %s merchant_store_id: %s file:%s', $report_type, $merchant_id, $merchant_store_id, $file));
             return true;
         }
         if (is_null($reportEndDate)) {
-            $logger->error(sprintf('Action %s 结束时间有误 merchant_id: %s merchant_store_id: %s file:%s', $this->report_type, $merchant_id, $merchant_store_id, $file));
+            $logger->error(sprintf('Action %s 结束时间有误 merchant_id: %s merchant_store_id: %s file:%s', $report_type, $merchant_id, $merchant_store_id, $file));
             return true;
         }
 
@@ -166,14 +167,14 @@ class SalesAndTrafficReportCustom extends ReportBase
             $this->setReportEndDate($item['end_time']);
 
             foreach ($marketplace_ids as $marketplace_id) {
-                is_callable($func) && $func($this, 'GET_SALES_AND_TRAFFIC_REPORT_CUSTOM', $this->buildReportBody($this->report_type, [$marketplace_id]), [$marketplace_id]);
+                is_callable($func) && $func($this, 'GET_SALES_AND_TRAFFIC_REPORT_CUSTOM', $this->buildReportBody($this->getReportType(), [$marketplace_id]), [$marketplace_id]);
             }
         }
     }
 
     public function getReportFileName(array $marketplace_ids): string
     {
-        return $this->report_type . '-' . $marketplace_ids[0] . '-' . $this->getReportStartDate()->format('Ymd') . '-' . $this->getReportEndDate()->format('Ymd');
+        return $this->getReportType() . '-' . $marketplace_ids[0] . '-' . $this->getReportStartDate()->format('Ymd') . '-' . $this->getReportEndDate()->format('Ymd');
     }
 
     /**

@@ -12,10 +12,17 @@ namespace App\Util;
 
 class RegionRefreshTokenConfig implements \JsonSerializable
 {
+    /**
+     * @var string
+     */
     private string $region;
-
+    /**
+     * @var array|string[]
+     */
     private array $country_ids;
-
+    /**
+     * @var string
+     */
     private string $refresh_token;
 
     public function __construct(string $region, string $country_ids, string $refresh_token)

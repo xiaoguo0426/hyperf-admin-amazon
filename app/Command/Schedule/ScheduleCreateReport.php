@@ -44,8 +44,8 @@ class ScheduleCreateReport extends HyperfCommand
                 true
             ),
         ];
-
-        AmazonApp::single(function (AmazonAppModel $amazonAppCollection) use ($report_schedule_list) {
+        $that = $this;
+        AmazonApp::single(static function (AmazonAppModel $amazonAppCollection) use ($that, $report_schedule_list): void {
             $merchant_id = $amazonAppCollection->merchant_id;
             $merchant_store_id = $amazonAppCollection->merchant_store_id;
 
@@ -53,7 +53,7 @@ class ScheduleCreateReport extends HyperfCommand
                 /*
                  * @var ScheduleReportCreator $reportScheduleCreator
                  */
-                $this->call('amazon:report:create', [
+                $that->call('amazon:report:create', [
                     'merchant_id' => $merchant_id,
                     'merchant_store_id' => $merchant_store_id,
                     'report_type' => $reportScheduleCreator->getReportType(),

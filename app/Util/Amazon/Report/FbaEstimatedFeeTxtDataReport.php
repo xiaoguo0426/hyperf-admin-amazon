@@ -18,10 +18,10 @@ class FbaEstimatedFeeTxtDataReport extends ReportBase
 {
     public function run(string $report_id, string $file): bool
     {
-        $config = $this->header_map;
+        $config = $this->getHeaderMap();
 
-        $merchant_id = $this->merchant_id;
-        $merchant_store_id = $this->merchant_store_id;
+        $merchant_id = $this->getMerchantId();
+        $merchant_store_id = $this->getMerchantStoreId();
 
         $handle = fopen($file, 'rb');
         $header_line = str_replace("\r\n", '', fgets($handle));
@@ -48,8 +48,6 @@ class FbaEstimatedFeeTxtDataReport extends ReportBase
             $data[$item['asin']][$item['currency']] = $item;
         }
         fclose($handle);
-
-        $logger = di(AmazonReportLog::class);
 
         foreach ($data as $asin => $currency_items) {
             foreach ($currency_items as $currency_item) {

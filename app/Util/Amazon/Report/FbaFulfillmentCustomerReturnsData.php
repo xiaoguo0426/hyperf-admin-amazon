@@ -31,10 +31,10 @@ class FbaFulfillmentCustomerReturnsData extends ReportBase
 
     public function run(string $report_id, string $file): bool
     {
-        $config = $this->header_map;
+        $config = $this->getHeaderMap();
 
-        $merchant_id = $this->merchant_id;
-        $merchant_store_id = $this->merchant_store_id;
+        $merchant_id = $this->getMerchantId();
+        $merchant_store_id = $this->getMerchantStoreId();
 
         $handle = fopen($file, 'rb');
         $header_line = str_replace("\r\n", '', fgets($handle));
@@ -65,7 +65,7 @@ class FbaFulfillmentCustomerReturnsData extends ReportBase
 
         foreach ($data as $item) {
             // 没有sku或则订单id则跳过
-            if (empty($item['sku']) || empty($item['order_id'])) {
+            if (trim($item['sku']) === '' || trim($item['order_id']) === '') {
                 continue;
             }
 

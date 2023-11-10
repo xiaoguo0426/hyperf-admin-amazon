@@ -389,12 +389,12 @@ class OrderItemEngine implements EngineInterface
                         $amazonOrderItemCollection->save();
 
                         unset($list[$amazonOrderItemCollection->order_item_id]);
-                    } elseif (! empty($list[$amazonOrderItemCollection->order_item_id])) {
+                    } elseif (isset($list[$amazonOrderItemCollection->order_item_id])) {
                         $create = AmazonOrderItemModel::insert($list[$amazonOrderItemCollection->order_item_id]);
                         unset($list[$amazonOrderItemCollection->order_item_id]);
                     }
                 }
-                if (! empty($list)) {
+                if (count($list)) {
                     foreach ($list as $item) {
                         $create = AmazonOrderItemModel::insert($item);
                     }

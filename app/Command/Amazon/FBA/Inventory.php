@@ -155,10 +155,10 @@ class Inventory extends HyperfCommand
 
                                 $reservedQuantity = $inventoryDetails->getReservedQuantity();
                                 if (! is_null($reservedQuantity)) {
-                                    $total_reserved_quantity = $reservedQuantity->getTotalReservedQuantity() ?: 0; // 开始配送。正在包装，运输等动态状态的货数
-                                    $pending_customer_order_quantity = $reservedQuantity->getPendingCustomerOrderQuantity() ?: 0; // 为客户订单保留的货品数
-                                    $pending_transshipment_quantity = $reservedQuantity->getPendingTransshipmentQuantity() ?: 0; // 从亚马逊库存转移到另一个亚马逊库存的货品数
-                                    $fc_processing_quantity = $reservedQuantity->getFcProcessingQuantity() ?: 0; // 被亚马逊物流搁置以进行其他处理的货品数
+                                    $total_reserved_quantity = $reservedQuantity->getTotalReservedQuantity() ?? 0; // 开始配送。正在包装，运输等动态状态的货数
+                                    $pending_customer_order_quantity = $reservedQuantity->getPendingCustomerOrderQuantity() ?? 0; // 为客户订单保留的货品数
+                                    $pending_transshipment_quantity = $reservedQuantity->getPendingTransshipmentQuantity() ?? 0; // 从亚马逊库存转移到另一个亚马逊库存的货品数
+                                    $fc_processing_quantity = $reservedQuantity->getFcProcessingQuantity() ?? 0; // 被亚马逊物流搁置以进行其他处理的货品数
                                 }
 
                                 $researchingQuantity = $inventoryDetails->getResearchingQuantity();
@@ -181,13 +181,13 @@ class Inventory extends HyperfCommand
 
                                 $unfulfillableQuantity = $inventoryDetails->getUnfulfillableQuantity();
                                 if (! is_null($unfulfillableQuantity)) {
-                                    $total_unfulfillable_quantity = $unfulfillableQuantity->getTotalUnfulfillableQuantity() ?: 0; // 库存中不可售的货品数
-                                    $customer_damaged_quantity = $unfulfillableQuantity->getCustomerDamagedQuantity() ?: 0; // 客户损坏的货品数
-                                    $warehouse_damaged_quantity = $unfulfillableQuantity->getWarehouseDamagedQuantity() ?: 0; // 损坏的货品总数
-                                    $distributor_damaged_quantity = $unfulfillableQuantity->getDistributorDamagedQuantity() ?: 0; // 亚马逊配送途中损坏的货品数
-                                    $carrier_damaged_quantity = $unfulfillableQuantity->getCarrierDamagedQuantity() ?: 0; // 承运人损坏的货品数
-                                    $defective_quantity = $unfulfillableQuantity->getDefectiveQuantity() ?: 0; // 正在处理的损坏的货品数
-                                    $expired_quantity = $unfulfillableQuantity->getExpiredQuantity() ?: 0; // 已过期的货品数
+                                    $total_unfulfillable_quantity = $unfulfillableQuantity->getTotalUnfulfillableQuantity() ?? 0; // 库存中不可售的货品数
+                                    $customer_damaged_quantity = $unfulfillableQuantity->getCustomerDamagedQuantity() ?? 0; // 客户损坏的货品数
+                                    $warehouse_damaged_quantity = $unfulfillableQuantity->getWarehouseDamagedQuantity() ?? 0; // 损坏的货品总数
+                                    $distributor_damaged_quantity = $unfulfillableQuantity->getDistributorDamagedQuantity() ?? 0; // 亚马逊配送途中损坏的货品数
+                                    $carrier_damaged_quantity = $unfulfillableQuantity->getCarrierDamagedQuantity() ?? 0; // 承运人损坏的货品数
+                                    $defective_quantity = $unfulfillableQuantity->getDefectiveQuantity() ?? 0; // 正在处理的损坏的货品数
+                                    $expired_quantity = $unfulfillableQuantity->getExpiredQuantity() ?? 0; // 已过期的货品数
                                 }
                             }
 

@@ -27,7 +27,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
      */
     public function run(string $report_id, string $file): bool
     {
-        $currency_list = array_keys($this->header_map);
+        $currency_list = array_keys($this->getHeaderMap());
 
         $lineNumber = 2; // 指定的行号
         $splFileObject = new \SplFileObject($file, 'r');
@@ -38,11 +38,11 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
         $currency = '';
         foreach ($currency_list as $currency) {
             if (strpos($desiredLine, $currency) !== false) {
-                $config = $this->header_map[$currency]; // 选择使用哪个货币对应的表头映射关系
+                $config = $currency_list[$currency]; // 选择使用哪个货币对应的表头映射关系
                 break;
             }
         }
-        if (empty($config)) {
+        if (count($config) === 0) {
             // 请定义该货币对应的表头映射关系
             return true;
         }
@@ -53,11 +53,11 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
             $locale = 'es'; // 西班牙语
         }
 
-        $merchant_id = $this->merchant_id;
-        $merchant_store_id = $this->merchant_store_id;
+        $merchant_id = $this->getMerchantId();
+        $merchant_store_id = $this->getMerchantStoreId();
 
-        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
-        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
+//        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
+//        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $handle = fopen($file, 'rb');
         // 前8行都是表头数据和报告描述信息，直接丢弃

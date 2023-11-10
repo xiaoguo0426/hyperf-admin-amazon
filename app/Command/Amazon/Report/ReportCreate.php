@@ -27,9 +27,7 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -56,8 +54,9 @@ class ReportCreate extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return void
      */
     public function handle(): void
     {
@@ -78,7 +77,7 @@ class ReportCreate extends HyperfCommand
             $report_end_date = $reportEndDate->format('Y-m-d');
         }
 
-        if (is_null($is_force_create) || $is_force_create === '0') {
+        if (is_null($is_force_create)) {
             $is_force_create = '0';
         } else {
             $is_force_create = '1';
@@ -112,10 +111,15 @@ class ReportCreate extends HyperfCommand
     }
 
     /**
-     * @param ?string $report_start_date
-     * @param ?string $report_end_date
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @param int $merchant_id
+     * @param int $merchant_store_id
+     * @param string $report_type
+     * @param string|null $report_start_date
+     * @param string|null $report_end_date
+     * @param string $is_force_create
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return void
      */
     private function fly(int $merchant_id, int $merchant_store_id, string $report_type, ?string $report_start_date, ?string $report_end_date, string $is_force_create): void
     {

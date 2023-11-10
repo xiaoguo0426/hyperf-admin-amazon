@@ -19,17 +19,17 @@ use Psr\Container\NotFoundExceptionInterface;
 
 abstract class ReportBase implements ReportInterface
 {
-    public string $report_type;
+    private string $report_type;
 
-    public int $merchant_id;
+    private int $merchant_id;
 
-    public int $merchant_store_id;
+    private int $merchant_store_id;
 
-    public ?Carbon $report_start_date;
+    private ?Carbon $report_start_date;
 
-    public ?Carbon $report_end_date;
+    private ?Carbon $report_end_date;
 
-    public array $header_map;
+    private array $header_map;
 
     protected string $dir;
 
@@ -105,11 +105,39 @@ abstract class ReportBase implements ReportInterface
         is_callable($func) && $func($this, $marketplace_ids);
     }
 
+    public function setReportType(string $report_type): void
+    {
+        $this->report_type = $report_type;
+    }
+
+    public function getReportType(): string
+    {
+        return $this->report_type;
+    }
+
+    public function getMerchantId(): int
+    {
+        return $this->merchant_id;
+    }
+
+    public function getMerchantStoreId(): int
+    {
+        return $this->merchant_store_id;
+    }
+
     /**
-     * @param mixed $date
+     * @return array
+     */
+    public function getHeaderMap(): array
+    {
+        return $this->header_map;
+    }
+
+    /**
+     * @param ?string $date
      * @throws \Exception
      */
-    public function setReportStartDate($date): void
+    public function setReportStartDate(?string $date): void
     {
         $this->report_start_date = $date ? new Carbon($date, 'UTC') : null;
     }
@@ -120,10 +148,10 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * @param mixed $date
+     * @param ?string $date
      * @throws \Exception
      */
-    public function setReportEndDate($date): void
+    public function setReportEndDate(?string $date): void
     {
         $this->report_end_date = $date ? new Carbon($date, 'UTC') : null;
     }

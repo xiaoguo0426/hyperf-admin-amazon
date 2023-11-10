@@ -42,7 +42,7 @@ if (is_running($sererPidFile)) {
 // hyperf启动命令
 $cmd = $argv;
 array_shift($cmd);
-if (empty($cmd)) {
+if (count($cmd) === 0) {
     $cmd = ['php', './bin/hyperf.php', 'start'];
 }
 

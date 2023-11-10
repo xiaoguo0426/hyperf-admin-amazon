@@ -17,17 +17,12 @@ class FbaFulfillmentLongtermStorageFeeChargesDataReport extends ReportBase
 {
     public array $date_list = [];
 
-    public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
-    {
-        parent::__construct($report_type, $merchant_id, $merchant_store_id);
-    }
-
     public function run(string $report_id, string $file): bool
     {
-        $config = $this->header_map;
+        $config = $this->getHeaderMap();
 
-        $merchant_id = $this->merchant_id;
-        $merchant_store_id = $this->merchant_store_id;
+        $merchant_id = $this->getMerchantId();
+        $merchant_store_id = $this->getMerchantStoreId();
 
         $handle = fopen($file, 'rb');
         $header_line = str_replace("\r\n", '', fgets($handle));

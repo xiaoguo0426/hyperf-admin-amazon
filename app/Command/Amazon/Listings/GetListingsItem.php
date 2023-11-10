@@ -65,7 +65,7 @@ class GetListingsItem extends HyperfCommand
             $seller_id = $amazonSDK->getSellerId();
             $amazonInventoryCollections = AmazonInventoryModel::query()->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
-                ->when($asin, function ($query, $asin) {
+                ->when($asin, static function ($query, $asin) {
                     return $query->where('asin', $asin);
                 })->get();
             if ($amazonInventoryCollections->isEmpty()) {

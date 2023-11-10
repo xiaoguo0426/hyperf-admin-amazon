@@ -69,6 +69,7 @@ class GetCatalogItem extends HyperfCommand
                 $asin = $amazonInventoryCollection->asin;
                 $retry = 10;
                 while (true) {
+                    $items_list = [];
                     try {
                         $item = $sdk->catalogItem()->getCatalogItem($accessToken, $region, $asin, $marketplace_ids, $included_data, $locale);
 

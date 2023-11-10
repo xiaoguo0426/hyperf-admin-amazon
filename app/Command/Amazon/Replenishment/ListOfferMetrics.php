@@ -22,5 +22,5 @@ class ListOfferMetrics extends HyperfCommand
         parent::__construct('amazon:replenishment:list-offer-metrics');
     }
 
-    public function handle() {}
+    public function handle() :void {}
 }

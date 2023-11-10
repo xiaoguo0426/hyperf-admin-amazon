@@ -28,9 +28,14 @@ use Psr\Container\NotFoundExceptionInterface;
 class ListFinancialEventsByOrderIdEngine implements EngineInterface
 {
     /**
+     * @param \App\Util\AmazonSDK $amazonSDK
+     * @param \AmazonPHP\SellingPartner\SellingPartnerSDK $sdk
+     * @param \AmazonPHP\SellingPartner\AccessToken $accessToken
+     * @param \App\Util\Amazon\Creator\CreatorInterface $creator
      * @throws \JsonException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {

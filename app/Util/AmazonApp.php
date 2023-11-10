@@ -166,7 +166,7 @@ class AmazonApp
     public static function region(string $region): void
     {
         if (Regions::isValid($region)) {
-            throw new BusinessException(1, 'Invalid Region');
+            throw new BusinessException('Invalid Region', 1);
         }
     }
 }

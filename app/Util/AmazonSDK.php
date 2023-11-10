@@ -91,7 +91,7 @@ class AmazonSDK
             } catch (InvalidArgumentException $exception) {
             }
         }
-        $this->setMarketplaceIds($marketplace_ids);
+        $this->marketplace_ids = $marketplace_ids;
 
         $this->refresh_token = $amazonAppModel->refresh_token;
     }
@@ -241,10 +241,10 @@ class AmazonSDK
         return $this->marketplace_ids;
     }
 
-    public function setMarketplaceIds(array $marketplace_ids): void
-    {
-        $this->marketplace_ids = $marketplace_ids;
-    }
+//    public function setMarketplaceIds(array $marketplace_ids): void
+//    {
+//        $this->marketplace_ids = $marketplace_ids;
+//    }
 
     public function getRefreshToken(): string
     {

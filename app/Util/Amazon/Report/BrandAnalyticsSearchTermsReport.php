@@ -56,7 +56,7 @@ class BrandAnalyticsSearchTermsReport extends ReportBase
     public function requestReport(array $marketplace_ids, callable $func): void
     {
         foreach ($marketplace_ids as $marketplace_id) {
-            is_callable($func) && $func($this, $this->report_type, $this->buildReportBody($this->report_type, [$marketplace_id]), [$marketplace_id]);
+            is_callable($func) && $func($this, $this->getReportType(), $this->buildReportBody($this->getReportType(), [$marketplace_id]), [$marketplace_id]);
         }
     }
 

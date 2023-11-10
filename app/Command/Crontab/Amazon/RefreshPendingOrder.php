@@ -46,8 +46,9 @@ class RefreshPendingOrder extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return void
      */
     public function handle(): void
     {
@@ -68,7 +69,7 @@ class RefreshPendingOrder extends HyperfCommand
                 return true;
             }
 
-            $orders->chunk(50)->each(function ($collections) use ($marketplace_ids, $amazonSDK, $sdk, $accessToken) {
+            $orders->chunk(50)->each(static function ($collections) use ($marketplace_ids, $amazonSDK, $sdk, $accessToken): void {
                 $amazon_order_ids = [];
                 foreach ($collections as $collection) {
                     $amazon_order_ids[] = $collection->amazon_order_id;

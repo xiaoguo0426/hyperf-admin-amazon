@@ -58,13 +58,13 @@ class SalesAndTrafficReport extends ReportBase
     public function requestReport(array $marketplace_ids, callable $func): void
     {
         foreach ($marketplace_ids as $marketplace_id) {
-            is_callable($func) && $func($this, $this->report_type, $this->buildReportBody($this->report_type, [$marketplace_id]), [$marketplace_id]);
+            is_callable($func) && $func($this, $this->getReportType(), $this->buildReportBody($this->getReportType(), [$marketplace_id]), [$marketplace_id]);
         }
     }
 
     public function getReportFileName(array $marketplace_ids): string
     {
-        return $this->report_type . '-' . $marketplace_ids[0];
+        return $this->getReportType() . '-' . $marketplace_ids[0];
     }
 
     /**
@@ -98,8 +98,8 @@ class SalesAndTrafficReport extends ReportBase
      */
     public function run(string $report_id, string $file): bool
     {
-        $merchant_id = $this->merchant_id;
-        $merchant_store_id = $this->merchant_store_id;
+        $merchant_id = $this->getMerchantId();
+        $merchant_store_id = $this->getMerchantStoreId();
 
         $content = file_get_contents($file);
 
@@ -107,7 +107,7 @@ class SalesAndTrafficReport extends ReportBase
             $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $jsonException) {
             $logger = ApplicationContext::getContainer()->get(AmazonReportActionLog::class);
-            $logger->error(sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $this->report_type, $merchant_id, $merchant_store_id));
+            $logger->error(sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $this->getReportType(), $merchant_id, $merchant_store_id));
             return true;
         }
 
