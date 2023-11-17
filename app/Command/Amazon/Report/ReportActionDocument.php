@@ -32,9 +32,10 @@ class ReportActionDocument extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {

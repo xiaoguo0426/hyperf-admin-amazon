@@ -28,7 +28,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
             'CAD',
             'MXN',
         ];
-        $config = $this->header_map;
+        $config = $this->getHeaderMap();
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();

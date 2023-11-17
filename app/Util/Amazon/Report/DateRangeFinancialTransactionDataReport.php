@@ -22,23 +22,27 @@ use Psr\Container\NotFoundExceptionInterface;
 class DateRangeFinancialTransactionDataReport extends ReportBase
 {
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @param string $report_id
+     * @param string $file
+     * @return bool
      */
     public function run(string $report_id, string $file): bool
     {
-        $currency_list = array_keys($this->getHeaderMap());
+        $headers_map = $this->getHeaderMap();
+        $currency_list = array_keys($headers_map);
 
         $lineNumber = 2; // 指定的行号
         $splFileObject = new \SplFileObject($file, 'r');
         $splFileObject->seek($lineNumber - 1); // 转到指定行号的前一行
         $desiredLine = $splFileObject->current(); // 获取指定行的内容
+        var_dump($desiredLine);
+        var_dump($currency_list);
 
         $config = [];
         $currency = '';
         foreach ($currency_list as $currency) {
-            if (strpos($desiredLine, $currency) !== false) {
-                $config = $currency_list[$currency]; // 选择使用哪个货币对应的表头映射关系
+            if (str_contains($desiredLine, $currency)) {
+                $config = $headers_map[$currency]; // 选择使用哪个货币对应的表头映射关系
                 break;
             }
         }
