@@ -15,7 +15,7 @@ use Carbon\Carbon;
 
 class FbaReimbursementsData extends ReportBase
 {
-    public array $date_list = [];
+    private array $date_list;
 
     public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
     {

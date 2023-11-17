@@ -14,7 +14,7 @@ use App\Constants\ErrorCode;
 
 class BusinessException extends BaseException
 {
-    public function __construct(?string $message, int $code, \Throwable $previous = null)
+    public function __construct(?string $message, int $code = 1, \Throwable $previous = null)
     {
         if (is_null($message)) {
             $message = ErrorCode::getMessage($code);

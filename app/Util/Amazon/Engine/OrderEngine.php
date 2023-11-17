@@ -335,10 +335,10 @@ class OrderEngine implements EngineInterface
                 $order_ids[] = $amazon_order_id;
             }
 
-            if (empty($order_ids)) {
+            if (count($order_ids) === 0) {
                 break;
             }
-            if (empty($data)) {
+            if (count($data) === 0) {
                 break;
             }
 
@@ -417,7 +417,7 @@ class OrderEngine implements EngineInterface
                             $existOrder->has_regulated_items = $item['has_regulated_items'];
                             $existOrder->electronic_invoice_status = $item['electronic_invoice_status'];
 
-                            $save = $existOrder->save();
+                            $existOrder->save();
 
                             $real_order_ids[] = $existOrder->amazon_order_id;
                         }

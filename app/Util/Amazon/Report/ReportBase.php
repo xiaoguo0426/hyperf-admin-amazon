@@ -188,7 +188,7 @@ abstract class ReportBase implements ReportInterface
         $dir = sprintf('%s%s/%s/%s-%s/', \Hyperf\Config\config('amazon.report_template_path'), $category, $date, $this->merchant_id, $this->merchant_store_id);
         $this->dir = $dir;
 
-        if (! is_dir($dir) && ! mkdir($dir, 0755, true)) {
+        if (! is_dir($dir) && ! mkdir($dir, 0755, true) && ! is_dir($dir)) {
             try {
                 ApplicationContext::getContainer()->get(AmazonReportLog::class)->error(sprintf('Get Directory "%s" was not created', $dir));
             } catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {

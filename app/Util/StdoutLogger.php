@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  *
  * @author   xiaoguo0426
@@ -98,10 +99,13 @@ final class StdoutLogger implements StdoutLoggerInterface
 
         $message = \str_replace($search, $context, $this->getMessage((string) $message, $level, $tags));
 
-        $this->output->writeln($message . ' ' . json_encode($context));
+        try {
+            $this->output->writeln($message . ' ' . json_encode($context, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+        }
     }
 
-    protected function getMessage(string $message, string $level = LogLevel::INFO, array $tags = [])
+    private function getMessage(string $message, string $level = LogLevel::INFO, array $tags = []): string
     {
         $tag = match ($level) {
             LogLevel::EMERGENCY, LogLevel::ALERT, LogLevel::CRITICAL => 'error',

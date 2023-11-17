@@ -22,5 +22,5 @@ class ConfirmShipment extends HyperfCommand
         parent::__construct('amazon:order:confirm-shipment');
     }
 
-    public function handle() {}
+    public function handle(): void {}
 }

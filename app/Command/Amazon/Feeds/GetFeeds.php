@@ -22,7 +22,7 @@ class GetFeeds extends HyperfCommand
         parent::__construct('amazon:feeds:get-feeds');
     }
 
-    public function handle()
+    public function handle(): void
     {
         // TODO: Implement handle() method.
     }

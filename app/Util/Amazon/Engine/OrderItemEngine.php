@@ -101,7 +101,7 @@ class OrderItemEngine implements EngineInterface
                 }
             }
 
-            if (empty($orderItems)) {
+            if (count($orderItems) === 0) {
                 continue; // 继续处理下一个order_id
             }
 
@@ -142,8 +142,8 @@ class OrderItemEngine implements EngineInterface
                     ];
                 }
 
-                $is_pending = false;
-                if (empty($itemPriceJson)) {
+//                $is_pending = false;
+                if (count($itemPriceJson) === 0) {
                     // 查找原始订单的状态
                     // TODO 如果订单状态为shipped且没有item_price，则为vine类型订单
                 }
@@ -291,10 +291,10 @@ class OrderItemEngine implements EngineInterface
                     'merchant_store_id' => $merchant_store_id,
                     'order_id' => $amazon_order_id,
                     'asin' => $asin, // 物品的亚马逊标准标识号（ASIN）
-                    'seller_sku' => $orderItem->getSellerSku(), // 商品的卖方库存单位（SKU）
+                    'seller_sku' => $seller_sku, // 商品的卖方库存单位（SKU）
                     'order_item_id' => $amazon_order_item_id, // Amazon定义的订单项标识符
                     'title' => $orderItem->getTitle() ?? '', // 标题
-                    'quantity_ordered' => $orderItem->getQuantityOrdered(), // 商品数量
+                    'quantity_ordered' => $quantity_ordered, // 商品数量
                     'quantity_shipped' => $orderItem->getQuantityShipped() ?? 0, // 装运的商品数量
                     'product_info_number_of_items' => $productInfo ? ($productInfo->getNumberOfItems() ?? 0) : 0, // ASIN中包含的项目总数。
                     'points_granted' => json_encode($pointsGrantedJson, JSON_THROW_ON_ERROR), // 购买商品时获得的亚马逊积分的数量和价值
@@ -390,13 +390,13 @@ class OrderItemEngine implements EngineInterface
 
                         unset($list[$amazonOrderItemCollection->order_item_id]);
                     } elseif (isset($list[$amazonOrderItemCollection->order_item_id])) {
-                        $create = AmazonOrderItemModel::insert($list[$amazonOrderItemCollection->order_item_id]);
+                        AmazonOrderItemModel::insert($list[$amazonOrderItemCollection->order_item_id]);
                         unset($list[$amazonOrderItemCollection->order_item_id]);
                     }
                 }
                 if (count($list)) {
                     foreach ($list as $item) {
-                        $create = AmazonOrderItemModel::insert($item);
+                        AmazonOrderItemModel::insert($item);
                     }
                 }
             }

@@ -41,7 +41,7 @@ class GetOrderAddress extends HyperfCommand
             ->setDescription('Amazon Order API Buyer Info Command');
     }
 
-    public function handle()
+    public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');

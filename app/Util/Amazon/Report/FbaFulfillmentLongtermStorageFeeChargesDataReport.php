@@ -15,8 +15,6 @@ use Carbon\Carbon;
 
 class FbaFulfillmentLongtermStorageFeeChargesDataReport extends ReportBase
 {
-    public array $date_list = [];
-
     public function run(string $report_id, string $file): bool
     {
         $config = $this->getHeaderMap();

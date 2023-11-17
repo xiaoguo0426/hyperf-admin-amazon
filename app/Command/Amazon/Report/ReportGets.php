@@ -52,7 +52,7 @@ class ReportGets extends HyperfCommand
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
             $report_types = \Hyperf\Config\config('amazon_reports.scheduled');
-            if (empty($report_types)) {
+            if (count($report_types) === 0) {
                 $logger->error('请配置亚马逊报告');
                 return false;
             }
@@ -84,7 +84,7 @@ class ReportGets extends HyperfCommand
                             $report_document_id = $report->getReportDocumentId();
 
                             $dir = sprintf('%s%s/%s/%s-%s/', $report_template_path, 'scheduled', $report_type, $merchant_id, $merchant_store_id);
-                            if (! is_dir($dir) && ! mkdir($dir, 0755, true)) {
+                            if (! is_dir($dir) && ! mkdir($dir, 0755, true) && ! is_dir($dir)) {
                                 $logger->error(sprintf('Get Directory "%s" was not created', $dir));
                                 break;
                             }

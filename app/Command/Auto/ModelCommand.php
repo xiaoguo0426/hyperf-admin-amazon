@@ -218,8 +218,8 @@ class ModelCommand extends \Hyperf\Command\Command
     protected function mkdir(string $path): void
     {
         $dir = dirname($path);
-        if (! is_dir($dir)) {
-            @mkdir($dir, 0755, true);
+        if (! is_dir($dir) && ! mkdir($dir, 0755, true) && ! is_dir($dir)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
     }
 

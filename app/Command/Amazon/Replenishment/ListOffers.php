@@ -22,5 +22,5 @@ class ListOffers extends HyperfCommand
         parent::__construct('amazon:replenishment:list-offers');
     }
 
-    public function handle() :void {}
+    public function handle(): void {}
 }

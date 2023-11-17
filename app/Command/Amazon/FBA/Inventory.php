@@ -148,10 +148,10 @@ class Inventory extends HyperfCommand
 
                             $inventoryDetails = $summary->getInventoryDetails();
                             if (! is_null($inventoryDetails)) {
-                                $fulfillable_quantity = $inventoryDetails->getFulfillableQuantity() ?: 0; // 可拣选，包装，运输的货品数
-                                $inbound_working_quantity = $inventoryDetails->getInboundWorkingQuantity() ?: 0; // 通知亚马逊入库的货品数
-                                $inbound_shipped_quantity = $inventoryDetails->getInboundShippedQuantity() ?: 0; // 通知亚马逊并有物流跟踪号的货品数
-                                $inbound_receiving_quantity = $inventoryDetails->getInboundReceivingQuantity() ?: 0; // 亚马逊物流未处理的入库货数
+                                $fulfillable_quantity = $inventoryDetails->getFulfillableQuantity() ?? 0; // 可拣选，包装，运输的货品数
+                                $inbound_working_quantity = $inventoryDetails->getInboundWorkingQuantity() ?? 0; // 通知亚马逊入库的货品数
+                                $inbound_shipped_quantity = $inventoryDetails->getInboundShippedQuantity() ?? 0; // 通知亚马逊并有物流跟踪号的货品数
+                                $inbound_receiving_quantity = $inventoryDetails->getInboundReceivingQuantity() ?? 0; // 亚马逊物流未处理的入库货数
 
                                 $reservedQuantity = $inventoryDetails->getReservedQuantity();
                                 if (! is_null($reservedQuantity)) {
@@ -163,8 +163,8 @@ class Inventory extends HyperfCommand
 
                                 $researchingQuantity = $inventoryDetails->getResearchingQuantity();
                                 if (! is_null($researchingQuantity)) {
-                                    $total_researching_quantity = $researchingQuantity->getTotalResearchingQuantity() ?: 0; // 放错位置或损坏的货品总数
-                                    $researchingQuantityBreakdowns = $researchingQuantity->getResearchingQuantityBreakdown() ?: []; // 正在判断是否放错位置或损坏的货品总数和货品名称
+                                    $total_researching_quantity = $researchingQuantity->getTotalResearchingQuantity() ?? 0; // 放错位置或损坏的货品总数
+                                    $researchingQuantityBreakdowns = $researchingQuantity->getResearchingQuantityBreakdown() ?? []; // 正在判断是否放错位置或损坏的货品总数和货品名称
                                     if ($researchingQuantityBreakdowns) {
                                         foreach ($researchingQuantityBreakdowns as $researchingQuantityBreakdown) {
                                             $name = $researchingQuantityBreakdown->getName();

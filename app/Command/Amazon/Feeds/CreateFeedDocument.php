@@ -22,7 +22,7 @@ class CreateFeedDocument extends HyperfCommand
         parent::__construct('amazon:feeds:create-feed-document');
     }
 
-    public function handle()
+    public function handle(): void
     {
         // TODO: Implement handle() method.
     }
