@@ -59,7 +59,7 @@ class ListFinancialEventsByOrderId extends HyperfCommand
             $amazonOrderCollections = AmazonOrderModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
-                ->when($amazon_order_ids, function ($query, $value) {
+                ->when($amazon_order_ids, static function ($query, $value) {
                     return $query->whereIn('amazon_order_id', $value);
                 })->get();
             if ($amazonOrderCollections->isEmpty()) {

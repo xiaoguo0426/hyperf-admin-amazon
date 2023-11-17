@@ -136,7 +136,7 @@ class ReportCreate extends HyperfCommand
             }
 
             // 解决某些Report只能传一个marketplace_id的问题，但同时店铺又存在多个地区。需要重写requestReport方法，参考GET_SALES_AND_TRAFFIC_REPORT
-            $instance->requestReport($marketplace_ids, function (ReportBase $instance, $report_type, CreateReportSpecification $body, array $marketplace_ids) use ($sdk, $accessToken, $region, $logger, $merchant_id, $merchant_store_id, $is_force_create) {
+            $instance->requestReport($marketplace_ids, static function (ReportBase $instance, $report_type, CreateReportSpecification $body, array $marketplace_ids) use ($sdk, $accessToken, $region, $logger, $merchant_id, $merchant_store_id, $is_force_create) {
                 $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
                 // 注意匿名函数里的$marketplace_ids的值

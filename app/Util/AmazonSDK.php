@@ -257,9 +257,12 @@ class AmazonSDK
 //    }
 
     /**
-     * @throws ApiException
+     * @param bool $force_refresh
+     * @throws \AmazonPHP\SellingPartner\Exception\ApiException
      * @throws \JsonException
-     * @throws ClientExceptionInterface
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws \RedisException
+     * @return \AmazonPHP\SellingPartner\SellingPartnerSDK
      */
     public function getSdk(bool $force_refresh = false): SellingPartnerSDK
     {
@@ -273,7 +276,9 @@ class AmazonSDK
         );
 
         $region = $this->getRegion();
-
+        /**
+         * @var AmazonSessionTokenHash $hash
+         */
         $hash = \Hyperf\Support\make(AmazonSessionTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
         $sessionToken = $hash->sessionToken;
 
@@ -329,8 +334,11 @@ class AmazonSDK
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
+     * @param string $region
+     * @param bool $force_refresh
+     * @throws \AmazonPHP\SellingPartner\Exception\ApiException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @return \AmazonPHP\SellingPartner\AccessToken
      */
     public function getToken(string $region, bool $force_refresh = false): AccessToken
     {

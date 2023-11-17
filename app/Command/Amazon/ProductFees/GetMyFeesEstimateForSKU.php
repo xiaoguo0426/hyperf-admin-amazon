@@ -22,5 +22,5 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
         parent::__construct('amazon:product-fees:get-my-fees-estimate-for-sku');
     }
 
-    public function handle() {}
+    public function handle(): void {}
 }

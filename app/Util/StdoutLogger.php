@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * PSR-3 logger implementation that logs to STDOUT, using a newline after each
  * message. Priority is ignored.
  */
-class StdoutLogger implements StdoutLoggerInterface
+final class StdoutLogger implements StdoutLoggerInterface
 {
     private OutputInterface $output;
     /**
