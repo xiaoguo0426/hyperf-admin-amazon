@@ -17,11 +17,10 @@ use Psr\Container\NotFoundExceptionInterface;
 class Redis
 {
     /**
-     * @param mixed $group
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public static function get($group = 'default')
+    public static function get(mixed $group = 'default')
     {
         return di(RedisFactory::class)->get($group);
     }

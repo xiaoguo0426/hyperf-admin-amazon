@@ -22,5 +22,5 @@ class GetSellingPartnerMetrics extends HyperfCommand
         parent::__construct('amazon:product-pricing:get-featured-offer-expected-price-batch');
     }
 
-    public function handle():void {}
+    public function handle(): void {}
 }

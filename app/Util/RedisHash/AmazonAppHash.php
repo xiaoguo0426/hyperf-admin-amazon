@@ -11,10 +11,10 @@ declare(strict_types=1);
 namespace App\Util\RedisHash;
 
 use App\Util\Prefix;
-use App\Util\RegionRefreshTokenConfig;
 
 /**
  * Class AmazonAppHash.
+ *
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id
@@ -62,9 +62,7 @@ class AmazonAppHash extends AbstractRedisHash
     }
 
     /**
-     * @param string $value
      * @throws \JsonException
-     * @return mixed
      */
     public function getConfigAttr(string $value): mixed
     {
@@ -81,9 +79,7 @@ class AmazonAppHash extends AbstractRedisHash
     }
 
     /**
-     * @param array $value
      * @throws \JsonException
-     * @return void
      */
     public function setConfigAttr(array $value): void
     {

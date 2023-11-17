@@ -18,6 +18,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Log基础类
  * Class AbstractConsoleLog.
+ *
  * @method void log(mixed $level, string $message, array $context = [])
  * @method void debug($message, array $context = [])
  * @method void info($message, array $context = [])

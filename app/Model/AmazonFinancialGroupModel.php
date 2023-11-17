@@ -12,6 +12,7 @@ namespace App\Model;
 
 /**
  * Class AmazonFinancialGroupModel.
+ *
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id

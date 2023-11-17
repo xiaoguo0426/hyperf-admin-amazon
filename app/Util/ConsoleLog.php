@@ -14,11 +14,12 @@ use Hyperf\Contract\StdoutLoggerInterface;
 
 /**
  * Class ConsoleLog.
+ *
  * @method void info($message)
  * @method void error($message)
  * @method void comment($message)
  * @method void warning($message)
- * @method void highlight($message)
+ * @method void notice($message)
  */
 class ConsoleLog
 {

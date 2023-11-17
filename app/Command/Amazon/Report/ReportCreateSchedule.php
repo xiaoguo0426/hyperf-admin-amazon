@@ -71,26 +71,26 @@ class ReportCreateSchedule extends HyperfCommand
                     --$retry;
                     var_dump($e->getResponseBody());
                     if ($retry > 0) {
-//                        $console->warning(sprintf('report_type: %s report_id: %s start_time: %s end_time: %s retry: %s ', $report_type, $report_id, $start_time, $end_time, $retry));
+                        //                        $console->warning(sprintf('report_type: %s report_id: %s start_time: %s end_time: %s retry: %s ', $report_type, $report_id, $start_time, $end_time, $retry));
                         sleep(10);
                         continue;
                     }
 
-//                    $log = sprintf('Get report_type: %s  report_id: %s merchant_id: %s merchant_store_id: %s 获取报告出错 %s', $report_type, $report_id, $merchant_id, $merchant_store_id, json_encode([
-//                        'merchant_id' => $merchant_id,
-//                        'merchant_store_id' => $merchant_store_id,
-//                        'marketplace_ids' => $marketplace_ids,
-//                        'report_id' => $report_id,
-//                        'report_type' => $report_type,
-////                        'data_start_time' => $start_time,
-////                        'data_end_time' => $end_time,
-//                    ], JSON_THROW_ON_ERROR));
-//
-//                    $console->error($log);
-//                    $logger->error($log, [
-//                        'message' => $e->getMessage(),
-//                        'response body' => $e->getResponseBody(),
-//                    ]);
+                    //                    $log = sprintf('Get report_type: %s  report_id: %s merchant_id: %s merchant_store_id: %s 获取报告出错 %s', $report_type, $report_id, $merchant_id, $merchant_store_id, json_encode([
+                    //                        'merchant_id' => $merchant_id,
+                    //                        'merchant_store_id' => $merchant_store_id,
+                    //                        'marketplace_ids' => $marketplace_ids,
+                    //                        'report_id' => $report_id,
+                    //                        'report_type' => $report_type,
+                    // //                        'data_start_time' => $start_time,
+                    // //                        'data_end_time' => $end_time,
+                    //                    ], JSON_THROW_ON_ERROR));
+                    //
+                    //                    $console->error($log);
+                    //                    $logger->error($log, [
+                    //                        'message' => $e->getMessage(),
+                    //                        'response body' => $e->getResponseBody(),
+                    //                    ]);
 
                     break;
                 } catch (InvalidArgumentException $e) {
@@ -108,5 +108,4 @@ class ReportCreateSchedule extends HyperfCommand
             return true;
         });
     }
-
 }

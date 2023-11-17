@@ -49,5 +49,5 @@ abstract class QueueData implements QueueDataInterface
         throw new \Exception('请在子类中实现 toJson 方法');
     }
 
-    abstract public function parse(array $arr);
+    abstract public function parse(array $arr): void;
 }

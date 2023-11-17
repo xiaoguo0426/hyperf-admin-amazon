@@ -24,12 +24,14 @@ class AmazonGetReportData extends QueueData
 
     /**
      * 报告数据开始时间.
+     *
      * @var null|string
      */
     private string $data_start_time;
 
     /**
      * 报告数据结束时间.
+     *
      * @var null|string
      */
     private string $data_end_time;

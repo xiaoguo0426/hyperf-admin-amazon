@@ -23,20 +23,13 @@ use App\Util\Log\AmazonOrdersLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class OrderItemEngine implements EngineInterface
 {
     /**
-     * @param \App\Util\AmazonSDK $amazonSDK
-     * @param \AmazonPHP\SellingPartner\SellingPartnerSDK $sdk
-     * @param \AmazonPHP\SellingPartner\AccessToken $accessToken
-     * @param \App\Util\Amazon\Creator\CreatorInterface $creator
      * @throws \JsonException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
-     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {
@@ -142,7 +135,7 @@ class OrderItemEngine implements EngineInterface
                     ];
                 }
 
-//                $is_pending = false;
+                //                $is_pending = false;
                 if (count($itemPriceJson) === 0) {
                     // 查找原始订单的状态
                     // TODO 如果订单状态为shipped且没有item_price，则为vine类型订单

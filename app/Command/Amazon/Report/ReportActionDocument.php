@@ -13,9 +13,7 @@ namespace App\Command\Amazon\Report;
 use App\Queue\AmazonReportDocumentActionQueue;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 #[Command]
 class ReportActionDocument extends HyperfCommand
@@ -35,7 +33,6 @@ class ReportActionDocument extends HyperfCommand
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \RedisException
-     * @return void
      */
     public function handle(): void
     {

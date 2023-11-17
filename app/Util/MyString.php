@@ -52,10 +52,10 @@ class MyString
 
     /**
      * 找出数组前缀相同的部分.
+     *
      * @param string[]
-     * @param mixed $array
      */
-    public static function findCommonPrefixes($array): array
+    public static function findCommonPrefixes(mixed $array): array
     {
         $result = [];
         $count = count($array);

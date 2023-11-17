@@ -15,11 +15,7 @@ use Hyperf\Collection\Collection;
 
 class ValueAddedServiceChargeEventList extends FinanceBase
 {
-    /**
-     * @param ValueAddedServiceChargeEventListNew $financialEvents
-     * @return bool
-     */
-    public function run($financialEvents): bool
+    public function run(ValueAddedServiceChargeEventListNew $financialEvents): bool
     {
         $collection = new Collection();
 

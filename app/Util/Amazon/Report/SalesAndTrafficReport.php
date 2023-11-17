@@ -16,8 +16,6 @@ use App\Model\AmazonReportSalesAndTrafficByDateModel;
 use App\Util\Log\AmazonReportActionLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class SalesAndTrafficReport extends ReportBase
 {
@@ -90,11 +88,8 @@ class SalesAndTrafficReport extends ReportBase
     }
 
     /**
-     * @param string $report_id
-     * @param string $file
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
-     * @return bool
      */
     public function run(string $report_id, string $file): bool
     {

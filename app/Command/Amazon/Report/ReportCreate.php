@@ -56,7 +56,6 @@ class ReportCreate extends HyperfCommand
     /**
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
-     * @return void
      */
     public function handle(): void
     {
@@ -111,15 +110,10 @@ class ReportCreate extends HyperfCommand
     }
 
     /**
-     * @param int $merchant_id
-     * @param int $merchant_store_id
-     * @param string $report_type
-     * @param string|null $report_start_date
-     * @param string|null $report_end_date
-     * @param string $is_force_create
+     * @param ?string $report_start_date
+     * @param ?string $report_end_date
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
-     * @return void
      */
     private function fly(int $merchant_id, int $merchant_store_id, string $report_type, ?string $report_start_date, ?string $report_end_date, string $is_force_create): void
     {

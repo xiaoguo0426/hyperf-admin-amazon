@@ -41,15 +41,15 @@ abstract class AbstractQueue
         $this->redis = Redis::get();
     }
 
-    abstract public function getQueueName();
+    abstract public function getQueueName(): void;
 
     abstract public function getQueueDataClass(): string;
 
-    abstract public function push(QueueDataInterface $queueData);
+    abstract public function push(QueueDataInterface $queueData): void;
 
-    abstract public function pop();
+    abstract public function pop(): void;
 
-    abstract public function handleQueueData(QueueDataInterface $queueData);
+    abstract public function handleQueueData(QueueDataInterface $queueData): void;
 
     /**
      * 队列安全线  0为不检测。大于0则会判断该队列当前长度是否超过安全线设置.

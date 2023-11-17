@@ -12,17 +12,13 @@ namespace App\Util;
 
 class RegionRefreshTokenConfig implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
     private string $region;
+
     /**
-     * @var array|string[]
+     * @var array<string>
      */
     private array $country_ids;
-    /**
-     * @var string
-     */
+
     private string $refresh_token;
 
     public function __construct(string $region, string $country_ids, string $refresh_token)
@@ -59,10 +55,9 @@ class RegionRefreshTokenConfig implements \JsonSerializable
     }
 
     /**
-     * @param mixed $json
      * @throws \JsonException
      */
-    public static function fromJson($json): RegionRefreshTokenConfig
+    public static function fromJson(mixed $json): RegionRefreshTokenConfig
     {
         $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR); // 解码为关联数组
         return new self($data['region'], $data['country_ids'], $data['refresh_token']);

@@ -14,6 +14,7 @@ use App\Util\RegionRefreshTokenConfig;
 
 /**
  * Class AmazonAppModel.
+ *
  * @property int $id
  * @property int $merchant_id
  * @property int $merchant_store_id
@@ -38,7 +39,7 @@ class AmazonAppModel extends Model
     protected ?string $table = 'amazon_app';
 
     /**
-     * @return RegionRefreshTokenConfig[]
+     * @return array<RegionRefreshTokenConfig>
      */
     public function getRegionRefreshTokenConfigs(): array
     {

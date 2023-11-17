@@ -89,6 +89,7 @@ class FbaStorageFeeChargesDataReport extends ReportBase
 
     /**
      * 请求报告.
+     *
      * @throws \Exception
      */
     public function requestReport(array $marketplace_ids, callable $func): void

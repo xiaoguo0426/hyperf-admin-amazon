@@ -16,7 +16,6 @@ use App\Util\Log\AmazonReportActionLog;
 use App\Util\RedisHash\AmazonAsinSaleVolumeHash;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -100,7 +99,7 @@ class SalesAndTrafficReportCustom extends ReportBase
         $diff_days = $diff->days + 1;
 
         // 报告更多参数，请见SalesAndTrafficReport类
-//        $data_time = $json['reportSpecification']['dataStartTime'];
+        //        $data_time = $json['reportSpecification']['dataStartTime'];
         $marketplace_id = $json['reportSpecification']['marketplaceIds'][0];
         // 目前销量只统计US
         $us_marketplace_id = Marketplace::US()->id();
@@ -179,6 +178,7 @@ class SalesAndTrafficReportCustom extends ReportBase
 
     /**
      * 处理报告.
+     *
      * @throws \Exception
      */
     public function processReport(callable $func, array $marketplace_ids): void

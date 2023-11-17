@@ -25,7 +25,6 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
 class GetOrder extends HyperfCommand
@@ -234,22 +233,24 @@ class GetOrder extends HyperfCommand
                     var_dump($automatedShippingSettingsJson);
                     var_dump($marketplaceTaxInfoJson);
 
-                    $that->table([
-                        'amazon_order_id',
-                        'order_total_currency_code',
-                        'order_total_amount',
-                        'purchase_date',
-                        'last_update_date',
-                        'paymentExecutionDetailJson',
-                        'paymentMethodDetailsJson',
-                        'defaultShipFromLocationAddressJson',
-                        'buyerTaxInformationJson',
-                        'fulfillmentInstructionJson',
-                        'shippingAddressJson',
-                        'buyerInfoJson',
-                        'automatedShippingSettingsJson',
-                        'marketplaceTaxInfoJson',
-                    ], [
+                    $that->table(
+                        [
+                            'amazon_order_id',
+                            'order_total_currency_code',
+                            'order_total_amount',
+                            'purchase_date',
+                            'last_update_date',
+                            'paymentExecutionDetailJson',
+                            'paymentMethodDetailsJson',
+                            'defaultShipFromLocationAddressJson',
+                            'buyerTaxInformationJson',
+                            'fulfillmentInstructionJson',
+                            'shippingAddressJson',
+                            'buyerInfoJson',
+                            'automatedShippingSettingsJson',
+                            'marketplaceTaxInfoJson',
+                        ],
+                        [
                             [
                                 'amazon_order_id' => $amazon_order_id,
                                 'order_total_currency_code' => $order_total_currency_code,
@@ -265,7 +266,7 @@ class GetOrder extends HyperfCommand
                                 'buyerInfoJson' => json_encode($buyerInfoJson, JSON_THROW_ON_ERROR),
                                 'automatedShippingSettingsJson' => json_encode($automatedShippingSettingsJson, JSON_THROW_ON_ERROR),
                                 'marketplaceTaxInfoJson' => json_encode($marketplaceTaxInfoJson, JSON_THROW_ON_ERROR),
-                            ]
+                            ],
                         ]
                     );
 

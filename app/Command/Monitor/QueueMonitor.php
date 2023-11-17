@@ -37,7 +37,7 @@ class QueueMonitor extends HyperfCommand
     public function handle(): void
     {
         /**
-         * @var AbstractQueue[] $queueCollections
+         * @var array<AbstractQueue> $queueCollections
          */
         $queueCollections = [
             AmazonActionReportQueue::class,

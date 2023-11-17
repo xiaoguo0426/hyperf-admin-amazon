@@ -166,10 +166,9 @@ class AmazonActionReportData extends QueueData implements \JsonSerializable
     }
 
     /**
-     * @param mixed $json
      * @throws \JsonException
      */
-    public static function fromJson($json): AmazonActionReportData
+    public static function fromJson(mixed $json): AmazonActionReportData
     {
         $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR); // 解码为关联数组
         return new self(

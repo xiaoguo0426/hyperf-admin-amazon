@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFbaEstimatedFeeModel;
-use App\Util\Log\AmazonReportLog;
 use App\Util\RedisHash\AmazonFbaEstimatedFeeHash;
 
 class FbaEstimatedFeeTxtDataReport extends ReportBase

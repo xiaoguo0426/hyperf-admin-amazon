@@ -14,6 +14,7 @@ use App\Util\Prefix;
 
 /**
  * Class AmazonSessionTokenHash.
+ *
  * @property $accessKeyId
  * @property $secretAccessKey
  * @property $sessionToken

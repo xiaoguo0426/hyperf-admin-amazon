@@ -39,43 +39,37 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
     }
 
     /**
-     * @param mixed $key
      * @throws \JsonException
      * @throws \RedisException
-     * @return mixed
      */
-    public function __get($key)
+    public function __get(mixed $key): mixed
     {
         return $this->getAttr($key);
     }
 
     /**
-     * @param mixed $name
-     * @param mixed $value
      * @throws \JsonException
      * @throws \RedisException
      */
-    public function __set($name, $value): void
+    public function __set(mixed $name, mixed $value): void
     {
         $this->setAttr($name, $value);
     }
 
     /**
-     * @param mixed $name
      * @throws \RedisException
      */
-    public function __unset($name): void
+    public function __unset(mixed $name): void
     {
         $this->offsetUnset($name);
     }
 
     /**
      * 判断属性是否存在.
-     * @param mixed $name
+     *
      * @throws \RedisException
-     * @return bool
      */
-    public function __isset($name)
+    public function __isset(mixed $name): bool
     {
         return $this->offsetExists($name);
     }
@@ -91,54 +85,51 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
 
     /**
      * 判断属性是否存在.
-     * @param mixed $offset
+     *
      * @throws \RedisException
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->redis->hExists($this->key, (string) $offset);
     }
 
     /**
      * 获得属性.
-     * @param mixed $offset
+     *
      * @throws \RedisException
      * @throws \JsonException
      */
-    public function offsetGet($offset): mixed
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->getAttr($offset);
     }
 
     /**
      * 设置属性.
-     * @param mixed $offset
-     * @param mixed $value
+     *
      * @throws \JsonException
      * @throws \RedisException
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->setAttr($offset, $value);
     }
 
     /**
      * 删除属性.
-     * @param mixed $offset
+     *
      * @throws \RedisException
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         $this->redis->hDel($this->key, (string) $offset);
     }
 
     /**
-     * 设置属性
-     * @param string $offset
-     * @param $value
+     * 设置属性.
+     *
      * @throws \JsonException
      * @throws \RedisException
-     * @return bool
      */
     public function setAttr(string $offset, $value): bool
     {
@@ -157,6 +148,7 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
 
     /**
      * 获得属性.
+     *
      * @throws \JsonException
      * @throws \RedisException
      */
@@ -184,6 +176,7 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
 
     /**
      * 初始化.
+     *
      * @throws \JsonException
      * @throws \RedisException
      */
@@ -205,6 +198,7 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
 
     /**
      * 转json.
+     *
      * @throws \JsonException
      * @throws \RedisException
      */
@@ -215,6 +209,7 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
 
     /**
      * 删除hash缓存.
+     *
      * @throws \RedisException
      */
     public function destroy(): bool
@@ -224,6 +219,7 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
 
     /**
      * 设置有效期
+     *
      * @throws \RedisException
      */
     public function ttl(int $ttl): bool

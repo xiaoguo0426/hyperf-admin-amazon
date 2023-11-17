@@ -12,6 +12,7 @@ namespace App\Model;
 
 /**
  * Class AmazonShipmentModel.
+ *
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id

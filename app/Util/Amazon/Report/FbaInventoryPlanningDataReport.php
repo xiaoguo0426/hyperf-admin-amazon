@@ -12,7 +12,6 @@ namespace App\Util\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
 use App\Model\AmazonReportFbaInventoryPlanningDataModel;
-use Exception;
 
 class FbaInventoryPlanningDataReport extends ReportBase
 {

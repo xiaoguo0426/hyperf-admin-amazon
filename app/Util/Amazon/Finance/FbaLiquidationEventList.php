@@ -15,11 +15,7 @@ use Hyperf\Collection\Collection;
 
 class FbaLiquidationEventList extends FinanceBase
 {
-    /**
-     * @param FBALiquidationEvent $financialEvents
-     * @return bool
-     */
-    public function run($financialEvents): bool
+    public function run(FBALiquidationEvent $financialEvents): bool
     {
         $collection = new Collection();
 

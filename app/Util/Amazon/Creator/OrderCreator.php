@@ -10,13 +10,12 @@ declare(strict_types=1);
 
 namespace App\Util\Amazon\Creator;
 
-use AmazonPHP\SellingPartner\Model\Orders\ItemApprovalStatus;
 use AmazonPHP\SellingPartner\Model\Orders\ItemApprovalType;
 
 class OrderCreator implements CreatorInterface
 {
     /**
-     * @var string[]
+     * @var array<string>
      */
     public array $marketplace_ids = [];
 
@@ -29,14 +28,14 @@ class OrderCreator implements CreatorInterface
     public ?string $last_updated_before = null;
 
     /**
-     * @var null|string[]
+     * @var null|array<string>
      */
     public ?array $order_statuses = null;
 
     public ?string $fulfillment_channels = null;
 
     /**
-     * @var null|string[]
+     * @var null|array<string>
      */
     public ?array $payment_methods = null;
 
@@ -49,19 +48,19 @@ class OrderCreator implements CreatorInterface
     public ?array $easy_ship_shipment_statuses = null;
 
     /**
-     * @var null|string[]
+     * @var null|array<string>
      */
     public ?array $electronic_invoice_statuses = null;
 
     public ?string $next_token;
 
     /**
-     * @var null|string[]
+     * @var null|array<string>
      */
     public ?array $amazon_order_ids;
 
     /**
-     * @var null|string[]
+     * @var null|array<string>
      */
     public ?array $actual_fulfillment_supply_source_id = null;
 
@@ -70,7 +69,7 @@ class OrderCreator implements CreatorInterface
     public ?string $store_chain_store_id = null;
 
     /**
-     * @var null|ItemApprovalType[]
+     * @var null|array<ItemApprovalType>
      */
     public ?array $item_approval_types = null;
 

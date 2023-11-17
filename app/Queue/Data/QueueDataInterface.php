@@ -16,5 +16,5 @@ interface QueueDataInterface
 
     public function toJson(): string;
 
-    public function parse(array $arr);
+    public function parse(array $arr): void;
 }

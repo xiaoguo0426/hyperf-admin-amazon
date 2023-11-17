@@ -46,7 +46,6 @@ class RefreshPendingOrder extends HyperfCommand
     /**
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
-     * @return void
      */
     public function handle(): void
     {

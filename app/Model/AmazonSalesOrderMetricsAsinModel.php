@@ -12,6 +12,7 @@ namespace App\Model;
 
 /**
  * Class AmazonSalesOrderMetricsAsinModel.
+ *
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id

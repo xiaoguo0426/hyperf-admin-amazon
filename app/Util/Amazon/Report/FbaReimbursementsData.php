@@ -106,6 +106,7 @@ class FbaReimbursementsData extends ReportBase
 
     /**
      * 请求报告.
+     *
      * @throws \Exception
      */
     public function requestReport(array $marketplace_ids, callable $func): void
@@ -122,7 +123,9 @@ class FbaReimbursementsData extends ReportBase
 
     /**
      * 处理报告.
+     *
      * @throws \Exception
+     *
      * @deprecated
      */
     public function processReport(callable $func, array $marketplace_ids): void

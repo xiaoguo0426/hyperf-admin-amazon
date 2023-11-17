@@ -19,6 +19,8 @@ use Psr\Container\NotFoundExceptionInterface;
 
 abstract class ReportBase implements ReportInterface
 {
+    protected string $dir;
+
     private string $report_type;
 
     private int $merchant_id;
@@ -30,8 +32,6 @@ abstract class ReportBase implements ReportInterface
     private ?Carbon $report_end_date;
 
     private array $header_map;
-
-    protected string $dir;
 
     public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
     {
@@ -125,9 +125,6 @@ abstract class ReportBase implements ReportInterface
         return $this->merchant_store_id;
     }
 
-    /**
-     * @return array
-     */
     public function getHeaderMap(): array
     {
         return $this->header_map;

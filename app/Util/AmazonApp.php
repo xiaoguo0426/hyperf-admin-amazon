@@ -76,6 +76,7 @@ class AmazonApp
 
     /**
      * 单个Amazon应用配置回调并触发Amazon SDK.
+     *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -136,6 +137,7 @@ class AmazonApp
 
     /**
      * 所有Amazon应用配置回调并触发Amazon SDK.
+     *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -154,7 +156,7 @@ class AmazonApp
     }
 
     /**
-     * @param string[] $regions
+     * @param array<string> $regions
      */
     public static function regions(array $regions): void
     {

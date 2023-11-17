@@ -22,7 +22,7 @@ use Psr\Log\LogLevel;
 class MultiLog implements LoggerInterface
 {
     /**
-     * @var AbstractLog[]|StdoutLoggerInterface[]
+     * @var array<AbstractLog>|array<StdoutLoggerInterface>
      */
     private array $loggers;
 

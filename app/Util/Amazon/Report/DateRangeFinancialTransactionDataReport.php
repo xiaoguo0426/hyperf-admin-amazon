@@ -12,20 +12,13 @@ namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportDateRangeFinancialTransactionDataModel;
 use App\Util\ConsoleLog;
-use App\Util\Log\AmazonReportDocumentLog;
+use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class DateRangeFinancialTransactionDataReport extends ReportBase
 {
-    /**
-     * @param string $report_id
-     * @param string $file
-     * @return bool
-     */
     public function run(string $report_id, string $file): bool
     {
         $headers_map = $this->getHeaderMap();
@@ -35,8 +28,6 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
         $splFileObject = new \SplFileObject($file, 'r');
         $splFileObject->seek($lineNumber - 1); // 转到指定行号的前一行
         $desiredLine = $splFileObject->current(); // 获取指定行的内容
-        var_dump($desiredLine);
-        var_dump($currency_list);
 
         $config = [];
         $currency = '';
@@ -60,8 +51,8 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
 
-//        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
-//        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
+        //        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
+        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $handle = fopen($file, 'rb');
         // 前8行都是表头数据和报告描述信息，直接丢弃
@@ -100,10 +91,8 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
             $item = [];
             foreach ($map as $index => $value) {
                 if (! isset($new[$index])) {
-                    var_dump($index);
-                    var_dump($value);
-                    var_dump($new);
-                    exit;
+                    $console->error(sprintf('列不存在:%s merchant_id:%s merchant_store_id:%s file:%s', $index, $merchant_id, $merchant_store_id, $file));
+                    continue;
                 }
                 $val = $new[$index];
                 if ($value === 'date') {
@@ -127,9 +116,17 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
         }
         fclose($handle);
 
+        $console->notice(sprintf('报告ID:%s 开始处理数据. 数据长度:%s', $report_id, $collection->count()));
+        $runtimeCalculator = new RuntimeCalculator();
+        $runtimeCalculator->start();
+
         try {
             // 数据分片处理
-            $collection->chunk(1000)->each(static function (Collection $list) use ($merchant_id, $merchant_store_id): void {
+            $collection->chunk(1000)->each(static function (Collection $list) use ($console, $merchant_id, $merchant_store_id): void {
+                $console->info(sprintf('开始处理分页数据. 当前分页长度:%s', $list->count()));
+                $runtimeCalculator = new RuntimeCalculator();
+                $runtimeCalculator->start();
+
                 try {
                     $final = []; // 写入的数据集合
                     foreach ($list as $item) {
@@ -191,12 +188,16 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
                     AmazonReportDateRangeFinancialTransactionDataModel::insert($final);
                 } catch (\Exception $exception) {
                 }
+
+                $console->info(sprintf('结束处理分页数据. 耗时:%s', $runtimeCalculator->stop()));
             });
         } catch (\RuntimeException $runtimeException) {
-            var_dump($runtimeException->getMessage());
+            $console->error(sprintf('file:%s 处理失败. %s', $file, $runtimeException->getMessage()));
             // 一旦出错，直接删除该文件，下一次重新拉取
             //            unlink($file);
         }
+
+        $console->notice(sprintf('报告ID:%s 结束处理数据. 耗时:%s', $report_id, $runtimeCalculator->stop()));
 
         return true;
     }

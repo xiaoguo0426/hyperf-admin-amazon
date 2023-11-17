@@ -28,15 +28,10 @@ use Hyperf\Contract\StdoutLoggerInterface;
 class OrderEngine implements EngineInterface
 {
     /**
-     * @param \App\Util\AmazonSDK $amazonSDK
-     * @param \AmazonPHP\SellingPartner\SellingPartnerSDK $sdk
-     * @param \AmazonPHP\SellingPartner\AccessToken $accessToken
-     * @param \App\Util\Amazon\Creator\CreatorInterface $creator
      * @throws \JsonException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \RedisException
-     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {

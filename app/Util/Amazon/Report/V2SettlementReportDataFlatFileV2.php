@@ -12,12 +12,10 @@ namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonSettlementReportDataFlatFileV2Model;
 use App\Util\ConsoleLog;
-use App\Util\Log\AmazonReportDocumentLog;
+use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 class V2SettlementReportDataFlatFileV2 extends ReportBase
 {
@@ -33,8 +31,8 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
 
-//        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
-//        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
+        //        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
+        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $splFileObject = new \SplFileObject($file, 'r');
         $header_line = str_replace("\r\n", '', $splFileObject->fgets());
@@ -95,7 +93,15 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
             $collection->push($item);
         }
 
-        $collection->chunk(1000)->each(static function (Collection $list): void {
+        $console->notice(sprintf('报告ID:%s 开始处理数据. 数据长度:%s', $report_id, $collection->count()));
+        $runtimeCalculator = new RuntimeCalculator();
+        $runtimeCalculator->start();
+
+        $collection->chunk(1000)->each(static function (Collection $list) use ($console): void {
+            $console->info(sprintf('开始处理分页数据. 当前分页长度:%s', $list->count()));
+            $runtimeCalculator = new RuntimeCalculator();
+            $runtimeCalculator->start();
+
             $final = []; // 写入的数据集合
 
             foreach ($list as $item) {
@@ -130,8 +136,14 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
                 }
             }
 
-            AmazonSettlementReportDataFlatFileV2Model::insert($final);
+            if (count($final) > 0) {
+                AmazonSettlementReportDataFlatFileV2Model::insert($final);
+            }
+
+            $console->info(sprintf('结束处理分页数据. 耗时:%s', $runtimeCalculator->stop()));
         });
+
+        $console->notice(sprintf('报告ID:%s 结束处理数据. 耗时:%s', $report_id, $runtimeCalculator->stop()));
 
         return true;
     }

@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  *
  * @author   xiaoguo0426
@@ -26,8 +25,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class StdoutLogger implements StdoutLoggerInterface
 {
     private OutputInterface $output;
+
     /**
-     * @var array|string[]
+     * @var array<string>
      */
     private array $tags = [
         'context',

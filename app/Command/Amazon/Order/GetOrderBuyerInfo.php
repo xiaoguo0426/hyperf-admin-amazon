@@ -16,7 +16,6 @@ use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
-use Carbon\Carbon;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
@@ -44,7 +43,6 @@ class GetOrderBuyerInfo extends HyperfCommand
 
     public function handle(): void
     {
-
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $amazon_order_id = $this->input->getArgument('order_id');

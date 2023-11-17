@@ -13,7 +13,7 @@ namespace App\Util\Amazon\Creator;
 class OrderItemCreator implements CreatorInterface
 {
     /**
-     * @var string[]
+     * @var array<string>
      */
     public array $amazon_order_ids;
 

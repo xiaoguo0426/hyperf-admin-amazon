@@ -12,7 +12,6 @@ namespace App\Util;
 
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Configuration;
-use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\Marketplace;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
@@ -25,7 +24,6 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Http\Client\ClientExceptionInterface;
 
 class AmazonSDK
 {
@@ -241,28 +239,26 @@ class AmazonSDK
         return $this->marketplace_ids;
     }
 
-//    public function setMarketplaceIds(array $marketplace_ids): void
-//    {
-//        $this->marketplace_ids = $marketplace_ids;
-//    }
+    //    public function setMarketplaceIds(array $marketplace_ids): void
+    //    {
+    //        $this->marketplace_ids = $marketplace_ids;
+    //    }
 
     public function getRefreshToken(): string
     {
         return $this->refresh_token;
     }
 
-//    public function setRefreshToken(string $refresh_token): void
-//    {
-//        $this->refresh_token = $refresh_token;
-//    }
+    //    public function setRefreshToken(string $refresh_token): void
+    //    {
+    //        $this->refresh_token = $refresh_token;
+    //    }
 
     /**
-     * @param bool $force_refresh
      * @throws \AmazonPHP\SellingPartner\Exception\ApiException
      * @throws \JsonException
      * @throws \Psr\Http\Client\ClientExceptionInterface
      * @throws \RedisException
-     * @return \AmazonPHP\SellingPartner\SellingPartnerSDK
      */
     public function getSdk(bool $force_refresh = false): SellingPartnerSDK
     {
@@ -334,11 +330,8 @@ class AmazonSDK
     }
 
     /**
-     * @param string $region
-     * @param bool $force_refresh
      * @throws \AmazonPHP\SellingPartner\Exception\ApiException
      * @throws \Psr\Http\Client\ClientExceptionInterface
-     * @return \AmazonPHP\SellingPartner\AccessToken
      */
     public function getToken(string $region, bool $force_refresh = false): AccessToken
     {
