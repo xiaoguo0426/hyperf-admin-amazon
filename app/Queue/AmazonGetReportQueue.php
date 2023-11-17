@@ -26,7 +26,6 @@ use App\Util\Log\AmazonReportGetLog;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\Inject;
-use Psr\Http\Client\ClientExceptionInterface;
 
 class AmazonGetReportQueue extends Queue
 {
@@ -44,8 +43,10 @@ class AmazonGetReportQueue extends Queue
     }
 
     /**
-     * @throws \Exception
-     * @throws ClientExceptionInterface
+     * @param \App\Queue\Data\QueueDataInterface $queueData
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {

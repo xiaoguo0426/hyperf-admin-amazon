@@ -128,6 +128,7 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
     /**
      * 设置属性.
      *
+     * @param mixed $value
      * @throws \JsonException
      * @throws \RedisException
      */

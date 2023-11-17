@@ -16,7 +16,7 @@ use App\Util\Prefix;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-abstract class AbstractQueue
+abstract class AbstractQueue implements QueueInterface
 {
     protected ?object $redis;
 
@@ -41,15 +41,15 @@ abstract class AbstractQueue
         $this->redis = Redis::get();
     }
 
-    abstract public function getQueueName(): void;
+    abstract public function getQueueName(): string;
 
     abstract public function getQueueDataClass(): string;
 
-    abstract public function push(QueueDataInterface $queueData): void;
+    abstract public function push(QueueDataInterface $queueData): bool;
 
-    abstract public function pop(): void;
+    abstract public function pop(): bool;
 
-    abstract public function handleQueueData(QueueDataInterface $queueData): void;
+    abstract public function handleQueueData(QueueDataInterface $queueData): bool;
 
     /**
      * 队列安全线  0为不检测。大于0则会判断该队列当前长度是否超过安全线设置.

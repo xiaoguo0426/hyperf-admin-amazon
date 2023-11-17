@@ -83,6 +83,10 @@ return (new PhpCsFixer\Config())
         'standardize_not_equals' => true,
         'multiline_comment_opening_closing' => true,
         'strict_param' => true,
+        'phpdoc_to_comment' => true,
+        'return_type_declaration' => ['space_before' => 'none'],
+        'phpdoc_to_return_type' => ['scalar_types' => true],
+        'phpdoc_no_empty_return' => true,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

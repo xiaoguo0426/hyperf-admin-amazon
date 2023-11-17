@@ -14,13 +14,13 @@ use App\Queue\Data\QueueDataInterface;
 
 interface QueueInterface
 {
-    public function getQueueName(): void;
+    public function getQueueName(): string;
 
     public function getQueueDataClass(): string;
 
-    public function push(QueueDataInterface $queueData): void;
+    public function push(QueueDataInterface $queueData): bool;
 
-    public function pop(): void;
+    public function pop(): bool;
 
-    public function handleQueueData(QueueDataInterface $queueData): void;
+    public function handleQueueData(QueueDataInterface $queueData): bool;
 }

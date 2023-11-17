@@ -57,13 +57,11 @@ class AmazonOrderItemData extends QueueData implements \JsonSerializable
         ], JSON_THROW_ON_ERROR);
     }
 
-    public function parse(array $arr): self
+    public function parse(array $arr): void
     {
         $this->merchant_id = $arr['merchant_id'];
         $this->merchant_store_id = $arr['merchant_store_id'];
         $this->order_id = $arr['order_id'];
-
-        return $this;
     }
 
     /**

@@ -57,11 +57,10 @@ class AmazonFinanceListFinancialEventsByOrderIdData extends QueueData
         ], JSON_THROW_ON_ERROR);
     }
 
-    public function parse(array $arr): self
+    public function parse(array $arr): void
     {
         $this->setMerchantId($arr['merchant_id']);
         $this->setMerchantStoreId($arr['merchant_store_id']);
         $this->setOrderId($arr['order_id']);
-        return $this;
     }
 }

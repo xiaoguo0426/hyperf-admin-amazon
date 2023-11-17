@@ -32,9 +32,9 @@ class Queue extends AbstractQueue
     /**
      * @throws \RedisException
      */
-    public function push(QueueDataInterface $queueData): int
+    public function push(QueueDataInterface $queueData): bool
     {
-        return (int) $this->redis->lpush($this->queue_name, $queueData->toJson());
+        return (bool) $this->redis->lpush($this->queue_name, $queueData->toJson());
     }
 
     /**

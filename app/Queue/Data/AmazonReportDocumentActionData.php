@@ -70,13 +70,11 @@ class AmazonReportDocumentActionData extends QueueData
         ], JSON_THROW_ON_ERROR);
     }
 
-    public function parse(array $arr): AmazonReportDocumentActionData
+    public function parse(array $arr): void
     {
         $this->setMerchantId($arr['merchant_id']);
         $this->setMerchantStoreId($arr['merchant_store_id']);
         $this->setReportDocumentId($arr['report_document_id']);
         $this->setReportType($arr['report_type']);
-
-        return $this;
     }
 }

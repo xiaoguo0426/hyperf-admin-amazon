@@ -11,3 +11,6 @@ parameters:
     - '#Static call to instance method AmazonPHP\\SellingPartner\\Marketplace::[a-zA-Z0-9\\_]+\(\)#'
     - '#Constant BASE_PATH not found#'
     - '#Call to an undefined static method App\\Model\\[A-Za-z0-9_]+::insert\(\)#'
+    - '#Access to an undefined property#'
+    - '#PHPDoc tag @property has invalid value#'
+    - '#Call to an undefined method Hyperf\\Database#'

@@ -151,7 +151,7 @@ class AmazonActionReportData extends QueueData implements \JsonSerializable
         ];
     }
 
-    public function parse(array $arr): AmazonActionReportData
+    public function parse(array $arr): void
     {
         $this->setMerchantId($arr['merchant_id']);
         $this->setMerchantStoreId($arr['merchant_store_id']);
@@ -161,8 +161,6 @@ class AmazonActionReportData extends QueueData implements \JsonSerializable
         $this->setReportFilePath($arr['report_file_path']);
         $this->setDataStartTime($arr['data_start_time']);
         $this->setDataEndTime($arr['data_end_time']);
-
-        return $this;
     }
 
     /**

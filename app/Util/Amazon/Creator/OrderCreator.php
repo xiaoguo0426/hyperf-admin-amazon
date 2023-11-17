@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Util\Amazon\Creator;
 
+use AmazonPHP\SellingPartner\Model\Orders\ItemApprovalStatus;
 use AmazonPHP\SellingPartner\Model\Orders\ItemApprovalType;
 
 class OrderCreator implements CreatorInterface
@@ -74,7 +75,7 @@ class OrderCreator implements CreatorInterface
     public ?array $item_approval_types = null;
 
     /**
-     * @var null|?ItemApprovalStatus[]
+     * @var null|ItemApprovalStatus[]
      */
     public ?array $item_approval_status = null;
 

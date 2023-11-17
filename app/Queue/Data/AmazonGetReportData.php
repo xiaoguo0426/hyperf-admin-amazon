@@ -27,14 +27,14 @@ class AmazonGetReportData extends QueueData
      *
      * @var null|string
      */
-    private string $data_start_time;
+    private ?string $data_start_time;
 
     /**
      * 报告数据结束时间.
      *
      * @var null|string
      */
-    private string $data_end_time;
+    private ?string $data_end_time;
 
     public function getMerchantId(): int
     {
@@ -89,7 +89,7 @@ class AmazonGetReportData extends QueueData
     /**
      * @return null|string
      */
-    public function getDataStartTime(): string
+    public function getDataStartTime(): ?string
     {
         return $this->data_start_time;
     }
@@ -102,7 +102,7 @@ class AmazonGetReportData extends QueueData
     /**
      * @return null|string
      */
-    public function getDataEndTime(): string
+    public function getDataEndTime(): ?string
     {
         return $this->data_end_time;
     }
@@ -125,7 +125,7 @@ class AmazonGetReportData extends QueueData
         ], JSON_THROW_ON_ERROR);
     }
 
-    public function parse(array $arr): AmazonGetReportData
+    public function parse(array $arr): void
     {
         $this->setMerchantId($arr['merchant_id']);
         $this->setMerchantStoreId($arr['merchant_store_id']);
@@ -134,7 +134,5 @@ class AmazonGetReportData extends QueueData
         $this->setReportType($arr['report_type']);
         $this->setDataStartTime($arr['data_start_time']);
         $this->setDataEndTime($arr['data_end_time']);
-
-        return $this;
     }
 }
