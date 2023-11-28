@@ -499,4 +499,7 @@ return [
             'total' => 'total',
         ],
     ],
+
+    'GET_LEDGER_SUMMARY_VIEW_DATA' => [],
+    'GET_LEDGER_DETAIL_VIEW_DATA' => [],
 ];

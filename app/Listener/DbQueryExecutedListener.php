@@ -11,16 +11,16 @@ declare(strict_types=1);
 namespace App\Listener;
 
 use App\Util\Log\SqlLog;
+use Hyperf\Collection\Arr;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
 
 #[Listener]
 class DbQueryExecutedListener implements ListenerInterface
 {
-    private LoggerInterface $logger;
+    private SqlLog $logger;
 
     public function __construct(ContainerInterface $container)
     {
@@ -38,16 +38,24 @@ class DbQueryExecutedListener implements ListenerInterface
     {
         if ($event instanceof QueryExecuted) {
             $sql = $event->sql;
-            if (! \Hyperf\Collection\Arr::isAssoc($event->bindings)) {
+            if (! Arr::isAssoc($event->bindings)) {
                 $position = 0;
                 foreach ($event->bindings as $value) {
                     $position = strpos($sql, '?', $position);
                     if ($position === false) {
                         break;
                     }
-                    $value = "'{$value}'";
-                    $sql = substr_replace($sql, $value, $position, 1);
-                    $position += strlen($value);
+                    if (is_int($value)) {
+                        $val = (string) ($value);
+                    } else if (is_string($value)) {
+                        $val = "'{$value}'";
+                    } else {
+                        $val = "'{$value}'";
+                        $this->logger->notice(sprintf('sql:%s 中参数位置 %s 值类型有误，请检查.', $sql, $position));
+                    }
+//                    $val = "'{$value}'";
+                    $sql = substr_replace($sql, $val, $position, 1);
+                    $position += strlen($val);
                 }
             }
 

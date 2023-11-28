@@ -40,11 +40,11 @@ class AmazonGetReportDocumentQueue extends Queue
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws \JsonException
+     * @param \App\Queue\Data\QueueDataInterface $queueData
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
@@ -69,7 +69,7 @@ class AmazonGetReportDocumentQueue extends Queue
 
             $retry = 10;
 
-            $dir = sprintf('%s%s/%s/%s-%s/', config('amazon.report_template_path'), 'scheduled', $report_type, $merchant_id, $merchant_store_id);
+            $dir = sprintf('%s%s/%s/%s-%s/', \Hyperf\Config\config('amazon.report_template_path'), 'scheduled', $report_type, $merchant_id, $merchant_store_id);
             $file_base_name = $report_document_id;
 
             while (true) {

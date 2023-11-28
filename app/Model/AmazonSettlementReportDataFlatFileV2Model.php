@@ -14,7 +14,6 @@ namespace App\Model;
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id
- * @property $date
  * @property $settlement_id
  * @property $settlement_start_date
  * @property $settlement_end_date

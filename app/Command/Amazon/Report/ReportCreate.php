@@ -76,10 +76,8 @@ class ReportCreate extends HyperfCommand
             $report_end_date = $reportEndDate->format('Y-m-d');
         }
 
-        if (is_null($is_force_create)) {
+        if ($is_force_create === '') {
             $is_force_create = '0';
-        } else {
-            $is_force_create = '1';
         }
 
         if ($is_range_date !== '1') {

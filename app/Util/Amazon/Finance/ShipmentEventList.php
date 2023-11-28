@@ -395,7 +395,7 @@ class ShipmentEventList extends FinanceBase
             ]);
         }
 
-        var_dump($collection->toJson());
+//        var_dump($collection->toJson());
 
         return true;
     }

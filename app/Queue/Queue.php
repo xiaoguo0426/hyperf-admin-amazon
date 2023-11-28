@@ -15,15 +15,11 @@ use App\Queue\Data\QueueDataInterface;
 use App\Util\Log\QueueLog;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class Queue extends AbstractQueue
 {
-    #[Inject]
-    private QueueLog $queueLog;
-
     public function getQueueName(): string
     {
         return '';
@@ -46,12 +42,13 @@ class Queue extends AbstractQueue
     public function pop(): bool
     {
         $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+        $logger = ApplicationContext::getContainer()->get(QueueLog::class);
 
         $pid = posix_getpid();
 
         $process_title = $this->queue_name . '-' . $pid;
         cli_set_process_title($process_title);
-
+        //swoole下无法做到进程平滑退出
         $signal_handler = static function ($sig_no) use ($console): void {
             $pid = posix_getpid();
             $title = cli_get_process_title();
@@ -77,12 +74,12 @@ class Queue extends AbstractQueue
                     break;
                 }
             } catch (\RedisException $exception) {
-                $this->queueLog->error(sprintf('队列：%s 连接Redis异常.%s', $this->queue_name, $exception->getMessage()));
+                $logger->error(sprintf('队列：%s 连接Redis异常.%s', $this->queue_name, $exception->getMessage()));
                 break;
             }
 
             $data = $pop[1];
-            $this->queueLog->info(sprintf('队列：%s 消费数据. data:%s', $this->queue_name, $data));
+            $logger->info(sprintf('队列：%s 消费数据. data:%s', $this->queue_name, $data));
             //            $decode = json_decode($data, true);
             //            if (json_last_error() !== JSON_ERROR_NONE) {
             //                Log::record('队列：' . $this->queue_name . ' 数据格式不是合法的JSON格式. data:' . $data);
@@ -103,20 +100,23 @@ class Queue extends AbstractQueue
             $t2 = microtime(true);
 
             if ($this->isLogHandleDataTime) {
-                $this->queueLog->debug(sprintf('队列：%s 消费数据. data:%s  耗时:%s 秒', $this->queue_name, $data, round($t2 - $t1, 3)));
+                $logger->debug(sprintf('队列：%s 消费数据. data:%s  耗时:%s 秒', $this->queue_name, $data, round($t2 - $t1, 3)));
             }
 
             if ($handle === false) {
                 $retry = $dataObject->getRetry();
                 if ($retry < $retryInterval) {
                     ++$retry;
+
                     $dataObject->setRetry($retry);
                     $json = $dataObject->toJson();
-                    $this->queueLog->warning(sprintf('队列：%s  消费失败，重新入队. data:%s', $this->queue_name, $json));
+
+                    $logger->warning(sprintf('队列：%s  消费失败，重新入队. data:%s', $this->queue_name, $json));
+
                     $this->push($dataObject);
                 }
             } else {
-                $this->queueLog->info(sprintf('队列：%s  消费成功. data:%s', $this->queue_name, $data));
+                $logger->info(sprintf('队列：%s  消费成功. data:%s', $this->queue_name, $data));
             }
 
             pcntl_signal_dispatch();

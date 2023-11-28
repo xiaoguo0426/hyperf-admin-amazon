@@ -83,6 +83,8 @@ class ReportFactory
             'GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE_V2' => V2SettlementReportDataFlatFileV2::class,
             'GET_V2_SELLER_PERFORMANCE_REPORT' => V2SellerPerformanceReport::class,
             'GET_DATE_RANGE_FINANCIAL_TRANSACTION_DATA' => DateRangeFinancialTransactionDataReport::class,
+            'GET_LEDGER_SUMMARY_VIEW_DATA' => FbaLedgerSummaryViewDataReport::class,
+            'GET_LEDGER_DETAIL_VIEW_DATA' => FbaLedgerDetailViewDataReport::class,
             default => throw new \RuntimeException(sprintf('请定义%s报告处理类', $report_type)),
         };
 

@@ -91,7 +91,9 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
             $item = [];
             foreach ($map as $index => $value) {
                 if (! isset($new[$index])) {
+                    var_dump($new);
                     $console->error(sprintf('列不存在:%s merchant_id:%s merchant_store_id:%s file:%s', $index, $merchant_id, $merchant_store_id, $file));
+                    die();
                     continue;
                 }
                 $val = $new[$index];
@@ -112,6 +114,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
             $item['merchant_store_id'] = $merchant_store_id;
             $item['created_at'] = $cur_date;
             $item['updated_at'] = $cur_date;
+            $item['report_id'] = $report_id;
             $collection->push($item);
         }
         fclose($handle);

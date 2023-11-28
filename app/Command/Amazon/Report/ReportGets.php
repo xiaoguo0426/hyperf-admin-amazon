@@ -77,11 +77,11 @@ class ReportGets extends HyperfCommand
 
                         foreach ($reports as $report) {
                             $report_type = $report->getReportType();
-                            //                            $marketplace_ids = $report->getMarketplaceIds();
-                            $data_start_time = $report->getDataStartTime();
-                            $data_end_time = $report->getDataEndTime();
-                            $report_schedule_id = $report->getReportScheduleId();
-                            $report_document_id = $report->getReportDocumentId();
+                            $report_marketplace_ids = $report->getMarketplaceIds();
+                            $data_start_time = $report->getDataStartTime()?->format('Y-m-d H:i:s') ?? '';
+                            $data_end_time = $report->getDataEndTime()?->format('Y-m-d H:i:s') ?? '';
+                            $report_schedule_id = $report->getReportScheduleId() ?? '';
+                            $report_document_id = $report->getReportDocumentId() ?? '';
 
                             $dir = sprintf('%s%s/%s/%s-%s/', $report_template_path, 'scheduled', $report_type, $merchant_id, $merchant_store_id);
                             if (! is_dir($dir) && ! mkdir($dir, 0755, true) && ! is_dir($dir)) {
@@ -93,8 +93,10 @@ class ReportGets extends HyperfCommand
                             if (file_exists($file_path)) {
                                 // 文件存在了直接返回
                                 $console->warning($file_path . ' 文件已存在');
-                                //                                continue;
+                                continue;
                             }
+
+                            $console->notice(sprintf('report_type:%s report_marketplace_ids:%s data_start_time:%s data_end_time:%s report_schedule_id:%s report_document_id:%s', $report_type, json_encode($report_marketplace_ids, JSON_THROW_ON_ERROR), $data_start_time, $data_end_time, $report_schedule_id, $report_document_id));
 
                             $amazonGetReportDocumentData = new AmazonGetReportDocumentData();
                             $amazonGetReportDocumentData->setMerchantId($merchant_id);
@@ -136,6 +138,7 @@ class ReportGets extends HyperfCommand
                         break;
                     }
                 }
+
             }
 
             return true;
