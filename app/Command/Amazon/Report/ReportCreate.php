@@ -108,10 +108,9 @@ class ReportCreate extends HyperfCommand
     }
 
     /**
-     * @param ?string $report_start_date
-     * @param ?string $report_end_date
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
      */
     private function fly(int $merchant_id, int $merchant_store_id, string $report_type, ?string $report_start_date, ?string $report_end_date, string $is_force_create): void
     {

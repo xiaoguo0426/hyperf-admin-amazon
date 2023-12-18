@@ -56,30 +56,30 @@ class GetShipmentDetails extends HyperfCommand
 
             $retry = 10;
 
-//            while (true) {
-//                try {
-//                    $response = $sdk->shipmentInvoicing()->getShipmentDetails($accessToken, $region);
-//                    $marketplaceParticipationList = $response->getPayload();
-//                    if (is_null($marketplaceParticipationList)) {
-//                        break;
-//                    }
-//
-//                    $errors = $response->getErrors();
-//                    if (! is_null($errors)) {
-//                        break;
-//                    }
-//
-//                    break;
-//                } catch (ApiException $e) {
-//                    --$retry;
-//                    if ($retry > 0) {
-//                        continue;
-//                    }
-//                    break;
-//                } catch (InvalidArgumentException $e) {
-//                    continue;
-//                }
-//            }
+            //            while (true) {
+            //                try {
+            //                    $response = $sdk->shipmentInvoicing()->getShipmentDetails($accessToken, $region);
+            //                    $marketplaceParticipationList = $response->getPayload();
+            //                    if (is_null($marketplaceParticipationList)) {
+            //                        break;
+            //                    }
+            //
+            //                    $errors = $response->getErrors();
+            //                    if (! is_null($errors)) {
+            //                        break;
+            //                    }
+            //
+            //                    break;
+            //                } catch (ApiException $e) {
+            //                    --$retry;
+            //                    if ($retry > 0) {
+            //                        continue;
+            //                    }
+            //                    break;
+            //                } catch (InvalidArgumentException $e) {
+            //                    continue;
+            //                }
+            //            }
 
             return true;
         });

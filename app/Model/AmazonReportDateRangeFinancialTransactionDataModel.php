@@ -49,5 +49,9 @@ namespace App\Model;
  */
 class AmazonReportDateRangeFinancialTransactionDataModel extends Model
 {
+    public const CREATED_AT = 'created_at';
+
+    public const UPDATED_AT = 'updated_at';
+
     protected ?string $table = 'amazon_report_date_range_financial_transaction_data';
 }

@@ -10,11 +10,8 @@ declare(strict_types=1);
 
 namespace App\Command\Fake;
 
-use AmazonPHP\SellingPartner\AccessToken;
-use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Queue\AmazonReportDocumentActionQueue;
 use App\Queue\Data\AmazonReportDocumentActionData;
-use App\Util\AmazonSDK;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerInterface;
@@ -62,16 +59,14 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
             $amazonReportDocumentActionData->setReportDocumentId($report_document_id);
 
             $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
-
         }
-//
-//        $amazonReportDocumentActionData = new AmazonReportDocumentActionData();
-//        $amazonReportDocumentActionData->setMerchantId($merchant_id);
-//        $amazonReportDocumentActionData->setMerchantStoreId($merchant_store_id);
-//        $amazonReportDocumentActionData->setReportType($report_type);
-//        $amazonReportDocumentActionData->setReportDocumentId('amzn1.spdoc.1.4.na.2eb15a3c-400f-4062-aab6-fb0b48c3ae1c.T3EEZT6NLPDADT.1202');
-//
-//        $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
-
+        //
+        //        $amazonReportDocumentActionData = new AmazonReportDocumentActionData();
+        //        $amazonReportDocumentActionData->setMerchantId($merchant_id);
+        //        $amazonReportDocumentActionData->setMerchantStoreId($merchant_store_id);
+        //        $amazonReportDocumentActionData->setReportType($report_type);
+        //        $amazonReportDocumentActionData->setReportDocumentId('amzn1.spdoc.1.4.na.2eb15a3c-400f-4062-aab6-fb0b48c3ae1c.T3EEZT6NLPDADT.1202');
+        //
+        //        $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
     }
 }

@@ -24,15 +24,11 @@ class AmazonGetReportData extends QueueData
 
     /**
      * 报告数据开始时间.
-     *
-     * @var null|string
      */
     private ?string $data_start_time;
 
     /**
      * 报告数据结束时间.
-     *
-     * @var null|string
      */
     private ?string $data_end_time;
 
@@ -86,9 +82,6 @@ class AmazonGetReportData extends QueueData
         $this->report_type = $report_type;
     }
 
-    /**
-     * @return null|string
-     */
     public function getDataStartTime(): ?string
     {
         return $this->data_start_time;
@@ -99,9 +92,6 @@ class AmazonGetReportData extends QueueData
         $this->data_start_time = $data_start_time;
     }
 
-    /**
-     * @return null|string
-     */
     public function getDataEndTime(): ?string
     {
         return $this->data_end_time;

@@ -48,7 +48,7 @@ class Queue extends AbstractQueue
 
         $process_title = $this->queue_name . '-' . $pid;
         cli_set_process_title($process_title);
-        //swoole下无法做到进程平滑退出
+        // swoole下无法做到进程平滑退出
         $signal_handler = static function ($sig_no) use ($console): void {
             $pid = posix_getpid();
             $title = cli_get_process_title();

@@ -90,12 +90,12 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
             }, $explodes);
             $item = [];
             foreach ($map as $index => $value) {
-                if (! isset($new[$index])) {
-                    var_dump($new);
-                    $console->error(sprintf('列不存在:%s merchant_id:%s merchant_store_id:%s file:%s', $index, $merchant_id, $merchant_store_id, $file));
-                    die();
-                    continue;
-                }
+                //                if (! isset($new[$index])) {
+                //                    var_dump($new);
+                //                    $console->error(sprintf('列不存在:%s merchant_id:%s merchant_store_id:%s file:%s', $index, $merchant_id, $merchant_store_id, $file));
+                //                    die();
+                //                    continue;
+                //                }
                 $val = $new[$index];
                 if ($value === 'date') {
                     if ($locale === 'es') {
@@ -105,6 +105,8 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
                         // 解析类似 Jun 26, 2023 11:53:30 PM PDT 格式时间
                         $val = Carbon::createFromLocaleFormat('F j, Y H:i:s A T', $locale, $val)->format('Y-m-d H:i:s');
                     }
+                } elseif (($value === 'quantity') && $val === '') {
+                    $val = 0;
                 }
 
                 $item[$value] = $val;
@@ -125,7 +127,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
 
         try {
             // 数据分片处理
-            $collection->chunk(1000)->each(static function (Collection $list) use ($console, $merchant_id, $merchant_store_id): void {
+            $collection->chunk(1000)->each(static function (Collection $list) use ($console): void {
                 $console->info(sprintf('开始处理分页数据. 当前分页长度:%s', $list->count()));
                 $runtimeCalculator = new RuntimeCalculator();
                 $runtimeCalculator->start();
@@ -138,58 +140,105 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
                         $order_id = $item['order_id'];
                         $sku = $item['sku'];
                         $description = $item['description'];
+                        $report_id = $item['report_id'];
 
-                        $model = AmazonReportDateRangeFinancialTransactionDataModel::query()
-                            ->where('merchant_id', $merchant_id)
-                            ->where('merchant_store_id', $merchant_store_id)
-                            ->where('settlement_id', $settlement_id);
+                        //                        $model = AmazonReportDateRangeFinancialTransactionDataModel::query()
+                        //                            ->where('merchant_id', $merchant_id)
+                        //                            ->where('merchant_store_id', $merchant_store_id)
+                        //                            ->where('settlement_id', $settlement_id);
+                        //
+                        //                        if ($type === '' && $sku === '') {
+                        //                            // 优惠券类型付款报告数据，需要补充date条件。
+                        //                            $model->where('order_id', $order_id)
+                        //                                ->where('date', $item['date'])
+                        //                                ->where('report_id', $report_id);
+                        //                        } elseif ($type === 'Service Fee') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('description', $item['description'])
+                        //                                ->where('date', $item['date']);
+                        //                        } elseif ($type === 'Fee Adjustment' && $sku === '') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('total', $item['total']);
+                        //                        } elseif ($type === 'Order') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('sku', $sku)
+                        //                                ->where('date', $item['date']);
+                        //                        } elseif ($type === 'FBA Inventory Fee') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('description', $description)
+                        //                                ->where('date', $item['date'])
+                        //                                ->where('total', $item['total']);
+                        //                        } elseif ($type === 'FBA Customer Return Fee') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('sku', $sku)
+                        //                                ->where('description', $description)
+                        //                                ->where('date', $item['date']);
+                        //                        } elseif ($type === 'Refund') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('sku', $sku)
+                        //                                ->where('description', $description)
+                        //                                ->where('date', $item['date']);
+                        //                        } else if ($type === 'Adjustment') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('sku', $sku)
+                        //                                ->where('description', $description)
+                        //                                ->where('date', $item['date']);
+                        //                        } else if ($type === 'Order_Retrocharge') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('description', $description)
+                        //                                ->where('date', $item['date']);
+                        //                        } else if ($type === 'Liquidations') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('sku', $sku);
+                        //                        } else if ($type === 'Transfer') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('description', $description)
+                        //                                ->where('date', $item['date']);
+                        //                        } else if ($type === 'Deal Fee') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('description', $description);
+                        //                        } else if ($type === 'Refund_Retrocharge') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('description', $description);
+                        //                        } else if ($type === 'Debt') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('description', $description)
+                        //                                ->where('date', $item['date']);
+                        //                        } else if ($type === 'Chargeback Refund') {
+                        //                            $model->where('type', $type)
+                        //                                ->where('order_id', $order_id)
+                        //                                ->where('sku', $sku);
+                        // //                                ->where('description', $description);
+                        //                        } else {
+                        //                            $log = sprintf('日期范围财务报告 未知类型 %s. 请检查数据.已跳过处理 report_id:%s', $type, $report_id);
+                        //                            $console->error($log);
+                        //                            continue;
+                        //                        }
+                        //
+                        //
+                        //                        $collection = $model->first();
+                        //                        if (is_null($collection)) {
+                        //                            $final[] = $item;
+                        //                        }
 
-                        if ($type === '' && $sku === '') {
-                            // 优惠券类型付款报告数据，需要补充date条件。
-                            $model->where('order_id', $order_id)
-                                ->where('date', $item['date']);
-                        } elseif ($type === 'Service Fee') {
-                            $model->where('type', $type)
-                                ->where('order_id', $order_id)
-                                ->where('description', $item['description'])
-                                ->where('date', $item['date']);
-                        } elseif ($type === 'Fee Adjustment' && $sku === '') {
-                            $model->where('type', $type)
-                                ->where('order_id', $order_id)
-                                ->where('total', $item['total']);
-                        } elseif ($type === 'Order') {
-                            $model->where('type', $type)
-                                ->where('order_id', $order_id)
-                                ->where('sku', $sku)
-                                ->where('date', $item['date']);
-                        } elseif ($type === 'FBA Inventory Fee') {
-                            $model->where('type', $type)
-                                ->where('order_id', $order_id)
-                                ->where('description', $description)
-                                ->where('date', $item['date'])
-                                ->where('total', $item['total']);
-                        } elseif ($type === 'FBA Customer Return Fee') {
-                            $model->where('type', $type)
-                                ->where('order_id', $order_id)
-                                ->where('sku', $sku)
-                                ->where('description', $description)
-                                ->where('date', $item['date']);
-                        } elseif ($type === 'Refund') {
-                            $model->where('type', $type)
-                                ->where('order_id', $order_id)
-                                ->where('sku', $sku)
-                                ->where('description', $description)
-                                ->where('date', $item['date']);
-                        }
-
-                        $collection = $model->first();
-                        if (is_null($collection)) {
-                            $final[] = $item;
-                        }
+                        $final[] = $item;
                     }
-
-                    AmazonReportDateRangeFinancialTransactionDataModel::insert($final);
+                    if (count($final) > 0) {
+                        AmazonReportDateRangeFinancialTransactionDataModel::insert($final);
+                    }
                 } catch (\Exception $exception) {
+                    var_dump($exception->getMessage());
                 }
 
                 $console->info(sprintf('结束处理分页数据. 耗时:%s', $runtimeCalculator->stop()));

@@ -7,6 +7,8 @@ declare(strict_types=1);
  * @contact  740644717@qq.com
  * @license  MIT
  */
+use function Hyperf\Support\env;
+
 return [
     'default' => [
         'driver' => env('DB_DRIVER', 'mysql'),

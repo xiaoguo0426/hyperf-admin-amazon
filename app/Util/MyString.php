@@ -13,10 +13,7 @@ namespace App\Util;
 class MyString
 {
     /**
-     * 找出两个字符串相同的部分
-     * @param string $str1
-     * @param string $str2
-     * @return string
+     * 找出两个字符串相同的部分.
      */
     public static function findCommonSubstring(string $str1, string $str2): string
     {
@@ -36,10 +33,7 @@ class MyString
     }
 
     /**
-     * 找出两个字符串前缀相同的部分
-     * @param string $str1
-     * @param string $str2
-     * @return string
+     * 找出两个字符串前缀相同的部分.
      */
     public static function findCommonPrefix(string $str1, string $str2): string
     {
@@ -57,9 +51,7 @@ class MyString
     }
 
     /**
-     * 找出数组前缀相同的部分
-     * @param mixed $array
-     * @return array
+     * 找出数组前缀相同的部分.
      */
     public static function findCommonPrefixes(mixed $array): array
     {

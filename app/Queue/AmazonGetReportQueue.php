@@ -43,10 +43,8 @@ class AmazonGetReportQueue extends Queue
     }
 
     /**
-     * @param \App\Queue\Data\QueueDataInterface $queueData
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
-     * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {

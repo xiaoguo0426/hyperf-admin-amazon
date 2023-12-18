@@ -76,13 +76,9 @@ class AmazonApp
 
     /**
      * 单个Amazon应用配置回调并触发Amazon SDK.
-     * @param int $merchant_id
-     * @param int $merchant_store_id
-     * @param callable $func
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \RedisException
-     * @return bool
      */
     public static function tok(int $merchant_id, int $merchant_store_id, callable $func): bool
     {

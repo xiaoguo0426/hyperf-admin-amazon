@@ -23,9 +23,6 @@ use App\Util\AmazonSDK;
 use App\Util\Log\AmazonReportDocumentLog;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Psr\Http\Client\ClientExceptionInterface;
 
 class AmazonGetReportDocumentQueue extends Queue
 {
@@ -40,11 +37,9 @@ class AmazonGetReportDocumentQueue extends Queue
     }
 
     /**
-     * @param \App\Queue\Data\QueueDataInterface $queueData
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \RedisException
-     * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {

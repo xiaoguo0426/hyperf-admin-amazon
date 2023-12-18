@@ -16,7 +16,6 @@ use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
-use SplFileObject;
 
 class V2SettlementReportDataFlatFileV2 extends ReportBase
 {
@@ -35,7 +34,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         //        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
         $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
-        $splFileObject = new SplFileObject($file, 'r');
+        $splFileObject = new \SplFileObject($file, 'r');
         $header_line = str_replace("\r\n", '', $splFileObject->fgets());
         $headers = explode("\t", trim($header_line));
 
@@ -47,13 +46,13 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
             $map[$index] = $config[$header];
         }
 
-        $summary_line = str_replace("\r\n", '', $splFileObject->fgets());//统计行数据不入库
+        $summary_line = str_replace("\r\n", '', $splFileObject->fgets()); // 统计行数据不入库
         $summaries = explode("\t", trim($summary_line));
 
         $report_settlement_start_date = $summaries[1];
         $report_settlement_end_date = $summaries[2];
         $report_deposit_date = $summaries[3];
-//        $report_total_amount = $summaries[4];//整个报告的total_amount； 要慎用
+        //        $report_total_amount = $summaries[4];//整个报告的total_amount； 要慎用
         $report_currency = $summaries[5];
 
         $cur_date = Carbon::now()->format('Y-m-d H:i:s');
@@ -62,7 +61,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         $splFileObject->seek(1); // 从第2行开始读取数据
         while (! $splFileObject->eof()) {
             $fgets = str_replace("\r\n", '', $splFileObject->fgets());
-            if ('' === $fgets) {
+            if ($fgets === '') {
                 continue;
             }
             $item = [];
@@ -88,7 +87,6 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
             $item['updated_at'] = $cur_date;
             $item['report_id'] = $report_id;
             $collection->push($item);
-
         }
 
         $console->notice(sprintf('报告ID:%s 开始处理数据. 数据长度:%s', $report_id, $collection->count()));
@@ -103,35 +101,44 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
             $final = []; // 写入的数据集合
 
             foreach ($list as $item) {
-                $merchant_id = $item['merchant_id'];
-                $merchant_store_id = $item['merchant_store_id'];
-                $settlement_id = $item['settlement_id'];
-                $order_id = $item['order_id'];
-                $transaction_type = $item['transaction_type'];
-                $amount_type = $item['amount_type'];
-                $amount_description = $item['amount_description'];
-                $sku = $item['sku'];
+                //                $merchant_id = $item['merchant_id'];
+                //                $merchant_store_id = $item['merchant_store_id'];
+                //                $settlement_id = $item['settlement_id'];
+                //                $order_id = $item['order_id'];
+                //                $transaction_type = $item['transaction_type'];
+                //                $amount_type = $item['amount_type'];
+                //                $amount_description = $item['amount_description'];
+                //                $sku = $item['sku'];
+                //                $report_id = $item['report_id'];
+                //
+                //                $model = AmazonSettlementReportDataFlatFileV2Model::query()
+                //                    ->where('merchant_id', $merchant_id)
+                //                    ->where('merchant_store_id', $merchant_store_id)
+                //                    ->where('settlement_id', $settlement_id)
+                //                    ->where('order_id', $order_id)
+                //                    ->where('transaction_type', $transaction_type)
+                //                    ->where('amount_type', $amount_type)
+                //                    ->where('amount_description', $amount_description);
+                //
+                //                if ($transaction_type === 'Order' && ($amount_type === 'ItemFees' || $amount_type === 'ItemPrice' || $amount_type === 'ItemWithheldTax' || $amount_type === 'Promotion')) {
+                //                    $model->where('sku', $sku);
+                //                } elseif ($transaction_type === 'CouponRedemptionFee' && $amount_type === 'CouponRedemptionFee') {
+                //                    $posted_date_time = $item['posted_date_time'];
+                //                    $model->where('posted_date_time', $posted_date_time);
+                //                } else if (){
+                //                    var_dump($item);
+                //
+                //                    $console->error(sprintf('付款报告 未知类型 %s. 请检查数据.已跳过处理 report_id:%s', $transaction_type, $report_id));
+                //                    exit();
+                //                    continue;
+                //                }
+                //
+                //                $collection = $model->first();
+                //                if (is_null($collection)) {
+                //                    $final[] = $item;
+                //                }
 
-                $model = AmazonSettlementReportDataFlatFileV2Model::query()
-                    ->where('merchant_id', $merchant_id)
-                    ->where('merchant_store_id', $merchant_store_id)
-                    ->where('settlement_id', $settlement_id)
-                    ->where('order_id', $order_id)
-                    ->where('transaction_type', $transaction_type)
-                    ->where('amount_type', $amount_type)
-                    ->where('amount_description', $amount_description);
-
-                if ($transaction_type === 'Order' && ($amount_type === 'ItemFees' || $amount_type === 'ItemPrice' || $amount_type === 'ItemWithheldTax' || $amount_type === 'Promotion')) {
-                    $model->where('sku', $sku);
-                } elseif ($transaction_type === 'CouponRedemptionFee' && $amount_type === 'CouponRedemptionFee') {
-                    $posted_date_time = $item['posted_date_time'];
-                    $model->where('posted_date_time', $posted_date_time);
-                }
-
-                $collection = $model->first();
-                if (is_null($collection)) {
-                    $final[] = $item;
-                }
+                $final[] = $item;
             }
 
             if (count($final) > 0) {
@@ -150,14 +157,13 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
     {
         if ($currency === 'USD') {
             $val = Carbon::createFromFormat('Y-m-d H:i:s T', $val)->format('Y-m-d H:i:s');
-        } else if ($currency === 'CAD') {
+        } elseif ($currency === 'CAD') {
             $val = Carbon::createFromFormat('d.m.Y H:i:s T', $val)->format('Y-m-d H:i:s');
-        } else if ($currency === 'MXN') {
+        } elseif ($currency === 'MXN') {
             $val = Carbon::createFromFormat('d.m.Y H:i:s T', $val)->format('Y-m-d H:i:s');
         } else {
             return $val;
         }
         return $val;
     }
-
 }

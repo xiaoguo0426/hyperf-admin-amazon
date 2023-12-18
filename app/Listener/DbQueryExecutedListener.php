@@ -46,14 +46,14 @@ class DbQueryExecutedListener implements ListenerInterface
                         break;
                     }
                     if (is_int($value)) {
-                        $val = (string) ($value);
-                    } else if (is_string($value)) {
+                        $val = (string) $value;
+                    } elseif (is_string($value)) {
                         $val = "'{$value}'";
                     } else {
                         $val = "'{$value}'";
                         $this->logger->notice(sprintf('sql:%s 中参数位置 %s 值类型有误，请检查.', $sql, $position));
                     }
-//                    $val = "'{$value}'";
+                    //                    $val = "'{$value}'";
                     $sql = substr_replace($sql, $val, $position, 1);
                     $position += strlen($val);
                 }

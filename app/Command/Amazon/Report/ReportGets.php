@@ -138,7 +138,6 @@ class ReportGets extends HyperfCommand
                         break;
                     }
                 }
-
             }
 
             return true;

@@ -17,6 +17,8 @@ use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
+use function Hyperf\Config\config;
+
 abstract class ReportBase implements ReportInterface
 {
     protected string $dir;
@@ -43,7 +45,7 @@ abstract class ReportBase implements ReportInterface
         $this->report_start_date = null;
         $this->report_end_date = null;
 
-        $header_map = \Hyperf\Config\config('amazon_report_headers.' . $this->report_type);
+        $header_map = config('amazon_report_headers.' . $this->report_type);
         if (is_null($header_map)) {
             throw new \RuntimeException(sprintf('请在config/amazon_report_headers.php文件中配置该报告类型%s表头映射关系', $this->report_type));
         }
@@ -178,11 +180,11 @@ abstract class ReportBase implements ReportInterface
 
     public function checkDir(): bool
     {
-        $date = (new Carbon($this->getReportStartDate() ? $this->getReportStartDate()->format('Ymd') : '-1 day'))->setTimezone('UTC')->format('Ymd');
+        $date = (new Carbon($this->getReportStartDate() ? $this->getReportStartDate()->format('Ymd') : '-1 day'))->setTimezone('UTC');
         // 检测report_type是哪个
         $category = $this->checkReportTypeCategory($this->report_type);
 
-        $dir = sprintf('%s%s/%s/%s-%s/', \Hyperf\Config\config('amazon.report_template_path'), $category, $date, $this->merchant_id, $this->merchant_store_id);
+        $dir = sprintf('%s%s/%s/%s/%s-%s/', config('amazon.report_template_path'), $category, $date->format('Y-m'), $date->format('d'), $this->merchant_id, $this->merchant_store_id);
         $this->dir = $dir;
 
         if (! is_dir($dir) && ! mkdir($dir, 0755, true) && ! is_dir($dir)) {
@@ -205,7 +207,7 @@ abstract class ReportBase implements ReportInterface
      */
     public function checkReportTypeCategory(string $report_type): string
     {
-        $all = \Hyperf\Config\config('amazon_reports');
+        $all = config('amazon_reports');
         foreach ($all as $type => $report_list) {
             foreach ($report_list as $report_type_raw) {
                 if ($report_type_raw === $report_type) {

@@ -24,9 +24,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Stringable\Str;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -49,8 +47,9 @@ class GetListingsItem extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
      */
     public function handle(): void
     {

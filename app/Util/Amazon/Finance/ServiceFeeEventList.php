@@ -60,7 +60,6 @@ class ServiceFeeEventList extends FinanceBase
                 'asin' => $asin,
             ]);
         }
-        var_dump($collection->values());
         return true;
     }
 }
