@@ -12,6 +12,7 @@ namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonSettlementReportDataFlatFileV2Model;
 use App\Util\ConsoleLog;
+use App\Util\Log\AmazonReportDocumentLog;
 use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
 use Hyperf\Collection\Collection;
@@ -19,19 +20,19 @@ use Hyperf\Context\ApplicationContext;
 
 class V2SettlementReportDataFlatFileV2 extends ReportBase
 {
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \JsonException
+     */
     public function run(string $report_id, string $file): bool
     {
-        $currency_list = [
-            'USD',
-            'CAD',
-            'MXN',
-        ];
         $config = $this->getHeaderMap();
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
 
-        //        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
+        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
         $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $splFileObject = new \SplFileObject($file, 'r');
@@ -58,10 +59,21 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         $cur_date = Carbon::now()->format('Y-m-d H:i:s');
         $collection = new Collection();
 
-        $splFileObject->seek(1); // 从第2行开始读取数据
+        //seek的bug在8.0.1中修复，且hyperf3.1框架要求>=8.1,所以此处仅作记录，其他php版本在在使用时注意甄别
+        //统计行不入库
+        // https://bugs.php.net/bug.php?id=62004   https://github.com/php/php-src/pull/6434
+//        $currentVersion = phpversion();
+//        if (version_compare($currentVersion, '8.0.1', '>=')) {
+//            $splFileObject->seek(2); // 从第2行开始读取数据
+//        } else {
+//            $splFileObject->seek(1); // 从第2行开始读取数据
+//        }
+        $splFileObject->seek(2); // 从第2行开始读取数据
+
+        $md5_hash_idx_map = [];
         while (! $splFileObject->eof()) {
             $fgets = str_replace("\r\n", '', $splFileObject->fgets());
-            if ($fgets === '') {
+            if ('' === $fgets) {
                 continue;
             }
             $item = [];
@@ -83,66 +95,67 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
 
             $item['merchant_id'] = $merchant_id;
             $item['merchant_store_id'] = $merchant_store_id;
-            $item['created_at'] = $cur_date;
-            $item['updated_at'] = $cur_date;
             $item['report_id'] = $report_id;
-            $collection->push($item);
-        }
 
-        $console->notice(sprintf('报告ID:%s 开始处理数据. 数据长度:%s', $report_id, $collection->count()));
+            $new_item = $item;
+
+            ksort($new_item);
+
+            $md5_hash = md5(json_encode($new_item, JSON_THROW_ON_ERROR));//TODO 注意hash的生成规则 有些类型不能排除
+
+            if ($collection->offsetExists($md5_hash)) {
+                $idx = $md5_hash_idx_map[$md5_hash] ?? 1;
+                $md5_hash = md5(json_encode($new_item, JSON_THROW_ON_ERROR) . $idx);
+                $md5_hash_idx_map[$md5_hash] = $idx + 1;
+            } else {
+                $item['md5_hash'] = $md5_hash;
+                $item['created_at'] = $cur_date;
+                $item['updated_at'] = $cur_date;
+
+                $collection->push($item);
+            }
+        }
+        $report_data_length = $collection->count();
+        $console->notice(sprintf('报告ID:%s 开始处理数据. 数据长度:%s', $report_id, $report_data_length));
         $runtimeCalculator = new RuntimeCalculator();
         $runtimeCalculator->start();
 
-        $collection->chunk(1000)->each(static function (Collection $list) use ($console): void {
+        $collection->chunk(1000)->each(static function (Collection $list) use ($merchant_id, $merchant_store_id, $console): void {
+            $page_date_length = $list->count();
             $console->info(sprintf('开始处理分页数据. 当前分页长度:%s', $list->count()));
             $runtimeCalculator = new RuntimeCalculator();
             $runtimeCalculator->start();
 
+            $pluck = $list->pluck('md5_hash');
+            $md5_hash_list = $pluck->toArray();
+
             $final = []; // 写入的数据集合
+            $collections = AmazonSettlementReportDataFlatFileV2Model::query()->where('merchant_id', $merchant_id)
+                ->where('merchant_store_id', $merchant_store_id)
+                ->whereIn('md5_hash', $md5_hash_list)
+                ->pluck('md5_hash');
+            if ($collections->isEmpty()) {
+                $final = $list->toArray();
+            } else {
+                $exist_md5_hash_list = $collections->toArray();
+                $new_list = $list->pluck([], 'md5_hash')->toArray();//因为分片后索引了，需要重新修正集合的索引
 
-            foreach ($list as $item) {
-                //                $merchant_id = $item['merchant_id'];
-                //                $merchant_store_id = $item['merchant_store_id'];
-                //                $settlement_id = $item['settlement_id'];
-                //                $order_id = $item['order_id'];
-                //                $transaction_type = $item['transaction_type'];
-                //                $amount_type = $item['amount_type'];
-                //                $amount_description = $item['amount_description'];
-                //                $sku = $item['sku'];
-                //                $report_id = $item['report_id'];
-                //
-                //                $model = AmazonSettlementReportDataFlatFileV2Model::query()
-                //                    ->where('merchant_id', $merchant_id)
-                //                    ->where('merchant_store_id', $merchant_store_id)
-                //                    ->where('settlement_id', $settlement_id)
-                //                    ->where('order_id', $order_id)
-                //                    ->where('transaction_type', $transaction_type)
-                //                    ->where('amount_type', $amount_type)
-                //                    ->where('amount_description', $amount_description);
-                //
-                //                if ($transaction_type === 'Order' && ($amount_type === 'ItemFees' || $amount_type === 'ItemPrice' || $amount_type === 'ItemWithheldTax' || $amount_type === 'Promotion')) {
-                //                    $model->where('sku', $sku);
-                //                } elseif ($transaction_type === 'CouponRedemptionFee' && $amount_type === 'CouponRedemptionFee') {
-                //                    $posted_date_time = $item['posted_date_time'];
-                //                    $model->where('posted_date_time', $posted_date_time);
-                //                } else if (){
-                //                    var_dump($item);
-                //
-                //                    $console->error(sprintf('付款报告 未知类型 %s. 请检查数据.已跳过处理 report_id:%s', $transaction_type, $report_id));
-                //                    exit();
-                //                    continue;
-                //                }
-                //
-                //                $collection = $model->first();
-                //                if (is_null($collection)) {
-                //                    $final[] = $item;
-                //                }
-
-                $final[] = $item;
+                //差集  需要插入的数据
+                $array_diff = array_diff($md5_hash_list, $exist_md5_hash_list);
+                if (count($array_diff)) {
+                    foreach ($array_diff as $diff) {
+                        $final[] = $new_list[$diff];
+                    }
+                }
             }
-
-            if (count($final) > 0) {
+            $final_data_length = count($final);
+            if ($final_data_length) {
                 AmazonSettlementReportDataFlatFileV2Model::insert($final);
+                //当前分页数量与实际写入数量不相等时才需要高亮提示
+                if ($page_date_length !== $final_data_length) {
+                    $console->warning(sprintf('当前分页实际写入数据长度 %s.', $final_data_length));
+                    $console->newLine();
+                }
             }
 
             $console->info(sprintf('结束处理分页数据. 耗时:%s', $runtimeCalculator->stop()));

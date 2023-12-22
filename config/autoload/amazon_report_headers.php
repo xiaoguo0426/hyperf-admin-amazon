@@ -423,7 +423,7 @@ return [
             'shipping credits' => 'shipping_credits',
             'shipping credits tax' => 'shipping_credits_tax',
             'gift wrap credits' => 'gift_wrap_credits',
-            'giftwrap credits tax' => 'giftwrap_credits_tax',
+            'giftwrap credits tax' => 'gift_wrap_credits_tax',
             'Regulatory Fee' => 'regulatory_fee',
             'Tax On Regulatory Fee' => 'tax_on_regulatory_fee',
             'promotional rebates' => 'promotional_rebates',
@@ -444,7 +444,7 @@ return [
             'description' => 'description',
             'quantity' => 'quantity',
             'marketplace' => 'marketplace',
-            'account type' => 'account_type',
+//            '' => 'account_type',//CA地区报告没有该表头数据
             'fulfillment' => 'fulfillment',
             'order city' => 'order_city',
             'order state' => 'order_state',
@@ -455,11 +455,13 @@ return [
             'shipping credits' => 'shipping_credits',
             'shipping credits tax' => 'shipping_credits_tax',
             'gift wrap credits' => 'gift_wrap_credits',
-            'giftwrap credits tax' => 'giftwrap_credits_tax',
-            'Regulatory Fee' => 'regulatory_fee',
-            'Tax On Regulatory Fee' => 'tax_on_regulatory_fee',
+            'giftwrap credits tax' => 'gift_wrap_credits_tax',
+            'Regulatory fee' => 'regulatory_fee',
+            'Tax on regulatory fee' => 'tax_on_regulatory_fee',
             'promotional rebates' => 'promotional_rebates',
             'promotional rebates tax' => 'promotional_rebates_tax',
+//            '' => 'sales_tax_collected',//CA地区报告没有该表头数据
+//            '' => 'marketplace_facilitator_tax',//CA地区报告没有该表头数据
             'marketplace withheld tax' => 'marketplace_withheld_tax',
             'selling fees' => 'selling_fees',
             'fba fees' => 'fba_fees',
@@ -470,13 +472,14 @@ return [
         'MXN' => [
             'fecha/hora' => 'date',
             'Id. de liquidación' => 'settlement_id',
-            'tipo ' => 'type',
+            'tipo' => 'type',
             'Id. del pedido' => 'order_id',
             'sku' => 'sku',
             'descripción' => 'description',
             'cantidad' => 'quantity',
             'marketplace' => 'marketplace',
-            'cumplimiento' => 'compliance', // todo
+//            '' => 'account_type',//MX地区报告没有该表头数据
+            'cumplimiento' => 'fulfillment',
             'ciudad del pedido' => 'order_city',
             'estado del pedido' => 'order_state',
             'código postal del pedido' => 'order_postal',
@@ -486,18 +489,20 @@ return [
             'créditos de envío' => 'shipping_credits',
             'impuesto de abono de envío' => 'shipping_credits_tax',
             'créditos por envoltorio de regalo' => 'gift_wrap_credits',
-            'impuesto de créditos de envoltura' => 'giftwrap_credits_tax',
+            'impuesto de créditos de envoltura' => 'gift_wrap_credits_tax',
             'Tarifa reglamentaria' => 'regulatory_fee',
             'Impuesto sobre tarifa reglamentaria' => 'tax_on_regulatory_fee',
             'descuentos promocionales' => 'promotional_rebates',
             'impuesto de reembolsos promocionales' => 'promotional_rebates_tax',
+//            '' => 'sales_tax_collected',//MX地区报告没有该表头数据
+//            '' => 'marketplace_facilitator_tax',//MX地区报告没有该表头数据
             'impuesto de retenciones en la plataforma' => 'marketplace_withheld_tax',
             'tarifas de venta' => 'selling_fees',
             'tarifas fba' => 'fba_fees',
             'tarifas de otra transacción' => 'other_transaction_fees',
             'otro' => 'other',
             'total' => 'total',
-        ],
+        ]
     ],
 
     'GET_LEDGER_SUMMARY_VIEW_DATA' => [],

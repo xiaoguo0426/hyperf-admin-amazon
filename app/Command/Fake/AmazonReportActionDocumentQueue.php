@@ -12,10 +12,13 @@ namespace App\Command\Fake;
 
 use App\Queue\AmazonReportDocumentActionQueue;
 use App\Queue\Data\AmazonReportDocumentActionData;
+use App\Util\ConsoleLog;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use function Hyperf\Config\config;
 
 #[Command]
 class AmazonReportActionDocumentQueue extends HyperfCommand
@@ -32,6 +35,7 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
             ->addArgument('report_type', InputArgument::REQUIRED, '报告类型')
+            ->addArgument('report_id', InputArgument::OPTIONAL, '报告ID')
             ->setDescription('Fake Amazon Report Action Document Queue');
     }
 
@@ -40,33 +44,43 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $report_type = (string) $this->input->getArgument('report_type');
+        $report_id = (string) $this->input->getArgument('report_id');
 
-        $report_file_dir = sprintf('%s%s/%s/%s-%s/', \Hyperf\Config\config('amazon.report_template_path'), 'scheduled', $report_type, $merchant_id, $merchant_store_id);
+        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $amazonReportDocumentActionQueue = new AmazonReportDocumentActionQueue();
 
-        $items = scandir($report_file_dir);
-        foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
-                continue;
+        $report_file_dir = sprintf('%s%s/%s/%s-%s/', config('amazon.report_template_path'), 'scheduled', $report_type, $merchant_id, $merchant_store_id);
+        if ($report_id) {
+            $file_path = sprintf('%s%s.txt', $report_file_dir, $report_id);
+            if (! file_exists($file_path)) {
+                $console->error(sprintf('%s 文件不存在', $file_path));
+                return;
             }
-            $report_document_id = pathinfo($item, PATHINFO_FILENAME);
 
             $amazonReportDocumentActionData = new AmazonReportDocumentActionData();
             $amazonReportDocumentActionData->setMerchantId($merchant_id);
             $amazonReportDocumentActionData->setMerchantStoreId($merchant_store_id);
             $amazonReportDocumentActionData->setReportType($report_type);
-            $amazonReportDocumentActionData->setReportDocumentId($report_document_id);
+            $amazonReportDocumentActionData->setReportDocumentId($report_id);
 
             $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
+        } else {
+            $items = scandir($report_file_dir);
+            foreach ($items as $item) {
+                if ($item === '.' || $item === '..') {
+                    continue;
+                }
+                $report_document_id = pathinfo($item, PATHINFO_FILENAME);
+
+                $amazonReportDocumentActionData = new AmazonReportDocumentActionData();
+                $amazonReportDocumentActionData->setMerchantId($merchant_id);
+                $amazonReportDocumentActionData->setMerchantStoreId($merchant_store_id);
+                $amazonReportDocumentActionData->setReportType($report_type);
+                $amazonReportDocumentActionData->setReportDocumentId($report_document_id);
+
+                $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
+            }
         }
-        //
-        //        $amazonReportDocumentActionData = new AmazonReportDocumentActionData();
-        //        $amazonReportDocumentActionData->setMerchantId($merchant_id);
-        //        $amazonReportDocumentActionData->setMerchantStoreId($merchant_store_id);
-        //        $amazonReportDocumentActionData->setReportType($report_type);
-        //        $amazonReportDocumentActionData->setReportDocumentId('amzn1.spdoc.1.4.na.2eb15a3c-400f-4062-aab6-fb0b48c3ae1c.T3EEZT6NLPDADT.1202');
-        //
-        //        $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
     }
 }

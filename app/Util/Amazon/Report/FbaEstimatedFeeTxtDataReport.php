@@ -12,6 +12,7 @@ namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFbaEstimatedFeeModel;
 use App\Util\RedisHash\AmazonFbaEstimatedFeeHash;
+use function Hyperf\Support\make;
 
 class FbaEstimatedFeeTxtDataReport extends ReportBase
 {
@@ -91,7 +92,7 @@ class FbaEstimatedFeeTxtDataReport extends ReportBase
                 }
 
                 // 设置缓存
-                $hash = \Hyperf\Support\make(AmazonFbaEstimatedFeeHash::class, [$merchant_id, $merchant_store_id, $currency_item['currency']]);
+                $hash = make(AmazonFbaEstimatedFeeHash::class, [$merchant_id, $merchant_store_id, $currency_item['currency']]);
                 $hash[$asin] = $currency_item['expected_fulfillment_fee_per_unit'];
             }
         }

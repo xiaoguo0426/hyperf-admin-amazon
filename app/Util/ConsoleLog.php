@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Util;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use function Hyperf\Support\env;
 
 /**
  * Class ConsoleLog.
@@ -32,6 +33,11 @@ class ConsoleLog
 
     public function __call($name, $arguments)
     {
-        return \Hyperf\Support\env('DEBUG') !== true ? $this->logger->{$name}(...$arguments) : null;
+        return env('DEBUG') !== true ? $this->logger->{$name}(...$arguments) : null;
+    }
+
+    public function newLine(): void
+    {
+        echo "\r\n";
     }
 }

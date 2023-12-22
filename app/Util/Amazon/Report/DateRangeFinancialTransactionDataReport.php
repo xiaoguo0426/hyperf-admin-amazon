@@ -12,15 +12,32 @@ namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportDateRangeFinancialTransactionDataModel;
 use App\Util\ConsoleLog;
+use App\Util\Log\AmazonReportDocumentLog;
 use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
+use function Hyperf\Config\config;
 
 class DateRangeFinancialTransactionDataReport extends ReportBase
 {
+    /**
+     * @param string $report_id
+     * @param string $file
+     * @throws \JsonException
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return bool
+     */
     public function run(string $report_id, string $file): bool
     {
+
+        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
+        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
+
+        $merchant_id = $this->getMerchantId();
+        $merchant_store_id = $this->getMerchantStoreId();
+
         $headers_map = $this->getHeaderMap();
         $currency_list = array_keys($headers_map);
 
@@ -31,28 +48,44 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
 
         $config = [];
         $currency = '';
-        foreach ($currency_list as $currency) {
-            if (str_contains($desiredLine, $currency)) {
-                $config = $headers_map[$currency]; // 选择使用哪个货币对应的表头映射关系
+        foreach ($currency_list as $_currency) {
+            if (str_contains($desiredLine, $_currency)) {
+                $config = $headers_map[$_currency] ?? [];//选择使用哪个货币对应的表头映射关系
+                $currency = $_currency;
                 break;
             }
         }
+        if ($currency === '') {
+            $log = sprintf('merchant_id:%s merchant_store_id:%s report_id:%s currency:%s 无法解析当前报告对应的货币，请检查.', $merchant_id, $merchant_store_id, $report_id, $currency);
+            $console->error($log);
+            $logger->error($log);
+            return true;
+        }
         if (count($config) === 0) {
-            // 请定义该货币对应的表头映射关系
+            //请定义该货币对应的表头映射关系
+            $log = sprintf('merchant_id:%s merchant_store_id:%s report_id:%s currency:%s 无法找到当前货币对应的表头映射关系', $merchant_id, $merchant_store_id, $report_id, $currency);
+            $console->error($log);
+            $logger->error($log);
             return true;
         }
 
-        $locale = 'en';
-        if ($currency === 'MXN') {
-            // 时间解析语言
-            $locale = 'es'; // 西班牙语
+        //日期统一转换为UTC时区
+        if ($currency === 'USD' || $currency === 'CAD') {
+            //英语
+            $locale = 'en';
+            //解析类似 Jun 26, 2023 11:53:30 PM PDT 格式时间
+            $locale_format = 'F j, Y H:i:s A T';
+        } else if ($currency === 'MXN') {
+            //西班牙语
+            $locale = 'es';
+            //解析类似 12 abr 2023 16:26:06 GMT-7 格式时间
+            $locale_format = 'd F Y H:i:s \G\M\TO';
+        } else {
+            $log = sprintf('merchant_id:%s merchant_store_id:%s report_id:%s currency:%s 无法为当前报告解析日期语言，请检查', $merchant_id, $merchant_store_id, $report_id, $currency);
+            $console->error($log);
+            $logger->error($log);
+            return true;
         }
-
-        $merchant_id = $this->getMerchantId();
-        $merchant_store_id = $this->getMerchantStoreId();
-
-        //        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
-        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $handle = fopen($file, 'rb');
         // 前8行都是表头数据和报告描述信息，直接丢弃
@@ -77,6 +110,10 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
         $cur_date = Carbon::now()->format('Y-m-d H:i:s');
         $collection = new Collection();
 
+        //非英语地区的需要作语言转换
+        $report_lang = config('amazon.report_lang.' . $currency);
+
+        $md5_hash_idx_map = [];
         while (! feof($handle)) {
             $fgets = fgets($handle);
             if ($fgets === false) {
@@ -90,166 +127,112 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
             }, $explodes);
             $item = [];
             foreach ($map as $index => $value) {
-                //                if (! isset($new[$index])) {
-                //                    var_dump($new);
-                //                    $console->error(sprintf('列不存在:%s merchant_id:%s merchant_store_id:%s file:%s', $index, $merchant_id, $merchant_store_id, $file));
-                //                    die();
-                //                    continue;
-                //                }
+                if (! isset($new[$index])) {
+                    $console->error(sprintf('列不存在:%s merchant_id:%s merchant_store_id:%s file:%s', $index, $merchant_id, $merchant_store_id, $file));
+                    continue;
+                }
                 $val = $new[$index];
                 if ($value === 'date') {
-                    if ($locale === 'es') {
-                        // 解析类似 12 abr 2023 16:26:06 GMT-7 格式时间
-                        $val = Carbon::createFromLocaleFormat('d F Y H:i:s \G\M\TO', $locale, $val)->format('Y-m-d H:i:s');
-                    } else {
-                        // 解析类似 Jun 26, 2023 11:53:30 PM PDT 格式时间
-                        $val = Carbon::createFromLocaleFormat('F j, Y H:i:s A T', $locale, $val)->format('Y-m-d H:i:s');
-                    }
-                } elseif (($value === 'quantity') && $val === '') {
+                    $localeDate = Carbon::createFromLocaleFormat($locale_format, $locale, $val);
+                    $val = $localeDate->utc()->format('Y-m-d H:i:s');
+                } else if (($value === 'quantity') && $val === '') {
                     $val = 0;
+                } else if ($value === 'type') {
+                    if (! is_null($report_lang) && isset($report_lang[$val])) {
+                        $val = $report_lang[$val];
+                    }
+                } else if ($value === 'description') {
+                    if (! is_null($report_lang) && isset($report_lang[$val])) {
+                        $val = $report_lang[$val];
+                    }
                 }
-
                 $item[$value] = $val;
             }
 
             $item['merchant_id'] = $merchant_id;
             $item['merchant_store_id'] = $merchant_store_id;
+            $item['currency'] = $currency;
+            $item['report_id'] = $report_id;
+
+            $new_item = $item;
+            ksort($new_item);
+
+            $md5_hash = md5(json_encode($new_item, JSON_THROW_ON_ERROR));//TODO 注意hash的生成规则
+
+            if ($collection->offsetExists($md5_hash)) {
+                $idx = $md5_hash_idx_map[$md5_hash] ?? 1;
+                $md5_hash = md5(json_encode($new_item, JSON_THROW_ON_ERROR) . $idx);
+                $md5_hash_idx_map[$md5_hash] = $idx + 1;
+            }
+            $item['md5_hash'] = $md5_hash;
             $item['created_at'] = $cur_date;
             $item['updated_at'] = $cur_date;
-            $item['report_id'] = $report_id;
+
             $collection->push($item);
+
         }
         fclose($handle);
 
-        $console->notice(sprintf('报告ID:%s 开始处理数据. 数据长度:%s', $report_id, $collection->count()));
+        $report_data_length = $collection->count();
+        $console->notice(sprintf('报告ID:%s 开始处理数据. 数据长度:%s', $report_id, $report_data_length));
         $runtimeCalculator = new RuntimeCalculator();
         $runtimeCalculator->start();
 
-        try {
-            // 数据分片处理
-            $collection->chunk(1000)->each(static function (Collection $list) use ($console): void {
-                $console->info(sprintf('开始处理分页数据. 当前分页长度:%s', $list->count()));
-                $runtimeCalculator = new RuntimeCalculator();
-                $runtimeCalculator->start();
+        // 数据分片处理
+        $collection->chunk(1000)->each(static function (Collection $list) use ($merchant_id, $merchant_store_id, $console): void {
 
-                try {
-                    $final = []; // 写入的数据集合
-                    foreach ($list as $item) {
-                        $settlement_id = $item['settlement_id'];
-                        $type = $item['type'];
-                        $order_id = $item['order_id'];
-                        $sku = $item['sku'];
-                        $description = $item['description'];
-                        $report_id = $item['report_id'];
+            $page_date_length = $list->count();
+            $console->info(sprintf('开始处理分页数据. 当前分页长度:%s', $page_date_length));
+            $runtimeCalculator = new RuntimeCalculator();
+            $runtimeCalculator->start();
 
-                        //                        $model = AmazonReportDateRangeFinancialTransactionDataModel::query()
-                        //                            ->where('merchant_id', $merchant_id)
-                        //                            ->where('merchant_store_id', $merchant_store_id)
-                        //                            ->where('settlement_id', $settlement_id);
-                        //
-                        //                        if ($type === '' && $sku === '') {
-                        //                            // 优惠券类型付款报告数据，需要补充date条件。
-                        //                            $model->where('order_id', $order_id)
-                        //                                ->where('date', $item['date'])
-                        //                                ->where('report_id', $report_id);
-                        //                        } elseif ($type === 'Service Fee') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('description', $item['description'])
-                        //                                ->where('date', $item['date']);
-                        //                        } elseif ($type === 'Fee Adjustment' && $sku === '') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('total', $item['total']);
-                        //                        } elseif ($type === 'Order') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('sku', $sku)
-                        //                                ->where('date', $item['date']);
-                        //                        } elseif ($type === 'FBA Inventory Fee') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('description', $description)
-                        //                                ->where('date', $item['date'])
-                        //                                ->where('total', $item['total']);
-                        //                        } elseif ($type === 'FBA Customer Return Fee') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('sku', $sku)
-                        //                                ->where('description', $description)
-                        //                                ->where('date', $item['date']);
-                        //                        } elseif ($type === 'Refund') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('sku', $sku)
-                        //                                ->where('description', $description)
-                        //                                ->where('date', $item['date']);
-                        //                        } else if ($type === 'Adjustment') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('sku', $sku)
-                        //                                ->where('description', $description)
-                        //                                ->where('date', $item['date']);
-                        //                        } else if ($type === 'Order_Retrocharge') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('description', $description)
-                        //                                ->where('date', $item['date']);
-                        //                        } else if ($type === 'Liquidations') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('sku', $sku);
-                        //                        } else if ($type === 'Transfer') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('description', $description)
-                        //                                ->where('date', $item['date']);
-                        //                        } else if ($type === 'Deal Fee') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('description', $description);
-                        //                        } else if ($type === 'Refund_Retrocharge') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('description', $description);
-                        //                        } else if ($type === 'Debt') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('description', $description)
-                        //                                ->where('date', $item['date']);
-                        //                        } else if ($type === 'Chargeback Refund') {
-                        //                            $model->where('type', $type)
-                        //                                ->where('order_id', $order_id)
-                        //                                ->where('sku', $sku);
-                        // //                                ->where('description', $description);
-                        //                        } else {
-                        //                            $log = sprintf('日期范围财务报告 未知类型 %s. 请检查数据.已跳过处理 report_id:%s', $type, $report_id);
-                        //                            $console->error($log);
-                        //                            continue;
-                        //                        }
-                        //
-                        //
-                        //                        $collection = $model->first();
-                        //                        if (is_null($collection)) {
-                        //                            $final[] = $item;
-                        //                        }
+            $pluck = $list->pluck('md5_hash');
+            $md5_hash_list = $pluck->toArray();
 
-                        $final[] = $item;
+            $final = []; // 写入的数据集合
+            $collections = AmazonReportDateRangeFinancialTransactionDataModel::query()->where('merchant_id', $merchant_id)
+                ->where('merchant_store_id', $merchant_store_id)
+                ->whereIn('md5_hash', $md5_hash_list)
+                ->pluck('md5_hash');
+            if ($collections->isEmpty()) {
+                $final = $list->toArray();
+            } else {
+                $exist_md5_hash_list = $collections->toArray();
+                $new_list = $list->pluck([], 'md5_hash')->toArray();//因为分片后索引了，需要重新修正集合的索引
+
+                //差集  需要插入的数据
+                $array_diff = array_diff($md5_hash_list, $exist_md5_hash_list);
+                if (count($array_diff)) {
+                    foreach ($array_diff as $diff) {
+                        $final[] = $new_list[$diff];
                     }
-                    if (count($final) > 0) {
-                        AmazonReportDateRangeFinancialTransactionDataModel::insert($final);
-                    }
-                } catch (\Exception $exception) {
-                    var_dump($exception->getMessage());
                 }
+            }
 
-                $console->info(sprintf('结束处理分页数据. 耗时:%s', $runtimeCalculator->stop()));
-            });
-        } catch (\RuntimeException $runtimeException) {
-            $console->error(sprintf('file:%s 处理失败. %s', $file, $runtimeException->getMessage()));
-            // 一旦出错，直接删除该文件，下一次重新拉取
-            //            unlink($file);
-        }
+            $final_data_length = count($final);
+            if ($final_data_length) {
+                AmazonReportDateRangeFinancialTransactionDataModel::insert($final);
+                //当前分页数量与实际写入数量不相等时才需要高亮提示
+                if ($page_date_length !== $final_data_length) {
+                    $console->warning(sprintf('当前分页实际写入数据长度 %s.', $final_data_length));
+                    $console->newLine();
+                }
+            }
+            $console->info(sprintf('结束处理分页数据. 耗时:%s', $runtimeCalculator->stop()));
+            $console->newLine();
+        });
 
         $console->notice(sprintf('报告ID:%s 结束处理数据. 耗时:%s', $report_id, $runtimeCalculator->stop()));
+
+        $real_data_length = AmazonReportDateRangeFinancialTransactionDataModel::where('merchant_id', $merchant_id)
+            ->where('merchant_store_id', $merchant_store_id)
+            ->where('report_id', $report_id)
+            ->count();
+        if ($report_data_length !== $real_data_length) {
+            $log = sprintf('日期范围报告 merchant_id:%s merchant_store_id:%s 报告ID:%s 报告数据长度:%s, 数据库数据长度:%s 两者数据长度不一致，请检查.', $merchant_id, $merchant_store_id, $report_id, $report_data_length, $real_data_length);
+            $console->error($log);
+            $logger->error($log);
+        }
 
         return true;
     }
