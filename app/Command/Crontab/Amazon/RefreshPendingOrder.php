@@ -24,6 +24,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use function Hyperf\Support\make;
 
 #[Command]
 class RefreshPendingOrder extends HyperfCommand
@@ -84,7 +85,7 @@ class RefreshPendingOrder extends HyperfCommand
                 $orderCreator->setNextToken($nextToken);
                 $orderCreator->setAmazonOrderIds($amazon_order_ids);
 
-                \Hyperf\Support\make(OrderEngine::class)->launch($amazonSDK, $sdk, $accessToken, $orderCreator);
+                make(OrderEngine::class)->launch($amazonSDK, $sdk, $accessToken, $orderCreator);
             });
 
             return true;

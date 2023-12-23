@@ -70,7 +70,7 @@ class AmazonActionReportQueue extends Queue
 
             $instance->run($report_id, $report_file_path);
         } catch (\Exception $e) {
-            var_dump($e->getTraceAsString());
+
             $logger->error(sprintf('Action 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $e->getMessage()));
             $console->error(sprintf('Action 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $e->getMessage()));
         }
