@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Util;
 
+use Carbon\Carbon;
+
 class Prefix
 {
     public static function amazonApp(int $merchant_id, int $merchant_store_id): string
@@ -40,5 +42,15 @@ class Prefix
     public static function amazonAsinFbaFee(int $merchant_id, int $merchant_store_id, string $currency): string
     {
         return 'amazon-asin-fba-fee:' . $currency . ':' . $merchant_id . ':' . $merchant_store_id;
+    }
+
+    public static function amazonReportMarkCanceled(int $merchant_id, int $merchant_store_id): string
+    {
+        return sprintf('amazon-report-mark-canceled:%s:%s:%s', Carbon::now()->format('Ymd'), $merchant_id, $merchant_store_id);
+    }
+
+    public static function amazonInventoryFnSkuMap(int $merchant_id, int $merchant_store_id): string
+    {
+        return sprintf('amazon-inventory-fnsku-sku-map:%s:%s', $merchant_id, $merchant_store_id);
     }
 }

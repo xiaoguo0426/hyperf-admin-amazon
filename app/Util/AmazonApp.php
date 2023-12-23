@@ -19,9 +19,8 @@ use App\Util\RedisHash\AmazonAppHash;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\ModelNotFoundException;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Client\ClientExceptionInterface;
+use function Hyperf\Support\make;
 
 class AmazonApp
 {
@@ -33,7 +32,7 @@ class AmazonApp
         if (! is_callable($func)) {
             return true; // 直接终止处理
         }
-        $appHash = \Hyperf\Support\make(AmazonAppHash::class, ['merchant_id' => $merchant_id, 'merchant_store_id' => $merchant_store_id]);
+        $appHash = make(AmazonAppHash::class, ['merchant_id' => $merchant_id, 'merchant_store_id' => $merchant_store_id]);
         $id = $appHash->id;
 
         if ($id) {
@@ -93,7 +92,7 @@ class AmazonApp
             /**
              * @var AmazonSDK $amazonSDK
              */
-            $amazonSDK = \Hyperf\Support\make(AmazonSDK::class, [$amazonAppModel]);
+            $amazonSDK = make(AmazonSDK::class, [$amazonAppModel]);
 
             $region = $amazonSDK->getRegion();
 
@@ -137,9 +136,11 @@ class AmazonApp
 
     /**
      * 所有Amazon应用配置回调并触发Amazon SDK.
-     *
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @param callable $func
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return void
      */
     public static function each(callable $func): void
     {

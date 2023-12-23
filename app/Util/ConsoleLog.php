@@ -11,16 +11,20 @@ declare(strict_types=1);
 namespace App\Util;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Stringable;
 use function Hyperf\Support\env;
 
 /**
  * Class ConsoleLog.
  *
- * @method void info($message)
- * @method void error($message)
- * @method void comment($message)
- * @method void warning($message)
- * @method void notice($message)
+ * @method void emergency(string|Stringable $message, array $context = [])
+ * @method void alert(string|Stringable $message, array $context = [])
+ * @method void critical(string|Stringable $message, array $context = [])
+ * @method void error(string|Stringable $message, array $context = [])
+ * @method void warning(string|Stringable $message, array $context = [])
+ * @method void notice(string|Stringable $message, array $context = [])
+ * @method void info(string|Stringable $message, array $context = [])
+ * @method void debug(string|Stringable $message, array $context = [])
  */
 class ConsoleLog
 {

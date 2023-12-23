@@ -12,12 +12,15 @@ namespace App\Util\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
 use App\Util\Log\AmazonReportLog;
+use App\Util\RedisHash\AmazonReportMarkCanceledHash;
 use Carbon\Carbon;
+use DateTimeInterface;
 use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 use function Hyperf\Config\config;
+use function Hyperf\Support\make;
 
 abstract class ReportBase implements ReportInterface
 {
@@ -229,5 +232,37 @@ abstract class ReportBase implements ReportInterface
     public function getFileExt(): string
     {
         return '.txt';
+    }
+
+    /**
+     * 检查Report内容
+     * @param string $file_path
+     * @return bool
+     */
+    public function checkReportContent(string $file_path): bool
+    {
+        return true;
+    }
+
+    /**
+     * 标记报告删除
+     */
+    public function markCanceled(string $report_type, array $marketplace_ids, ?DateTimeInterface $dataStartTime, ?DateTimeInterface $dataEndTime): bool
+    {
+        //被取消或被终止的报告需要被标记，今日内不再请求
+        /**
+         * @var AmazonReportMarkCanceledHash $amazonReportMarkCanceled
+         */
+        $amazonReportMarkCanceled = make(AmazonReportMarkCanceledHash::class,[$this->merchant_id, $this->merchant_store_id]);
+        return $amazonReportMarkCanceled->mark($report_type, $marketplace_ids, $dataStartTime, $dataEndTime);
+    }
+
+    /**
+     * 检查报告是否被标记删除
+     */
+    public function checkMarkCanceled(array $marketplace_ids): bool
+    {
+        $amazonReportMarkCanceled = make(AmazonReportMarkCanceledHash::class,[$this->merchant_id, $this->merchant_store_id]);
+        return $amazonReportMarkCanceled->check($this->report_type, $marketplace_ids, $this->getReportStartDate(), $this->getReportEndDate());
     }
 }
