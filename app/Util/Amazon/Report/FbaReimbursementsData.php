@@ -12,6 +12,7 @@ namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFbaReimbursementsDataModel;
 use Carbon\Carbon;
+use Hyperf\Database\Model\ModelNotFoundException;
 
 class FbaReimbursementsData extends ReportBase
 {
@@ -77,17 +78,26 @@ class FbaReimbursementsData extends ReportBase
                 $collection = new AmazonReportFbaReimbursementsDataModel();
             }
 
-            $collection->merchant_id = $merchant_id;
-            $collection->merchant_store_id = $merchant_store_id;
-            $collection->approval_date = isset($item['approval_date']) ? Carbon::parse($item['approval_date'])->format('Y-m-d H:i:s') : null;
-            $collection->reimbursement_id = $item['reimbursement_id'];
-            $collection->case_id = $item['case_id'] ?? '';
-            $collection->amazon_order_id = $item['amazon_order_id'] ?? '';
-            $collection->reason = $item['reason'] ?? '';
-            $collection->sku = $item['sku'];
-            $collection->fnsku = $item['fnsku'] ?? '';
-            $collection->asin = $item['asin'] ?? '';
-            $collection->product_name = $item['product_name'] ?? '';
+            try {
+                $collection = AmazonReportFbaReimbursementsDataModel::query()->where('merchant_id', $merchant_id)
+                    ->where('merchant_store_id', $merchant_store_id)
+                    ->where('reimbursement_id', $item['reimbursement_id'])
+                    ->firstOrFail();
+            } catch (ModelNotFoundException $modelNotFoundException) {
+                $collection->merchant_id = $merchant_id;
+                $collection->merchant_store_id = $merchant_store_id;
+                $collection->approval_date = isset($item['approval_date']) ? Carbon::parse($item['approval_date'])->format('Y-m-d H:i:s') : null;
+                $collection->reimbursement_id = $item['reimbursement_id'];
+                $collection->case_id = $item['case_id'] ?? '';
+                $collection->amazon_order_id = $item['amazon_order_id'] ?? '';
+                $collection->reason = $item['reason'] ?? '';
+                $collection->sku = $item['sku'];
+                $collection->fnsku = $item['fnsku'] ?? '';
+                $collection->asin = $item['asin'] ?? '';
+                $collection->product_name = $item['product_name'] ?? '';
+            }
+
+
             $collection->condition = $item['condition'] ?? '';
             $collection->currency_unit = $item['currency_unit'] ?? '';
             $collection->amount_per_unit = $item['amount_per_unit'] ?? 0;

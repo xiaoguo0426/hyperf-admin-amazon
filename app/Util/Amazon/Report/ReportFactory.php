@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Util\Amazon\Report;
 
+use function Hyperf\Support\make;
+
 class ReportFactory
 {
     public static function getInstance(int $merchant_id, int $merchant_store_id, string $report_type): ReportBase
@@ -88,6 +90,6 @@ class ReportFactory
             default => throw new \RuntimeException(sprintf('请定义%s报告处理类', $report_type)),
         };
 
-        return \Hyperf\Support\make($class, [$report_type, $merchant_id, $merchant_store_id]);
+        return make($class, [$report_type, $merchant_id, $merchant_store_id]);
     }
 }

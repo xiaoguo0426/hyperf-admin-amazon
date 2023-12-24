@@ -12,6 +12,7 @@ namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFbaFulfillmentCustomerReturnDataModel;
 use Carbon\Carbon;
+use Hyperf\Database\Model\ModelNotFoundException;
 
 class FbaFulfillmentCustomerReturnsData extends ReportBase
 {
@@ -74,29 +75,31 @@ class FbaFulfillmentCustomerReturnsData extends ReportBase
             $sku = $item['sku'];
             $fnsku = $item['fnsku'];
             $asin = $item['asin'];
+            $order_id = $item['order_id'];
+            $fulfillment_center_id = $item['fulfillment_center_id'];
 
-            $collection = AmazonReportFbaFulfillmentCustomerReturnDataModel::query()->where('merchant_id', $merchant_id)
-                ->where('merchant_store_id', $merchant_store_id)
-                ->where('return_date', $return_date)
-                ->where('sku', $sku)
-                ->where('fnsku', $fnsku)
-                ->where('asin', $asin)
-                ->first();
-
-            if (is_null($collection)) {
+            try {
+                $collection = AmazonReportFbaFulfillmentCustomerReturnDataModel::query()->where('merchant_id', $merchant_id)
+                    ->where('merchant_store_id', $merchant_store_id)
+                    ->where('return_date', $return_date)
+                    ->where('sku', $sku)
+                    ->where('asin', $asin)
+                    ->where('order_id', $order_id)
+                    ->where('fulfillment_center_id', $fulfillment_center_id)
+                    ->firstOrFail();
+            } catch (ModelNotFoundException $modelNotFoundException) {
                 $collection = new AmazonReportFbaFulfillmentCustomerReturnDataModel();
+                $collection->merchant_id = $merchant_id;
+                $collection->merchant_store_id = $merchant_store_id;
+                $collection->return_date = $return_date;
+                $collection->order_id = $order_id;
+                $collection->sku = $sku;
+                $collection->asin = $asin;
+                $collection->fnsku = $fnsku;
+                $collection->product_name = preg_replace('/[^a-zA-Z0-9 ]/i', '', $item['product_name']);
+                $collection->fulfillment_center_id = $item['fulfillment_center_id'];
             }
-
-            $collection->merchant_id = $merchant_id;
-            $collection->merchant_store_id = $merchant_store_id;
-            $collection->return_date = $return_date;
-            $collection->order_id = $item['order_id'];
-            $collection->sku = $item['sku'];
-            $collection->asin = $item['asin'];
-            $collection->fnsku = $item['fnsku'];
-            $collection->product_name = $item['product_name'];
             $collection->quantity = $item['quantity'];
-            $collection->fulfillment_center_id = $item['fulfillment_center_id'];
             $collection->detailed_disposition = $item['detailed_disposition'];
             $collection->reason = $item['reason'];
             $collection->status = $item['status'];
