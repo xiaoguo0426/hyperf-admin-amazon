@@ -17,6 +17,9 @@ class ReportFactory
     public static function getInstance(int $merchant_id, int $merchant_store_id, string $report_type): ReportBase
     {
         $class = match ($report_type) {
+
+            'GET_COUPON_PERFORMANCE_REPORT' => CouponPerformanceReport::class,
+            'GET_PROMOTION_PERFORMANCE_REPORT' => PromotionPerformanceReport::class,
             // Inventory reports
             'GET_FLAT_FILE_OPEN_LISTINGS_DATA' => FlatFileOpenListingsDataReport::class,// 请求不了
             'GET_MERCHANT_LISTINGS_ALL_DATA' => MerchantListingsAllDataReport::class,
@@ -60,10 +63,10 @@ class ReportFactory
             // Fulfillment by Amazon (FBA) reports
             'GET_AMAZON_FULFILLED_SHIPMENTS_DATA_GENERAL' => AmazonFulfilledShipmentsDataGeneralReport::class,
             'GET_AMAZON_FULFILLED_SHIPMENTS_DATA_INVOICING',
-            //        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
-            //        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
-            //        'GET_XML_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
-            //        'GET_XML_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
+                //        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
+                //        'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
+                //        'GET_XML_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL',
+                //        'GET_XML_ALL_ORDERS_DATA_BY_ORDER_DATE_GENERAL',
             'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_SALES_DATA',
             'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_PROMOTION_DATA',
             'GET_FBA_FULFILLMENT_CUSTOMER_TAXES_DATA',

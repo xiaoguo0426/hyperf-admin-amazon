@@ -100,7 +100,7 @@ class Queue extends AbstractQueue
             $t2 = microtime(true);
 
             if ($this->isLogHandleDataTime) {
-                $logger->debug(sprintf('队列：%s 消费数据. data:%s  耗时:%s 秒', $this->queue_name, $data, round($t2 - $t1, 3)));
+                $logger->info(sprintf('队列：%s 消费数据. data:%s  耗时:%s 秒', $this->queue_name, $data, round($t2 - $t1, 3)));
             }
 
             if ($handle === false) {
@@ -116,7 +116,7 @@ class Queue extends AbstractQueue
                     $this->push($dataObject);
                 }
             } else {
-                $logger->info(sprintf('队列：%s  消费成功. data:%s', $this->queue_name, $data));
+                $logger->info(sprintf('队列：%s 消费成功. data:%s', $this->queue_name, $data));
             }
 
             pcntl_signal_dispatch();

@@ -8,6 +8,9 @@ declare(strict_types=1);
  * @license  MIT
  */
 return [
+    'GET_COUPON_PERFORMANCE_REPORT' => [],
+    'GET_PROMOTION_PERFORMANCE_REPORT' => [],
+
     // Inventory reports
     'GET_FLAT_FILE_OPEN_LISTINGS_DATA' => [],
     'GET_MERCHANT_LISTINGS_ALL_DATA' => [

@@ -31,6 +31,7 @@ use JsonException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use function Hyperf\Support\make;
 
 #[Command]
 class ReportCreate extends HyperfCommand
@@ -180,7 +181,7 @@ class ReportCreate extends HyperfCommand
                         $response = $sdk->reports()->createReport($accessToken, $region, $body);
                         $report_id = $response->getReportId();
 
-                        $amazonGetReportData = \Hyperf\Support\make(AmazonGetReportData::class);
+                        $amazonGetReportData = make(AmazonGetReportData::class);
                         $amazonGetReportData->setMerchantId($merchant_id);
                         $amazonGetReportData->setMerchantStoreId($merchant_store_id);
                         $amazonGetReportData->setMarketplaceIds($marketplace_ids);
