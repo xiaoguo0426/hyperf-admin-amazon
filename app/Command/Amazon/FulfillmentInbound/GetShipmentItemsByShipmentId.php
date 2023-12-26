@@ -18,6 +18,7 @@ use App\Model\AmazonShipmentItemsModel;
 use App\Model\AmazonShipmentModel;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
+use App\Util\ConsoleLog;
 use App\Util\Log\AmazonFulfillmentInboundGetShipmentItemsByShipmentIdLog;
 use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
@@ -25,7 +26,6 @@ use Hyperf\Collection\Collection;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -44,7 +44,7 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
         parent::configure();
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
-//            ->addArgument('shipment_id', InputArgument::REQUIRED, 'shipment id')
+            ->addArgument('shipment_id', InputArgument::OPTIONAL, '货件ID', null)
             ->setDescription('Amazon Fulfillment Inbound Get Shipment Items By Shipment Id Command');
     }
 
@@ -56,17 +56,26 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
-        //        $shipment_id = (int) $this->input->getArgument('shipment_id');
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-            $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+        $shipment_id = $this->input->getArgument('shipment_id');
+
+        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($shipment_id) {
+            $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetShipmentItemsByShipmentIdLog::class);
 
             $amazonShipmentCollections = AmazonShipmentModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->when($shipment_id, function ($query, $value) {
+                    return $query->where('shipment_id', $value);
+                })
                 ->orderByDesc('id')
                 ->get();
             if ($amazonShipmentCollections->isEmpty()) {
+                if (is_null($shipment_id)) {
+                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s 没有符合条件的shipment数据', $merchant_id, $merchant_store_id));
+                } else {
+                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s shipment_id:%s 不存在', $merchant_id, $merchant_store_id, $shipment_id));
+                }
                 return true;
             }
 
@@ -185,10 +194,28 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                             break;
                         }
                     } catch (ApiException $e) {
-                        --$retry;
-                        if ($retry === 0) {
-                            break;
+                        if (! is_null($e->getResponseBody())) {
+                            $body = json_decode($e->getResponseBody(), true, 512, JSON_THROW_ON_ERROR);
+                            if (isset($body['errors'])) {
+                                $errors = $body['errors'];
+                                foreach ($errors as $error) {
+                                    if ($error['code'] !== 'QuotaExceeded') {
+                                        $console->warning(sprintf('merchant_id:%s merchant_store_id:%s Page:%s code:%s message:%s', $merchant_id, $merchant_store_id, $page, $error['code'], $error['message']));
+                                        break 2;
+                                    }
+                                }
+                            }
                         }
+
+                        --$retry;
+                        if ($retry > 0) {
+                            $console->warning(sprintf('merchant_id:%s merchant_store_id:%s Page:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $page, $retry));
+                            sleep(3);
+                            continue;
+                        }
+
+                        $console->error(sprintf('merchant_id:%s merchant_store_id:%s Page:%s 重试次数已用完', $merchant_id, $merchant_store_id, $page));
+                        break;
                     } catch (InvalidArgumentException $e) {
                         break;
                     }

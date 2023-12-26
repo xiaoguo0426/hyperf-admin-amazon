@@ -17,11 +17,11 @@ use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Model\AmazonShipmentModel;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
+use App\Util\ConsoleLog;
 use App\Util\Log\AmazonFulfillmentInboundGetTransportDetailsLog;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -41,6 +41,7 @@ class GetTransportDetails extends HyperfCommand
         // 指令配置
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
+            ->addArgument('shipment_id', InputArgument::OPTIONAL, '货件ID', null)
             ->setDescription('Amazon Fulfillment Inbound GetTransportDetails Command');
     }
 
@@ -52,17 +53,26 @@ class GetTransportDetails extends HyperfCommand
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
+        $shipment_id = $this->input->getArgument('shipment_id');
 
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-            $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($shipment_id) {
+            $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetTransportDetailsLog::class);
 
             $amazonShipmentsCollections = AmazonShipmentModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->when($shipment_id, function ($query, $value) {
+                    return $query->where('shipment_id', $value);
+                })
                 ->orderByDesc('id')
                 ->get();
             if ($amazonShipmentsCollections->isEmpty()) {
+                if (is_null($shipment_id)) {
+                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s 没有符合条件的shipment数据', $merchant_id, $merchant_store_id));
+                } else {
+                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s shipment_id:%s 不存在', $merchant_id, $merchant_store_id, $shipment_id));
+                }
                 return true;
             }
             foreach ($amazonShipmentsCollections as $amazonShipmentsCollection) {
