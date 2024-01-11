@@ -19,11 +19,11 @@ use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use function Hyperf\Support\make;
+use function Sentry\continueTrace;
 
 #[Command]
 class GetOrders extends HyperfCommand
@@ -39,30 +39,38 @@ class GetOrders extends HyperfCommand
         // 指令配置
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
+            ->addOption('region', null, InputOption::VALUE_OPTIONAL, '地区', null)
             ->addOption('order_ids', null, InputOption::VALUE_OPTIONAL, 'order_ids集合', null)
             ->setDescription('Amazon Order API Get Orders');
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
+        $real_region = $this->input->getOption('region');
         $amazon_order_ids = $this->input->getOption('order_ids');
 
         $that = $this;
 
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
+        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($real_region, $amazon_order_ids) {
             $created_after = null;
-            if (! is_null($amazon_order_ids)) {
+            if (! is_null($real_region) && ! is_null($amazon_order_ids)) {
+                if ($real_region !== $region) {
+                    return true;
+                }
                 $amazon_order_ids = explode(',', $amazon_order_ids);
             } else {
                 $last_create_date = AmazonOrderModel::query()
                     ->where('merchant_id', $merchant_id)
                     ->where('merchant_store_id', $merchant_store_id)
+                    ->where('region', $region)
                     ->orderBy('purchase_date', 'DESC')
                     ->value('purchase_date');
                 if (is_null($last_create_date)) {
@@ -82,7 +90,7 @@ class GetOrders extends HyperfCommand
             $orderCreator->setNextToken($nextToken);
             $orderCreator->setAmazonOrderIds($amazon_order_ids);
 
-            \Hyperf\Support\make(OrderEngine::class)->launch($amazonSDK, $sdk, $accessToken, $orderCreator);
+            make(OrderEngine::class)->launch($amazonSDK, $sdk, $accessToken, $orderCreator);
 
             return true;
         });

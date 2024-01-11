@@ -29,6 +29,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use function Hyperf\Support\make;
 
 #[Command]
 class ListFinancialEventGroups extends HyperfCommand
@@ -47,8 +48,10 @@ class ListFinancialEventGroups extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {
@@ -68,12 +71,12 @@ class ListFinancialEventGroups extends HyperfCommand
             /**
              * @var AmazonFinanceListFinancialEventsByGroupIdData $queueData
              */
-            $queueData = \Hyperf\Support\make(AmazonFinanceListFinancialEventsByGroupIdData::class);
+            $queueData = make(AmazonFinanceListFinancialEventsByGroupIdData::class);
 
             /**
              * @var AmazonFinanceFinancialListEventsByGroupIdQueue $queue
              */
-            $queue = \Hyperf\Support\make(AmazonFinanceFinancialListEventsByGroupIdQueue::class);
+            $queue = make(AmazonFinanceFinancialListEventsByGroupIdQueue::class);
 
             while (true) {
                 try {
@@ -164,6 +167,7 @@ class ListFinancialEventGroups extends HyperfCommand
                             $collection = new AmazonFinancialGroupModel();
                             $collection->merchant_id = $merchant_id;
                             $collection->merchant_store_id = $merchant_store_id;
+                            $collection->region = $region;
                             $collection->financial_event_group_id = $financial_event_group_id;
                             $collection->processing_status = $processing_status;
                             $collection->fund_transfer_status = $fund_transfer_status;

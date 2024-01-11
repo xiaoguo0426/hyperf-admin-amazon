@@ -27,9 +27,6 @@ use App\Util\RegionRefreshTokenConfig;
  * @property string $role_arn
  * @property string $lwa_client_id
  * @property string $lwa_client_id_secret
- * @property string $region
- * @property string $country_ids
- * @property string $refresh_token
  * @property string $status
  * @property string $created_at
  * @property string $updated_at
@@ -37,6 +34,10 @@ use App\Util\RegionRefreshTokenConfig;
 class AmazonAppModel extends Model
 {
     protected ?string $table = 'amazon_app';
+
+    public const CREATED_AT = 'created_at';
+
+    public const UPDATED_AT = 'updated_at';
 
     /**
      * @return array<RegionRefreshTokenConfig>

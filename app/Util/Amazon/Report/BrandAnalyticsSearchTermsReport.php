@@ -40,7 +40,7 @@ class BrandAnalyticsSearchTermsReport extends ReportBase
     {
         return new CreateReportSpecification([
             'report_options' => [
-                'reportPeriod' => 'DAY',
+                'reportPeriod' => 'WEEK',
                 //                'reportPeriod' => 'MONTH',
             ],
             'report_type' => $report_type, // 报告类型
@@ -58,6 +58,11 @@ class BrandAnalyticsSearchTermsReport extends ReportBase
         foreach ($marketplace_ids as $marketplace_id) {
             is_callable($func) && $func($this, $this->getReportType(), $this->buildReportBody($this->getReportType(), [$marketplace_id]), [$marketplace_id]);
         }
+    }
+
+    public function getReportFileName(array $marketplace_ids): string
+    {
+        return $this->getReportType() . '-' . $marketplace_ids[0] . '-' . $this->getReportStartDate()->format('Ymd') . '-' . $this->getReportEndDate()->format('Ymd');
     }
 
     public function run(string $report_id, string $file): bool

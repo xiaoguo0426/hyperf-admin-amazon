@@ -24,9 +24,7 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -48,8 +46,10 @@ class Inventory extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {
@@ -73,7 +73,7 @@ class Inventory extends HyperfCommand
                     return true;
                 }
             }
-            //            $seller_skus = null;
+
             $granularity_type = 'Marketplace';
 
             $now = Carbon::now()->format('Y-m-d H:i:s');
@@ -82,13 +82,9 @@ class Inventory extends HyperfCommand
                 $retry = 30;
                 $nextToken = null;
 
-                //                if ($marketplace_id !== Marketplace::US()->id()) {
-                //                    continue;
-                //                }
-
                 $country_code = $amazonSDK->fetchCountryFromMarketplaceId($marketplace_id);
 
-                $console->info(sprintf('merchant_id:%s merchant_store_id:%s 现在开始处理 %s 市场数据', $merchant_id, $merchant_store_id, $country_code));
+                $console->info(sprintf('merchant_id:%s merchant_store_id:%s region:%s 现在开始处理 %s 市场数据', $merchant_id, $merchant_store_id, $region, $country_code));
 
                 while (true) {
                     $asin_list = [];
@@ -204,6 +200,7 @@ class Inventory extends HyperfCommand
                             $collections->offsetSet($asin, [
                                 'merchant_id' => $merchant_id,
                                 'merchant_store_id' => $merchant_store_id,
+                                'region' => $region,
                                 'asin' => $asin,
                                 'fn_sku' => $fn_sku,
                                 'seller_sku' => $seller_sku,
@@ -230,7 +227,7 @@ class Inventory extends HyperfCommand
                                 'expired_quantity' => $expired_quantity,
                                 'last_updated_time' => $last_updated_time,
                                 'total_quantity' => $total_quantity,
-                                //                                'country_ids' => $amazonSDK->fetchCountryFromMarketplaceId($marketplace_id),
+//                                'country_ids' => $amazonSDK->fetchCountryFromMarketplaceId($marketplace_id),
                                 'created_at' => $now,
                             ]);
                             $asin_list[] = $asin;
@@ -239,6 +236,7 @@ class Inventory extends HyperfCommand
                         $existAmazonInventoryCollections = AmazonInventoryModel::query()
                             ->where('merchant_id', $merchant_id)
                             ->where('merchant_store_id', $merchant_store_id)
+                            ->where('region', $region)
                             ->whereIn('asin', $asin_list)->get();
 
                         if ($existAmazonInventoryCollections->isEmpty()) {

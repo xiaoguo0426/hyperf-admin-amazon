@@ -58,6 +58,7 @@ class GetCatalogItem extends HyperfCommand
             $amazonInventoryCollections = AmazonInventoryModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('region', $region)
                 ->get();
             if ($amazonInventoryCollections->isEmpty()) {
                 return true;
@@ -454,6 +455,7 @@ class GetCatalogItem extends HyperfCommand
                         ];
 
                         $retry = 10;
+                        break;
                     } catch (ApiException $e) {
                         $message = $e->getMessage();
                         --$retry;
@@ -463,6 +465,7 @@ class GetCatalogItem extends HyperfCommand
                             continue;
                         }
                         $console->error(sprintf('Catalog Items ApiException getCatalogItem Failed. merchant_id:%s merchant_store_id:%s asin:%s %s', $merchant_id, $merchant_store_id, $asin, $message));
+                        break;
                     } catch (InvalidArgumentException $e) {
                         $log = sprintf('Catalog Items InvalidArgumentException getCatalogItem Failed. merchant_id:%s merchant_store_id:%s asin:%s', $merchant_id, $merchant_store_id, $asin);
                         $console->error($log);

@@ -16,6 +16,8 @@ class AmazonOrderItemData extends QueueData implements \JsonSerializable
 
     private int $merchant_store_id;
 
+    private string $region;
+
     private string $order_id;
 
     public function getMerchantId(): int
@@ -38,6 +40,22 @@ class AmazonOrderItemData extends QueueData implements \JsonSerializable
         $this->merchant_store_id = $merchant_store_id;
     }
 
+    /**
+     * @return string
+     */
+    public function getRegion(): string
+    {
+        return $this->region;
+    }
+
+    /**
+     * @param string $region
+     */
+    public function setRegion(string $region): void
+    {
+        $this->region = $region;
+    }
+
     public function getOrderId(): array
     {
         return explode(',', $this->order_id);
@@ -53,6 +71,7 @@ class AmazonOrderItemData extends QueueData implements \JsonSerializable
         return json_encode([
             'merchant_id' => $this->merchant_id,
             'merchant_store_id' => $this->merchant_store_id,
+            'region' => $this->region,
             'order_id' => $this->order_id,
         ], JSON_THROW_ON_ERROR);
     }
@@ -61,6 +80,7 @@ class AmazonOrderItemData extends QueueData implements \JsonSerializable
     {
         $this->merchant_id = $arr['merchant_id'];
         $this->merchant_store_id = $arr['merchant_store_id'];
+        $this->region = $arr['region'];
         $this->order_id = $arr['order_id'];
     }
 
@@ -73,6 +93,7 @@ class AmazonOrderItemData extends QueueData implements \JsonSerializable
         return new self(
             $data['merchant_id'],
             $data['merchant_store_id'],
+            $data['region'],
             $data['order_id']
         );
     }
@@ -82,6 +103,7 @@ class AmazonOrderItemData extends QueueData implements \JsonSerializable
         return [
             'merchant_id' => $this->merchant_id,
             'merchant_store_id' => $this->merchant_store_id,
+            'region' => $this->region,
             'order_id' => $this->order_id,
         ];
     }

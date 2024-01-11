@@ -24,6 +24,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use function Hyperf\Support\make;
 
 class AmazonSDK
 {
@@ -77,8 +78,8 @@ class AmazonSDK
         $this->setRoleArn($amazonAppModel->role_arn);
         $this->setLwaClientId($amazonAppModel->lwa_client_id);
         $this->setLwaClientIdSecret($amazonAppModel->lwa_client_id_secret);
-        $this->setRegion($amazonAppModel->region);
-        $this->setCountryIds($amazonAppModel->country_ids);
+        $this->setRegion($amazonAppModel->getAttribute('region'));
+        $this->setCountryIds($amazonAppModel->getAttribute('country_ids'));
 
         $marketplace_ids = [];
         foreach ($this->getCountryIds() as $countryId) {
@@ -91,7 +92,7 @@ class AmazonSDK
         }
         $this->marketplace_ids = $marketplace_ids;
 
-        $this->refresh_token = $amazonAppModel->refresh_token;
+        $this->refresh_token = $amazonAppModel->getAttribute('refresh_token');
     }
 
     public function getId(): int
@@ -255,12 +256,15 @@ class AmazonSDK
     //    }
 
     /**
+     * @param string $region
+     * @param bool $force_refresh
      * @throws \AmazonPHP\SellingPartner\Exception\ApiException
      * @throws \JsonException
      * @throws \Psr\Http\Client\ClientExceptionInterface
      * @throws \RedisException
+     * @return \AmazonPHP\SellingPartner\SellingPartnerSDK
      */
-    public function getSdk(bool $force_refresh = false): SellingPartnerSDK
+    public function getSdk(string $region, bool $force_refresh = false): SellingPartnerSDK
     {
         $factory = new Psr17Factory();
         $client = new Curl($factory);
@@ -271,11 +275,10 @@ class AmazonSDK
             $streamFactory = $factory
         );
 
-        $region = $this->getRegion();
         /**
          * @var AmazonSessionTokenHash $hash
          */
-        $hash = \Hyperf\Support\make(AmazonSessionTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
+        $hash = make(AmazonSessionTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
         $sessionToken = $hash->sessionToken;
 
         $flag = false;
@@ -297,7 +300,7 @@ class AmazonSDK
             $hash->sessionToken = $assumeRole->sessionToken();
             $expiration = $assumeRole->expiration();
             $hash->expiration = $expiration;
-            $hash->ttl(40 * 60);
+            $hash->ttl(50 * 60);
         }
 
         $configuration = Configuration::forIAMRole(
@@ -330,12 +333,16 @@ class AmazonSDK
     }
 
     /**
+     * @param string $region
+     * @param bool $force_refresh
      * @throws \AmazonPHP\SellingPartner\Exception\ApiException
      * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @return \AmazonPHP\SellingPartner\AccessToken
      */
     public function getToken(string $region, bool $force_refresh = false): AccessToken
     {
-        $hash = \Hyperf\Support\make(AmazonAccessTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
+
+        $hash = make(AmazonAccessTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
         $token = $hash->token;
 
         $flag = false;
@@ -361,7 +368,7 @@ class AmazonSDK
                 'expiresIn' => $accessToken->expiresIn(),
                 'grantType' => $accessToken->grantType(),
             ]);
-            $hash->ttl(40 * 60);
+            $hash->ttl(50 * 60);
         }
 
         return $accessToken;

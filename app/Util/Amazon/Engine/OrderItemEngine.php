@@ -19,7 +19,7 @@ use App\Util\Amazon\Creator\CreatorInterface;
 use App\Util\Amazon\Creator\OrderItemCreator;
 use App\Util\AmazonSDK;
 use App\Util\Constants;
-use App\Util\Log\AmazonOrdersLog;
+use App\Util\Log\AmazonOrderItemsLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -27,14 +27,19 @@ use Hyperf\Contract\StdoutLoggerInterface;
 class OrderItemEngine implements EngineInterface
 {
     /**
+     * @param \App\Util\AmazonSDK $amazonSDK
+     * @param \AmazonPHP\SellingPartner\SellingPartnerSDK $sdk
+     * @param \AmazonPHP\SellingPartner\AccessToken $accessToken
+     * @param \App\Util\Amazon\Creator\CreatorInterface $creator
      * @throws \JsonException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {
         $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
-        $logger = ApplicationContext::getContainer()->get(AmazonOrdersLog::class);
+        $logger = ApplicationContext::getContainer()->get(AmazonOrderItemsLog::class);
 
         $merchant_id = $amazonSDK->getMerchantId();
         $merchant_store_id = $amazonSDK->getMerchantStoreId();
@@ -282,6 +287,8 @@ class OrderItemEngine implements EngineInterface
                 $list[$amazon_order_item_id] = [
                     'merchant_id' => $merchant_id,
                     'merchant_store_id' => $merchant_store_id,
+                    'region' => $region,
+                    'marketplace_id' => '',
                     'order_id' => $amazon_order_id,
                     'asin' => $asin, // 物品的亚马逊标准标识号（ASIN）
                     'seller_sku' => $seller_sku, // 商品的卖方库存单位（SKU）
@@ -387,6 +394,7 @@ class OrderItemEngine implements EngineInterface
                         unset($list[$amazonOrderItemCollection->order_item_id]);
                     }
                 }
+
                 if (count($list)) {
                     foreach ($list as $item) {
                         AmazonOrderItemModel::insert($item);

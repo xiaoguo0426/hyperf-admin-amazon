@@ -23,6 +23,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use function Hyperf\Support\make;
 
 #[Command]
 class GetOrderItems extends HyperfCommand
@@ -38,26 +39,30 @@ class GetOrderItems extends HyperfCommand
         // 指令配置
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
-            ->addOption('order_id', null, InputOption::VALUE_OPTIONAL, 'order_id', null)
+            ->addOption('region', null, InputOption::VALUE_OPTIONAL, '地区', null)
+            ->addOption('order_ids', null, InputOption::VALUE_OPTIONAL, 'order_id集合', null)
             ->setDescription('Amazon Order API Get Order Items');
     }
 
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws \RedisException
      */
     public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
+        $region = $this->input->getArgument('region');
         $amazon_order_ids = $this->input->getArgument('order_ids');
         $amazon_order_ids = explode(',', $amazon_order_ids);
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
+
             $orderItemCreator = new OrderItemCreator();
             $orderItemCreator->setAmazonOrderIds($amazon_order_ids);
 
-            \Hyperf\Support\make(OrderItemEngine::class)->launch($amazonSDK, $sdk, $accessToken, $orderItemCreator);
+            make(OrderItemEngine::class)->launch($amazonSDK, $sdk, $accessToken, $orderItemCreator);
 
             return true;
         });

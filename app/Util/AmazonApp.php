@@ -15,6 +15,7 @@ use AmazonPHP\SellingPartner\Regions;
 use App\Exception\AmazonAppException;
 use App\Exception\BusinessException;
 use App\Model\AmazonAppModel;
+use App\Model\AmazonAppRegionModel;
 use App\Util\RedisHash\AmazonAppHash;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -55,9 +56,6 @@ class AmazonApp
             $amazonAppCollection->role_arn = $appHash->role_arn;
             $amazonAppCollection->lwa_client_id = $appHash->lwa_client_id;
             $amazonAppCollection->lwa_client_id_secret = $appHash->lwa_client_id_secret;
-            $amazonAppCollection->region = $appHash->region;
-            $amazonAppCollection->refresh_token = $appHash->refresh_token;
-            $amazonAppCollection->country_ids = $appHash->country_ids;
             $amazonAppCollection->status = $status;
         } else {
             // 缓存不存在
@@ -89,37 +87,59 @@ class AmazonApp
             $merchant_id = $amazonAppModel->merchant_id;
             $merchant_store_id = $amazonAppModel->merchant_store_id;
 
-            /**
-             * @var AmazonSDK $amazonSDK
-             */
-            $amazonSDK = make(AmazonSDK::class, [$amazonAppModel]);
+            $amazonAppRegionCollections = AmazonAppRegionModel::query()
+                ->where('merchant_id', $merchant_id)
+                ->where('merchant_store_id', $merchant_store_id)
+                ->get();
+            if ($amazonAppRegionCollections->isEmpty()) {
+                return false;
+            }
+            foreach ($amazonAppRegionCollections as $amazonAppRegionCollection) {
 
-            $region = $amazonSDK->getRegion();
+                $amazonAppModel->setAttribute('region', $amazonAppRegionCollection->region);
+                $amazonAppModel->setAttribute('country_ids', $amazonAppRegionCollection->country_codes);
+                $amazonAppModel->setAttribute('refresh_token', $amazonAppRegionCollection->refresh_token);
 
-            try {
-                $sdk = $amazonSDK->getSdk();
-            } catch (ApiException|ClientExceptionInterface|\JsonException $exception) {
-                $log = sprintf('Amazon App SDK构建失败，请检查. %s merchant_id:%s merchant_store_id:%s ', $exception->getMessage(), $merchant_id, $merchant_store_id);
-                $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
-                $console->error($log);
-                throw new AmazonAppException($log, 201);
+                /**
+                 * @var AmazonSDK $amazonSDK
+                 */
+                $amazonSDK = make(AmazonSDK::class, [$amazonAppModel]);
+
+                $region = $amazonSDK->getRegion();
+
+                try {
+                    $sdk = $amazonSDK->getSdk($region);
+                } catch (ApiException|ClientExceptionInterface|\JsonException $exception) {
+                    $log = sprintf('Amazon App SDK构建失败，请检查. %s merchant_id:%s merchant_store_id:%s ', $exception->getMessage(), $merchant_id, $merchant_store_id);
+                    $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+                    $console->error($log);
+                    throw new AmazonAppException($log, 201);
+                }
+
+                try {
+                    $accessToken = $amazonSDK->getToken($region);
+                } catch (ApiException|ClientExceptionInterface $exception) {
+                    $log = sprintf('Amazon App Token获取失败，请检查. %s merchant_id:%s merchant_store_id:%s ', $exception->getMessage(), $merchant_id, $merchant_store_id);
+                    $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+                    $console->error($log);
+                    throw new AmazonAppException($log, 201);
+                }
+
+                $marketplace_ids = $amazonSDK->getMarketplaceIds();
+
+                $func($amazonSDK, $merchant_id, $merchant_store_id, $sdk, $accessToken, $region, $marketplace_ids);
+
             }
 
-            try {
-                $accessToken = $amazonSDK->getToken($region);
-            } catch (ApiException|ClientExceptionInterface $exception) {
-                $log = sprintf('Amazon App Token获取失败，请检查. %s merchant_id:%s merchant_store_id:%s ', $exception->getMessage(), $merchant_id, $merchant_store_id);
-                $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
-                $console->error($log);
-                throw new AmazonAppException($log, 201);
-            }
-
-            $marketplace_ids = $amazonSDK->getMarketplaceIds();
-
-            return $func($amazonSDK, $merchant_id, $merchant_store_id, $sdk, $accessToken, $region, $marketplace_ids);
+            return true;
         });
     }
 
+    /**
+     * 所有Amazon应用配置回调
+     * @param callable $func
+     * @return bool
+     */
     public static function single(callable $func): bool
     {
         $amazonAppCollections = AmazonAppModel::query()->where('status', Constants::STATUS_ACTIVE)->get();

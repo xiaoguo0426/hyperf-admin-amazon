@@ -18,8 +18,8 @@ class ReportFactory
     {
         $class = match ($report_type) {
 
-            'GET_COUPON_PERFORMANCE_REPORT' => CouponPerformanceReport::class,
-            'GET_PROMOTION_PERFORMANCE_REPORT' => PromotionPerformanceReport::class,
+            'GET_COUPON_PERFORMANCE_REPORT' => CouponPerformanceReport::class,//优惠券报告
+            'GET_PROMOTION_PERFORMANCE_REPORT' => PromotionPerformanceReport::class,//促销报告
             // Inventory reports
             'GET_FLAT_FILE_OPEN_LISTINGS_DATA' => FlatFileOpenListingsDataReport::class,// 请求不了
             'GET_MERCHANT_LISTINGS_ALL_DATA' => MerchantListingsAllDataReport::class,
@@ -32,11 +32,11 @@ class ReportFactory
             'GET_MERCHANTS_LISTINGS_FYP_REPORT' => MerchantListingsFypReport::class,// 请求不了
             'GET_REFERRAL_FEE_PREVIEW_REPORT' => ReferralFeePreviewReport::class,// 请求不了
             // Analytics Reports
-            'GET_BRAND_ANALYTICS_MARKET_BASKET_REPORT' => BrandAnalyticsMarketBasketReport::class,// 获取报告失败
-            'GET_BRAND_ANALYTICS_SEARCH_TERMS_REPORT' => BrandAnalyticsSearchTermsReport::class,// 获取报告失败
-            'GET_BRAND_ANALYTICS_REPEAT_PURCHASE_REPORT' => BrandAnalyticsRepeatPurchaseReport::class,// 获取报告失败
-            'GET_SALES_AND_TRAFFIC_REPORT' => SalesAndTrafficReport::class,
-            'GET_SALES_AND_TRAFFIC_REPORT_CUSTOM' => SalesAndTrafficReportCustom::class,
+            'GET_BRAND_ANALYTICS_MARKET_BASKET_REPORT' => BrandAnalyticsMarketBasketReport::class,//市场采购行为分析报告
+            'GET_BRAND_ANALYTICS_SEARCH_TERMS_REPORT' => BrandAnalyticsSearchTermsReport::class,// 亚马逊搜索词报告
+            'GET_BRAND_ANALYTICS_REPEAT_PURCHASE_REPORT' => BrandAnalyticsRepeatPurchaseReport::class,// 重复购买
+            'GET_SALES_AND_TRAFFIC_REPORT' => SalesAndTrafficReport::class,//销售与流量报告
+            'GET_SALES_AND_TRAFFIC_REPORT_CUSTOM' => SalesAndTrafficReportCustom::class,//销售与流量报告(计算最近x天的平均销量，实际还是GET_SALES_AND_TRAFFIC_REPORT_CUSTOM报告)
             // Order reports
             'GET_FLAT_FILE_ACTIONABLE_ORDER_DATA_SHIPPING' => FlatFileActionableOrderDataShippingReport::class,// 获取报告失败
             'GET_ORDER_REPORT_DATA_INVOICING' => OrderReportDataInvoicingReport::class,// 获取报告失败 -- 适用欧洲

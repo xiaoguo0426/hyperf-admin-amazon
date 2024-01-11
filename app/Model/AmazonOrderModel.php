@@ -16,6 +16,7 @@ use Hyperf\DbConnection\Model\Model;
  * @property int $id
  * @property int $merchant_id 商户id
  * @property int $merchant_store_id 店铺id
+ * @property string $region 地区
  * @property string $amazon_order_id 亚马逊定义的订单标识符，格式为3-7-7
  * @property string $seller_order_id 卖家定义的订单标识符
  * @property string $purchase_date 订单创建时间

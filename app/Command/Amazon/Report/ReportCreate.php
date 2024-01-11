@@ -164,7 +164,7 @@ class ReportCreate extends HyperfCommand
 
                 //需要创建的报告类型再次检测是否被标记了删除，如果已被标记，则不再创建
                 if ($instance->checkMarkCanceled($marketplace_ids)) {
-                    $log = sprintf('Create Report Notice. %s 类型报告文件被标注删除，不需要重复创建. merchant_id: %s merchant_store_id: %s marketplace_ids:%s data_start_time:%s data_end_time:%s ', $report_type, $merchant_id, $merchant_store_id, implode(',', $marketplace_ids), is_null($body->getDataStartTime()) ? '' : $body->getDataStartTime()->format('Y-m-d H:i:s'), is_null($body->getDataEndTime()) ? '' : $body->getDataEndTime()->format('Y-m-d H:i:s'));
+                    $log = sprintf('Create Report Notice. %s 类型报告文件被标注删除，不需要重复创建. merchant_id: %s merchant_store_id: %s region:%s marketplace_ids:%s data_start_time:%s data_end_time:%s ', $report_type, $merchant_id, $merchant_store_id, $region, implode(',', $marketplace_ids), is_null($body->getDataStartTime()) ? '' : $body->getDataStartTime()->format('Y-m-d H:i:s'), is_null($body->getDataEndTime()) ? '' : $body->getDataEndTime()->format('Y-m-d H:i:s'));
                     $console->comment($log);
                     $logger->notice($log);
                     return true;
@@ -181,16 +181,20 @@ class ReportCreate extends HyperfCommand
                         $response = $sdk->reports()->createReport($accessToken, $region, $body);
                         $report_id = $response->getReportId();
 
+                        /**
+                         * @var  AmazonGetReportData $amazonGetReportData
+                         */
                         $amazonGetReportData = make(AmazonGetReportData::class);
                         $amazonGetReportData->setMerchantId($merchant_id);
                         $amazonGetReportData->setMerchantStoreId($merchant_store_id);
+                        $amazonGetReportData->setRegion($region);
                         $amazonGetReportData->setMarketplaceIds($marketplace_ids);
                         $amazonGetReportData->setReportId($report_id);
                         $amazonGetReportData->setReportType($report_type);
                         $amazonGetReportData->setDataStartTime($data_start_time);
                         $amazonGetReportData->setDataEndTime($data_end_time);
 
-                        $log = sprintf('Create %s report_id: %s merchant_id: %s merchant_store_id: %s  start_time:%s end_time:%s', $report_type, $report_id, $merchant_id, $merchant_store_id, $data_start_time, $data_end_time);
+                        $log = sprintf('Create %s report_id: %s merchant_id: %s merchant_store_id: %s region:%s start_time:%s end_time:%s', $report_type, $report_id, $merchant_id, $merchant_store_id, $region, $data_start_time, $data_end_time);
                         $console->info($log);
                         $logger->info($log, [
                             'marketplace_ids' => $marketplace_ids,
@@ -204,11 +208,11 @@ class ReportCreate extends HyperfCommand
                     } catch (ApiException $e) {
                         --$retry;
                         if ($retry > 0) {
-                            $console->warning(sprintf('Create %s report fail, retry: %s  merchant_id: %s merchant_store_id: %s ', $report_type, $retry, $merchant_id, $merchant_store_id));
+                            $console->warning(sprintf('Create %s report fail, retry: %s  merchant_id: %s merchant_store_id: %s region:%s', $report_type, $retry, $merchant_id, $merchant_store_id, $region));
                             sleep(5);
                             continue;
                         }
-                        $logger->error(sprintf('ApiException %s 创建报告出错 merchant_id: %s merchant_store_id: %s', $report_type, $merchant_id, $merchant_store_id), [
+                        $logger->error(sprintf('ApiException %s 创建报告出错 merchant_id: %s merchant_store_id: %s region:%s', $report_type, $merchant_id, $merchant_store_id, $region), [
                             'message' => $e->getMessage(),
                             'response body' => $e->getResponseBody(),
                             'data_start_time' => $body->getDataStartTime(),
@@ -216,7 +220,7 @@ class ReportCreate extends HyperfCommand
                         ]);
                         break;
                     } catch (InvalidArgumentException $e) {
-                        $logger->error(sprintf('InvalidArgumentException %s 创建报告出错 merchant_id: %s merchant_store_id: %s', $report_type, $merchant_id, $merchant_store_id));
+                        $logger->error(sprintf('InvalidArgumentException %s 创建报告出错 merchant_id: %s merchant_store_id: %s region:%s', $report_type, $merchant_id, $merchant_store_id, $region));
                         break;
                     }
                 }

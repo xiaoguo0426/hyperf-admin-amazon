@@ -27,6 +27,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use function Hyperf\Support\make;
 
 #[Command]
 class ListFinancialEvents extends HyperfCommand
@@ -47,8 +48,10 @@ class ListFinancialEvents extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {
@@ -96,7 +99,7 @@ class ListFinancialEvents extends HyperfCommand
                         break;
                     }
 
-                    \Hyperf\Support\make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
+                    make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
 
                     // 如果下一页没有数据，nextToken 会变成null
                     $next_token = $payload->getNextToken();

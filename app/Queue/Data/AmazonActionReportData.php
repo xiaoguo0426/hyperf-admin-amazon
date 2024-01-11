@@ -16,6 +16,8 @@ class AmazonActionReportData extends QueueData implements \JsonSerializable
 
     private int $merchant_store_id;
 
+    private string $region;
+
     private string $marketplace_ids;
 
     /**

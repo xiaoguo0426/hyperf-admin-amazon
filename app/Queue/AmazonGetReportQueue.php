@@ -45,6 +45,7 @@ class AmazonGetReportQueue extends Queue
     /**
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
@@ -53,6 +54,7 @@ class AmazonGetReportQueue extends Queue
          */
         $merchant_id = $queueData->getMerchantId();
         $merchant_store_id = $queueData->getMerchantStoreId();
+        $real_region = $queueData->getRegion();
         $marketplace_ids = $queueData->getMarketplaceIds();
         $report_type = $queueData->getReportType();
         $report_id = $queueData->getReportId();
@@ -63,7 +65,12 @@ class AmazonGetReportQueue extends Queue
 
         $logger->info(sprintf('Get 报告队列数据： %s', $queueData->toJson()));
 
-        return AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($report_type, $report_id, $start_time, $end_time, $logger) {
+        return AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($real_region, $report_type, $report_id, $start_time, $end_time, $logger) {
+
+            if ($region !== $real_region) {
+                return true;
+            }
+
             $queue = new AmazonActionReportQueue();
 
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
@@ -148,17 +155,18 @@ class AmazonGetReportQueue extends Queue
                     $console->info(sprintf('文件保存路径 %s', $file_path));
 
                     // 将报告保存的路径投递到队列中
-                    $queueData = new AmazonActionReportData();
-                    $queueData->setMerchantId($merchant_id);
-                    $queueData->setMerchantStoreId($merchant_store_id);
-                    $queueData->setMarketplaceIds($marketplace_ids);
-                    $queueData->setReportId($report_id);
-                    $queueData->setReportType($report_type);
-                    $queueData->setReportFilePath($file_path);
-                    $queueData->setDataStartTime($dataStartTime?->format('Y-m-d H:i:s'));
-                    $queueData->setDataEndTime($dataEndTime?->format('Y-m-d H:i:s'));
 
-                    $queue->push($queueData);
+                    $amazonActionReportData = new AmazonActionReportData();
+                    $amazonActionReportData->setMerchantId($merchant_id);
+                    $amazonActionReportData->setMerchantStoreId($merchant_store_id);
+                    $amazonActionReportData->setMarketplaceIds($marketplace_ids);
+                    $amazonActionReportData->setReportId($report_id);
+                    $amazonActionReportData->setReportType($report_type);
+                    $amazonActionReportData->setReportFilePath($file_path);
+                    $amazonActionReportData->setDataStartTime($dataStartTime?->format('Y-m-d H:i:s'));
+                    $amazonActionReportData->setDataEndTime($dataEndTime?->format('Y-m-d H:i:s'));
+
+                    $queue->push($amazonActionReportData);
 
                     sleep(5);
 

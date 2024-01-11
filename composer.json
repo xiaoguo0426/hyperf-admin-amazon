@@ -18,6 +18,7 @@
         "ext-posix": "*",
         "ext-redis": "*",
         "ext-zlib": "*",
+        "ext-pdo": "*",
         "amazon-php/sp-api-sdk": "^5.0",
         "friendsofhyperf/sentry": "^3.0",
         "hyperf/cache": "~3.1.0",
@@ -27,6 +28,7 @@
         "hyperf/crontab": "^3.1",
         "hyperf/dag": "~3.1.0",
         "hyperf/database": "~3.1.0",
+        "hyperf/db": "^3.1",
         "hyperf/db-connection": "~3.1.0",
         "hyperf/elasticsearch": "~3.1.0",
         "hyperf/framework": "~3.1.0",
@@ -58,7 +60,6 @@
     "suggest": {
         "ext-openssl": "Required to use HTTPS.",
         "ext-json": "Required to use JSON.",
-        "ext-pdo": "Required to use MySQL Client.",
         "ext-pdo_mysql": "Required to use MySQL Client."
     },
     "autoload": {

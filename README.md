@@ -33,6 +33,12 @@
 # 处理报告
 > php bin/hyperf.php amazon:report:action
 
+# 获取周期报告
+>
+# 拉取周期报告
+>
+# 处理周期报告
+>
 
 
 ```

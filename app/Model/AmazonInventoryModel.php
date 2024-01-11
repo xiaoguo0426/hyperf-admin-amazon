@@ -16,6 +16,7 @@ namespace App\Model;
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id
+ * @property $region
  * @property $asin
  * @property $fn_sku
  * @property $seller_sku

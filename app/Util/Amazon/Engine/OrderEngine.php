@@ -28,10 +28,15 @@ use Hyperf\Contract\StdoutLoggerInterface;
 class OrderEngine implements EngineInterface
 {
     /**
+     * @param \App\Util\AmazonSDK $amazonSDK
+     * @param \AmazonPHP\SellingPartner\SellingPartnerSDK $sdk
+     * @param \AmazonPHP\SellingPartner\AccessToken $accessToken
+     * @param \App\Util\Amazon\Creator\CreatorInterface $creator
      * @throws \JsonException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \RedisException
+     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {
@@ -94,7 +99,7 @@ class OrderEngine implements EngineInterface
                         $errors = $body['errors'];
                         foreach ($errors as $error) {
                             if ($error['code'] !== 'QuotaExceeded') {
-                                $console->warning(sprintf('merchant_id:%s merchant_store_id:%s Page:%s code:%s message:%s', $merchant_id, $merchant_store_id, $page, $error['code'], $error['message']));
+                                $console->warning(sprintf('merchant_id:%s merchant_store_id:%s region:%s Page:%s code:%s message:%s', $merchant_id, $merchant_store_id, $region, $page, $error['code'], $error['message']));
                                 break 2;
                             }
                         }
@@ -103,15 +108,15 @@ class OrderEngine implements EngineInterface
 
                 --$retry;
                 if ($retry > 0) {
-                    $console->warning(sprintf('merchant_id:%s merchant_store_id:%s Page:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $page, $retry));
+                    $console->warning(sprintf('merchant_id:%s merchant_store_id:%s region:%s Page:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $region, $page, $retry));
                     sleep(3);
                     continue;
                 }
 
-                $console->error(sprintf('merchant_id:%s merchant_store_id:%s Page:%s 重试次数已用完', $merchant_id, $merchant_store_id, $page));
+                $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s Page:%s 重试次数已用完', $merchant_id, $merchant_store_id, $region, $page));
                 break;
             } catch (InvalidArgumentException $e) {
-                $console->error(sprintf('merchant_id:%s merchant_store_id:%s InvalidArgumentException %s %s', $merchant_id, $merchant_store_id, $e->getCode(), $e->getMessage()));
+                $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s InvalidArgumentException %s %s', $merchant_id, $merchant_store_id, $region, $e->getCode(), $e->getMessage()));
                 break;
             }
 
@@ -275,6 +280,7 @@ class OrderEngine implements EngineInterface
                 $data[$amazon_order_id] = [
                     'merchant_id' => $merchant_id,
                     'merchant_store_id' => $merchant_store_id,
+                    'region' => $region,
                     'amazon_order_id' => $amazon_order_id, // 亚马逊定义的订单标识符，格式为3-7-7
                     'seller_order_id' => $order->getSellerOrderId() ?? '', // 卖家定义的订单标识符
                     'purchase_date' => $purchase_date, // 订单创建时间
@@ -341,6 +347,7 @@ class OrderEngine implements EngineInterface
             $existOrders = AmazonOrderModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('region', $region)
                 ->whereIn('amazon_order_id', array_keys($data))->get();
 
             if ($existOrders->isEmpty()) {
@@ -422,7 +429,7 @@ class OrderEngine implements EngineInterface
                 $order_ids = $real_order_ids;
             }
 
-            $chunks = array_chunk($order_ids, 50);
+            $chunks = array_chunk($order_ids, 10);
             foreach ($chunks as $chunk) {
                 $amazonOrderData = new AmazonOrderItemData();
                 $amazonOrderData->setMerchantId($merchant_id);
@@ -430,6 +437,8 @@ class OrderEngine implements EngineInterface
                 $amazonOrderData->setOrderId($chunk);
                 $orderItemQueue->push($amazonOrderData);
             }
+
+            $console->info(sprintf('merchant_id:%s merchant_store_id:%s region:%s 订单拉取 page:%s 拉取成功.', $merchant_id, $merchant_store_id, $region, $page));
 
             // 如果下一页没有数据，nextToken 会变成null
             $nextToken = $payload->getNextToken();

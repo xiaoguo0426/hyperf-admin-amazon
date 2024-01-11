@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Util;
 
 use Carbon\Carbon;
+use function Hyperf\Config\config;
 
 class Prefix
 {
@@ -31,7 +32,7 @@ class Prefix
 
     public static function queue(): string
     {
-        return \Hyperf\Config\config('app_name') . ':queue:';
+        return config('app_name') . ':queue:';
     }
 
     public static function amazonAsinSaleVolume(int $merchant_id, string $type): string

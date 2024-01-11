@@ -16,6 +16,8 @@ class AmazonGetReportData extends QueueData
 
     private int $merchant_store_id;
 
+    private string $region;
+
     private string $marketplace_ids;
 
     private string $report_id;
@@ -50,6 +52,22 @@ class AmazonGetReportData extends QueueData
     public function setMerchantStoreId(int $merchant_store_id): void
     {
         $this->merchant_store_id = $merchant_store_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRegion(): string
+    {
+        return $this->region;
+    }
+
+    /**
+     * @param string $region
+     */
+    public function setRegion(string $region): void
+    {
+        $this->region = $region;
     }
 
     public function getMarketplaceIds(): array
@@ -107,6 +125,7 @@ class AmazonGetReportData extends QueueData
         return json_encode([
             'merchant_id' => $this->merchant_id,
             'merchant_store_id' => $this->merchant_store_id,
+            'region' => $this->region,
             'marketplace_ids' => $this->marketplace_ids,
             'report_id' => $this->report_id,
             'report_type' => $this->report_type,
@@ -119,6 +138,7 @@ class AmazonGetReportData extends QueueData
     {
         $this->setMerchantId($arr['merchant_id']);
         $this->setMerchantStoreId($arr['merchant_store_id']);
+        $this->setRegion($arr['region']);
         $this->setMarketplaceIds(explode(',', $arr['marketplace_ids']));
         $this->setReportId($arr['report_id']);
         $this->setReportType($arr['report_type']);
