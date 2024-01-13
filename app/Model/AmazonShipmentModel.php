@@ -16,6 +16,7 @@ namespace App\Model;
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id
+ * @property $region
  * @property $marketplace_id
  * @property $shipment_id
  * @property $shipment_name

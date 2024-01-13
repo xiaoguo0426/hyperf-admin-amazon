@@ -44,9 +44,10 @@ class GetPreorderInfo extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws \JsonException
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {
@@ -60,6 +61,7 @@ class GetPreorderInfo extends HyperfCommand
             $amazonShipmentsCollections = AmazonShipmentModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('region', $region)
                 ->orderByDesc('id')
                 ->get();
             if ($amazonShipmentsCollections->isEmpty()) {
@@ -109,7 +111,7 @@ class GetPreorderInfo extends HyperfCommand
                     var_dump($need_by_date);
                     var_dump($confirmed_fulfillable_date);
                 } catch (ApiException $exception) {
-                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s shipment_id:%s %s', $merchant_id, $merchant_store_id, $shipment_id, $exception->getMessage()));
+                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s shipment_id:%s %s', $merchant_id, $merchant_store_id, $region, $shipment_id, $exception->getMessage()));
                 } catch (InvalidArgumentException $exception) {
                     $console->error('InvalidArgumentException API请求错误', [
                         'message' => $exception->getMessage(),

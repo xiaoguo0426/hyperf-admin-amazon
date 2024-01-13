@@ -44,9 +44,10 @@ class GetLabels extends HyperfCommand
     }
 
     /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     * @throws \JsonException
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {
@@ -70,6 +71,7 @@ class GetLabels extends HyperfCommand
             $amazonShipmentsCollections = AmazonShipmentModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('region', $region)
                 ->orderByDesc('id')
                 ->get();
             if ($amazonShipmentsCollections->isEmpty()) {

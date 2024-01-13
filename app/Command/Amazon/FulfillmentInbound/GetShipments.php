@@ -25,9 +25,7 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -47,14 +45,18 @@ class GetShipments extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
+
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
+
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFinanceLog::class);
 
@@ -165,6 +167,7 @@ class GetShipments extends HyperfCommand
                         $collections->offsetSet($shipment_id, [
                             'merchant_id' => $merchant_id,
                             'merchant_store_id' => $merchant_store_id,
+                            'region' => $region,
                             //                            'marketplace_id' => $marketplace_id,
                             'marketplace_id' => '',
                             'shipment_id' => $shipment_id,
@@ -195,17 +198,17 @@ class GetShipments extends HyperfCommand
                 } catch (ApiException $e) {
                     --$retry;
                     if ($retry > 0) {
-                        $console->warning(sprintf('FulfillmentInbound ApiException GetShipments Failed. retry:%s merchant_id: %s merchant_store_id: %s ', $retry, $merchant_id, $merchant_store_id));
+                        $console->warning(sprintf('FulfillmentInbound ApiException GetShipments Failed. retry:%s merchant_id: %s merchant_store_id: %s region:%s ', $retry, $merchant_id, $merchant_store_id, $region));
                         sleep(10);
                         continue;
                     }
 
-                    $log = sprintf('FulfillmentInbound ApiException GetShipments Failed. merchant_id: %s merchant_store_id: %s ', $merchant_id, $merchant_store_id);
+                    $log = sprintf('FulfillmentInbound ApiException GetShipments Failed. merchant_id: %s merchant_store_id: %s region:%s', $merchant_id, $merchant_store_id, $region);
                     $console->error($log);
                     $logger->error($log);
                     break;
                 } catch (InvalidArgumentException $e) {
-                    $log = sprintf('FulfillmentInbound InvalidArgumentException GetShipments Failed. merchant_id: %s merchant_store_id: %s ', $merchant_id, $merchant_store_id);
+                    $log = sprintf('FulfillmentInbound InvalidArgumentException GetShipments Failed. merchant_id: %s merchant_store_id: %s region:%s', $merchant_id, $merchant_store_id, $region);
                     $console->error($log);
                     $logger->error($log);
                     break;
@@ -214,6 +217,7 @@ class GetShipments extends HyperfCommand
 
             $existShipments = AmazonShipmentModel::query()->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('region', $region)
                 ->whereIn('shipment_id', $shipment_ids)
                 ->get();
 
@@ -249,7 +253,7 @@ class GetShipments extends HyperfCommand
                 AmazonShipmentModel::insert($collections->toArray());
             }
 
-            $console->notice(sprintf('FulfillmentInbound merchant_id:%s merchant_store_id:%s 完成处理，耗时:%s. 更新:%s 新增:%s', $merchant_id, $merchant_store_id, $runtimeCalculator->stop(), $existShipments->count(), $collections->count()));
+            $console->notice(sprintf('FulfillmentInbound merchant_id:%s merchant_store_id:%s region:%s 完成处理，耗时:%s. 更新:%s 新增:%s', $merchant_id, $merchant_store_id, $region, $runtimeCalculator->stop(), $existShipments->count(), $collections->count()));
 
             return true;
         });

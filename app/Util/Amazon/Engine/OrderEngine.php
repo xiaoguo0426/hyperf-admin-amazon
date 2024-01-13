@@ -198,8 +198,7 @@ class OrderEngine implements EngineInterface
                 $shippingAddressJson = [];
                 if ($shippingAddress) {
                     $shippingAddressJson = [
-                        //                                'name' => $shippingAddress->getName() ?? '',
-                        'name' => '',
+                        'name' => $shippingAddress->getName() ?? '',
                         'address_line1' => $shippingAddress->getAddressLine1() ?? '',
                         'address_line2' => $shippingAddress->getAddressLine2() ?? '',
                         'address_line3' => $shippingAddress->getAddressLine3() ?? '',
@@ -434,6 +433,7 @@ class OrderEngine implements EngineInterface
                 $amazonOrderData = new AmazonOrderItemData();
                 $amazonOrderData->setMerchantId($merchant_id);
                 $amazonOrderData->setMerchantStoreId($merchant_store_id);
+                $amazonOrderData->setRegion($region);
                 $amazonOrderData->setOrderId($chunk);
                 $orderItemQueue->push($amazonOrderData);
             }
