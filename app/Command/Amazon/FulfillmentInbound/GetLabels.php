@@ -40,6 +40,8 @@ class GetLabels extends HyperfCommand
         // 指令配置
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
+            ->addArgument('region', InputArgument::REQUIRED, '地区')
+            ->addArgument('shipment_id', InputArgument::REQUIRED, '店铺id')
             ->setDescription('Amazon Fulfillment Inbound Get Labels Command');
     }
 
@@ -53,8 +55,14 @@ class GetLabels extends HyperfCommand
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
+        $real_region = $this->input->getArgument('region');
+        $shipment_id = $this->input->getArgument('shipment_id');
 
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
+        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($real_region, $shipment_id) {
+            if ($region !== $real_region) {
+                return true;
+            }
+
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetLabelsLog::class);
 
@@ -72,6 +80,9 @@ class GetLabels extends HyperfCommand
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
                 ->where('region', $region)
+                ->when($shipment_id, function ($query, $value) {
+                    return $query->where('shipment_id', $value);
+                })
                 ->orderByDesc('id')
                 ->get();
             if ($amazonShipmentsCollections->isEmpty()) {

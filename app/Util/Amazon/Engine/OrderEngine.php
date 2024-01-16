@@ -159,7 +159,7 @@ class OrderEngine implements EngineInterface
                 $defaultShipFromLocationAddressJson = [];
                 if ($defaultShipFromLocationAddress) {
                     $defaultShipFromLocationAddressJson = [
-                        'name' => '',
+                        'name' => $defaultShipFromLocationAddress->getName() ?? '',
                         'address_line1' => $defaultShipFromLocationAddress->getAddressLine1() ?? '',
                         'address_line2' => $defaultShipFromLocationAddress->getAddressLine2() ?? '',
                         'address_line3' => $defaultShipFromLocationAddress->getAddressLine3() ?? '',

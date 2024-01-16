@@ -15,11 +15,10 @@
         "php": ">=8.1",
         "ext-bcmath": "*",
         "ext-pcntl": "*",
+        "ext-pdo": "*",
         "ext-posix": "*",
         "ext-redis": "*",
         "ext-zlib": "*",
-        "ext-pdo": "*",
-        "amazon-php/sp-api-sdk": "^5.0",
         "friendsofhyperf/sentry": "^3.0",
         "hyperf/cache": "~3.1.0",
         "hyperf/command": "~3.1.0",
@@ -44,6 +43,7 @@
         "kriswallsmith/buzz": "^1.2",
         "nesbot/carbon": "^2.66",
         "nyholm/psr7": "^1.6",
+        "onetech/sp-api-sdk": "*@dev",
         "thewirecutter/paapi5-php-sdk": "^1.2"
     },
     "require-dev": {
@@ -101,5 +101,17 @@
             "Composer\\Config::disableProcessTimeout",
             "php ./bin/hyperf.php start"
         ]
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../sp-api-sdk",
+            "options": {
+                "symlink": true,
+                "versions": {
+                    "onetech/sp-api-sdk": "dev-develop"
+                }
+            }
+        }
+    ]
 }
