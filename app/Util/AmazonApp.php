@@ -20,13 +20,21 @@ use App\Util\RedisHash\AmazonAppHash;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\ModelNotFoundException;
+use Hyperf\Di\Exception\NotFoundException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Client\ClientExceptionInterface;
+use RedisException;
 use function Hyperf\Support\make;
 
 class AmazonApp
 {
     /**
      * 单个Amazon应用配置回调.
+     * @param int $merchant_id
+     * @param int $merchant_store_id
+     * @param callable $func
+     * @return bool
      */
     public static function tick(int $merchant_id, int $merchant_store_id, callable $func): bool
     {
@@ -73,9 +81,14 @@ class AmazonApp
 
     /**
      * 单个Amazon应用配置回调并触发Amazon SDK.
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RedisException
+     * @param int $merchant_id
+     * @param int $merchant_store_id
+     * @param callable $func
+     * @throws NotFoundException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
+     * @return bool
      */
     public static function tok(int $merchant_id, int $merchant_store_id, callable $func): bool
     {
@@ -136,6 +149,75 @@ class AmazonApp
     }
 
     /**
+     * 单个Amazon应用配置回调并触发Amazon SDK(指定region).
+     * @param int $merchant_id
+     * @param int $merchant_store_id
+     * @param string $region
+     * @param callable $func
+     * @throws NotFoundException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
+     * @return bool
+     */
+    public static function tok2(int $merchant_id, int $merchant_store_id, string $region, callable $func): bool
+    {
+        return self::tick($merchant_id, $merchant_store_id, static function (AmazonAppModel $amazonAppModel) use ($func, $region) {
+            if (! is_callable($func)) {
+                return false;
+            }
+
+            $merchant_id = $amazonAppModel->merchant_id;
+            $merchant_store_id = $amazonAppModel->merchant_store_id;
+
+            try {
+                $amazonAppRegionCollection = AmazonAppRegionModel::query()
+                    ->where('merchant_id', $merchant_id)
+                    ->where('merchant_store_id', $merchant_store_id)
+                    ->where('region', $region)
+                    ->firstOrFail();
+            } catch (ModelNotFoundException $modelNotFoundException) {
+                return true;
+            }
+
+            $amazonAppModel->setAttribute('region', $amazonAppRegionCollection->region);
+            $amazonAppModel->setAttribute('country_ids', $amazonAppRegionCollection->country_codes);
+            $amazonAppModel->setAttribute('refresh_token', $amazonAppRegionCollection->refresh_token);
+
+            /**
+             * @var AmazonSDK $amazonSDK
+             */
+            $amazonSDK = make(AmazonSDK::class, [$amazonAppModel]);
+
+            $region = $amazonSDK->getRegion();
+
+            try {
+                $sdk = $amazonSDK->getSdk($region);
+            } catch (ApiException|ClientExceptionInterface|\JsonException $exception) {
+                $log = sprintf('Amazon App SDK构建失败，请检查. %s merchant_id:%s merchant_store_id:%s ', $exception->getMessage(), $merchant_id, $merchant_store_id);
+                $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+                $console->error($log);
+                throw new AmazonAppException($log, 201);
+            }
+
+            try {
+                $accessToken = $amazonSDK->getToken($region);
+            } catch (ApiException|ClientExceptionInterface $exception) {
+                $log = sprintf('Amazon App Token获取失败，请检查. %s merchant_id:%s merchant_store_id:%s ', $exception->getMessage(), $merchant_id, $merchant_store_id);
+                $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+                $console->error($log);
+                throw new AmazonAppException($log, 201);
+            }
+
+            $marketplace_ids = $amazonSDK->getMarketplaceIds();
+
+            $func($amazonSDK, $merchant_id, $merchant_store_id, $sdk, $accessToken, $region, $marketplace_ids);
+
+            return true;
+        });
+    }
+
+    /**
      * 所有Amazon应用配置回调
      * @param callable $func
      * @return bool
@@ -157,9 +239,10 @@ class AmazonApp
     /**
      * 所有Amazon应用配置回调并触发Amazon SDK.
      * @param callable $func
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundException
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
      * @return void
      */
     public static function each(callable $func): void

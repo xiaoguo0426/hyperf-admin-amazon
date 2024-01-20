@@ -19,7 +19,11 @@ use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Di\Exception\NotFoundException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use function Hyperf\Support\make;
 
@@ -42,24 +46,21 @@ class ListFinancialEventsByOrderId extends HyperfCommand
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
+     * @throws NotFoundException
      * @return void
      */
     public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
-        $real_region = $this->input->getArgument('region');
+        $region = $this->input->getArgument('region');
         $amazon_order_ids = $this->input->getArgument('order_ids');
 
         //amazon_order需要添加region属性
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($real_region, $amazon_order_ids) {
-
-            if ($real_region !== $region) {
-                return true;
-            }
+        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
 
             if (! is_null($amazon_order_ids)) {
                 $amazon_order_ids = explode(',', $amazon_order_ids);

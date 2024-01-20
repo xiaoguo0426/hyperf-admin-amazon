@@ -66,8 +66,17 @@ class GetMarketplaceParticipation extends HyperfCommand
                         break;
                     }
 
-                    $errors = $response->getErrors();
-                    if (! is_null($errors)) {
+                    $errorsList = $response->getErrors();
+                    if (! is_null($errorsList)) {
+                        $errors = [];
+                        foreach ($errorsList as $error) {
+                            $errors[] = [
+                                'code' => $error->getCode(),
+                                'message' => $error->getMessage() ?? '',
+                                'details' => $error->getDetails() ?? '',
+                            ];
+                        }
+                        $console->error(sprintf('merchant_id:%s merchant_store_id:%s 处理 %s 市场数据发生错误 %s', $merchant_id, $merchant_store_id, $country_code, json_encode($errors, JSON_THROW_ON_ERROR)));
                         break;
                     }
 

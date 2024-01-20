@@ -15,6 +15,7 @@ use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\AmazonSDK;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\DB\DB;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -59,8 +60,16 @@ class AmazonApp extends HyperfCommand
         //            return true;
         //        });
 
-        \App\Util\AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-            return true;
-        });
+//        \App\Util\AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
+//            return true;
+//        });
+
+        $merchant_id = 1;
+        $merchant_store_id = 1;
+        $region = 'us-east-1';
+        $amazon_order_id = '113-1610073-2158614';
+        $seller_sku = 'DEY-6A20615-BLACK-US';
+        $other = DB::query("SELECT amazon_order.order_status,amazon_order.marketplace_id,amazon_order.order_total_currency,amazon_order_items.item_price FROM amazon_order INNER JOIN amazon_order_items ON amazon_order.amazon_order_id = amazon_order_items.order_id AND amazon_order_items.item_price <> '' AND   amazon_order_items.item_price <> '[]' AND amazon_order.marketplace_id = (select marketplace_id FROM amazon_order WHERE merchant_id = {$merchant_id} and merchant_store_id = {$merchant_store_id} and region = '{$region}' and amazon_order_id = '{$amazon_order_id}') AND amazon_order_items.seller_sku = '{$seller_sku}' AND amazon_order_items.quantity_ordered = 1 ORDER BY amazon_order_items.id DESC LIMIT 1;");
+        var_dump($other);
     }
 }

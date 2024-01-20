@@ -13,11 +13,11 @@ namespace App\Util\Amazon\Creator;
 class OrderItemCreator implements CreatorInterface
 {
     /**
-     * @var array<string>
+     * @var ?array<string>
      */
-    public array $amazon_order_ids;
+    public ?array $amazon_order_ids;
 
-    public function setAmazonOrderIds(array $amazon_order_ids): void
+    public function setAmazonOrderIds(?array $amazon_order_ids): void
     {
         $this->amazon_order_ids = $amazon_order_ids;
     }

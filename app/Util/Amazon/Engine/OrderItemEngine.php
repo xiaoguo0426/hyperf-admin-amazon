@@ -15,6 +15,7 @@ use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Model\AmazonOrderItemModel;
+use App\Model\AmazonOrderModel;
 use App\Util\Amazon\Creator\CreatorInterface;
 use App\Util\Amazon\Creator\OrderItemCreator;
 use App\Util\AmazonSDK;
@@ -23,6 +24,9 @@ use App\Util\Log\AmazonOrderItemsLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Database\Model\ModelNotFoundException;
+use Hyperf\DB\DB;
+
 
 class OrderItemEngine implements EngineInterface
 {
@@ -50,11 +54,14 @@ class OrderItemEngine implements EngineInterface
          */
         $amazon_order_ids = $creator->getAmazonOrderIds();
 
+        $cur_date = Carbon::now()->format('Y-m-d H:i:s');
+
         foreach ($amazon_order_ids as $amazon_order_id) {
+
+            $console->info(sprintf('merchant_id:%s merchant_store_id:%s region:%s amazon_order_id:%s 开始处理', $merchant_id, $merchant_store_id, $region, $amazon_order_id));
+
             $retry = 30;
             $orderItems = [];
-
-            $cur_date = Carbon::now()->format('Y-m-d H:i:s');
 
             // https://developer-docs.amazon.com/sp-api/docs/orders-api-v0-reference#getorderitems
             while (true) {
@@ -104,6 +111,10 @@ class OrderItemEngine implements EngineInterface
             }
 
             $list = [];
+
+            $is_vine_order_flag_list = [];//是否为vine订单标识集合
+            $order_status = '';//当前订单状态
+
             foreach ($orderItems as $orderItem) {
                 $productInfo = $orderItem->getProductInfo();
 
@@ -140,10 +151,59 @@ class OrderItemEngine implements EngineInterface
                     ];
                 }
 
-                //                $is_pending = false;
+                $is_pending = false;
                 if (count($itemPriceJson) === 0) {
                     // 查找原始订单的状态
                     // TODO 如果订单状态为shipped且没有item_price，则为vine类型订单
+                    if ($order_status === '') {
+                        try {
+                            /**
+                             * @var AmazonOrderModel $amazonOrderCollection
+                             */
+                            $amazonOrderCollection = AmazonOrderModel::query()
+                                ->where('merchant_id', $merchant_id)
+                                ->where('merchant_store_id', $merchant_store_id)
+                                ->where('region', $region)
+                                ->where('amazon_order_id', $amazon_order_id)
+                                ->firstOrFail();
+                            $order_status = $amazonOrderCollection->order_status;
+                        } catch (ModelNotFoundException $modelNotFoundException) {
+
+                        }
+                    }
+
+                    //查找原始订单的状态
+                    if ($order_status === 'Pending') {
+                        //未支付的Pending订单是获取不到的订单项金额的，需要根据相同seller_sku订单项最新的历史数据计算订单项金额
+                        $other = DB::query("SELECT amazon_order.order_status,amazon_order.marketplace_id,amazon_order.order_total_currency,amazon_order_items.item_price FROM amazon_order INNER JOIN amazon_order_items ON amazon_order.amazon_order_id = amazon_order_items.order_id AND amazon_order_items.item_price <> '' AND   amazon_order_items.item_price <> '[]' AND amazon_order.marketplace_id = (select marketplace_id FROM amazon_order WHERE merchant_id = {$merchant_id} and merchant_store_id = {$merchant_store_id} and region = '{$region}' and amazon_order_id = '{$amazon_order_id}') AND amazon_order_items.seller_sku = '{$seller_sku}' AND amazon_order_items.quantity_ordered = 1 ORDER BY amazon_order_items.id DESC LIMIT 1;");
+                        if (! empty($other)) {
+                            $d = $other[0];
+                            $is_pending = true;
+                            try {
+                                $new_item_price = $d['item_price'];//单个商品价格
+                                $new_item_price_json = json_decode($new_item_price, true, 512, JSON_THROW_ON_ERROR);
+                                $new_item_price_amount = $new_item_price_json['amount'];//单个商品价格
+                                $new_item_price_currency_code = $d['order_total_currency'];
+                                if ($new_item_price_currency_code === '') {
+                                    $new_item_price_currency_code = $marketplace_currency_map[$d['marketplace_id']] ?? '';
+                                }
+
+                                $itemPriceJson = [
+                                    'fake_item_price' => 1,
+                                    'currency_code' => $new_item_price_currency_code,
+                                    'amount' => bcmul($new_item_price_amount, (string) $quantity_ordered, 2)
+                                ];
+                            } catch (\Exception $exception) {
+                            }
+                        }
+                    } elseif ($order_status === 'Canceled') {
+                        $itemPriceJson = [];
+                        $is_vine_order_flag_list[] = 0;
+                    } elseif ($order_status === 'Shipped') {
+                        $is_vine_order_flag_list[] = 1;//要考虑订单有多items的情况;  如果一个订单中存在多个订单项，某一个取消的话，也是获取不了订单数据的
+                    }
+                } else {
+                    $is_vine_order_flag_list[] = 0;
                 }
 
                 $shippingPrice = $orderItem->getShippingPrice();
@@ -199,6 +259,10 @@ class OrderItemEngine implements EngineInterface
                         'currency_code' => $promotionDiscount->getCurrencyCode() ?? '',
                         'amount' => $promotionDiscount->getAmount() ?? '0.00',
                     ];
+                }
+
+                if ($is_pending === true && '' !== $promotion_ids && count($promotionDiscountJson) === 0) {
+                    //TODO Pending情况下即时有promotion_id也没法获取到对应的优惠信息，需要查询默认的优惠信息
                 }
 
                 $promotionDiscountTax = $orderItem->getPromotionDiscountTax();
@@ -334,6 +398,28 @@ class OrderItemEngine implements EngineInterface
                 ];
             }
 
+            if (0 === count($list)) {
+                continue;//继续处理下一个order_id
+            }
+
+            //判断订单是否为vine类型订单   -- 一定要要判断数组个数是否大于0，因为有些Pending状态订单无法获得item_price数据，该状态下不能判断是否为vine类型订单
+            if (count($is_vine_order_flag_list) > 0) {
+                $is_vine_order_flag_list_unique = array_unique($is_vine_order_flag_list);
+                //如果数组有0，则不是vine订单
+                if (in_array(0, $is_vine_order_flag_list_unique)) {
+//                    AmazonOrderModel::query()->where('merchant_id', $merchant_id)
+//                        ->where('merchant_store_id', $merchant_store_id)
+//                        ->where('amazon_order_id', $amazon_order_id)
+//                        ->save(['is_vine_order' => 2]);
+                } else if (count($is_vine_order_flag_list_unique) === 1 && in_array(1, $is_vine_order_flag_list_unique)) {
+                    //如果数组数量只有1，且1在数组里，表示该订单为vine类型订单
+//                    AmazonOrderModel::query()->where('merchant_id', $merchant_id)
+//                        ->where('merchant_store_id', $merchant_store_id)
+//                        ->where('amazon_order_id', $amazon_order_id)
+//                        ->save(['is_vine_order' => 1]);
+                }
+            }
+
             $amazonOrderItemCollections = AmazonOrderItemModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
@@ -396,9 +482,7 @@ class OrderItemEngine implements EngineInterface
                 }
 
                 if (count($list)) {
-                    foreach ($list as $item) {
-                        AmazonOrderItemModel::insert($item);
-                    }
+                    AmazonOrderItemModel::insert($list);
                 }
             }
         }

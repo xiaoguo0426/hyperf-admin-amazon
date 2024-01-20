@@ -13,6 +13,7 @@ namespace App\Util;
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Configuration;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
+use AmazonPHP\SellingPartner\Extension;
 use AmazonPHP\SellingPartner\Marketplace;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use AmazonPHP\SellingPartner\STSClient;
@@ -24,6 +25,9 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LogLevel;
 use function Hyperf\Support\make;
 
 class AmazonSDK
@@ -259,6 +263,7 @@ class AmazonSDK
      * @param string $region
      * @param bool $force_refresh
      * @throws \AmazonPHP\SellingPartner\Exception\ApiException
+     * @throws \Hyperf\Di\Exception\NotFoundException
      * @throws \JsonException
      * @throws \Psr\Http\Client\ClientExceptionInterface
      * @throws \RedisException
@@ -312,20 +317,20 @@ class AmazonSDK
         $logger = new Logger('amazon');
         $logger->pushHandler(new StreamHandler(BASE_PATH . '/runtime/sp-api-php.log', Level::Info));
 
-        //        $configuration->setDefaultLogLevel(LogLevel::INFO);
-        //
-        //        $configuration->registerExtension(new class implements Extension {
-        //            public function preRequest(string $api, string $operation, RequestInterface $request): void
-        //            {
-        //                echo "pre: " . $api . "::" . $operation . " " . $request->getUri() . "\n";
-        //            }
-        //
-        //            public function postRequest(string $api, string $operation, RequestInterface $request, ResponseInterface $response): void
-        //            {
-        //                echo "post: " . $api . "::" . $operation . " " . $request->getUri() . " "
-        //                    . $response->getStatusCode() . " rate limit: " . implode(' ', $response->getHeader('x-amzn-RateLimit-Limit')) . "\n";
-        //            }
-        //        });
+        $configuration->setDefaultLogLevel(LogLevel::INFO);
+
+        $configuration->registerExtension(new class implements Extension {
+            public function preRequest(string $api, string $operation, RequestInterface $request): void
+            {
+                echo "pre: " . $api . "::" . $operation . " " . $request->getUri() . "\n";
+            }
+
+            public function postRequest(string $api, string $operation, RequestInterface $request, ResponseInterface $response): void
+            {
+                echo "post: " . $api . "::" . $operation . " " . $request->getUri() . " "
+                    . $response->getStatusCode() . " rate limit: " . implode(' ', $response->getHeader('x-amzn-RateLimit-Limit')) . "\n";
+            }
+        });
 
         $this->sdk = SellingPartnerSDK::create($client, $factory, $factory, $configuration, $logger);
 
@@ -336,6 +341,7 @@ class AmazonSDK
      * @param string $region
      * @param bool $force_refresh
      * @throws \AmazonPHP\SellingPartner\Exception\ApiException
+     * @throws \Hyperf\Di\Exception\NotFoundException
      * @throws \Psr\Http\Client\ClientExceptionInterface
      * @return \AmazonPHP\SellingPartner\AccessToken
      */

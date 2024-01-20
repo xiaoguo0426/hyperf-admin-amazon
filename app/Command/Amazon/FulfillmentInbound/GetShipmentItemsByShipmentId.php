@@ -29,6 +29,7 @@ use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -44,6 +45,7 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
         parent::configure();
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
+            ->addArgument('region', InputArgument::REQUIRED, '地区', null)
             ->addArgument('shipment_id', InputArgument::OPTIONAL, '货件ID', null)
             ->setDescription('Amazon Fulfillment Inbound Get Shipment Items By Shipment Id Command');
     }
@@ -51,6 +53,8 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws RedisException
+     * @return void
      */
     public function handle(): void
     {
@@ -65,6 +69,7 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
             $amazonShipmentCollections = AmazonShipmentModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('region', $region)
                 ->when($shipment_id, function ($query, $value) {
                     return $query->where('shipment_id', $value);
                 })
@@ -174,6 +179,7 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                             $collections->push([
                                 'merchant_id' => $merchant_id,
                                 'merchant_store_id' => $merchant_store_id,
+                                'region' => $region,
                                 'shipment_id' => $shipment_id,
                                 'seller_sku' => $seller_sku,
                                 'fulfillment_network_sku' => $fulfillment_network_sku,

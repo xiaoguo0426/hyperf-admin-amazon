@@ -25,8 +25,8 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use function Hyperf\Support\make;
 
 #[Command]
@@ -42,23 +42,23 @@ class ListFinancialEvents extends HyperfCommand
         parent::configure();
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
-            ->addOption('posted_after', null, InputOption::VALUE_OPTIONAL, '指定时间之后（或在指定时间）发布的财务事件的日期', null)
-            ->addOption('posted_before', null, InputOption::VALUE_OPTIONAL, '指定时间之前（但不是在指定时间）发布的财务事件的日期', null)
+            ->addArgument('posted_after', InputArgument::REQUIRED, '指定时间之后（或在指定时间）发布的财务事件的日期')
+            ->addArgument('posted_before', InputArgument::OPTIONAL, '指定时间之前（但不是在指定时间）发布的财务事件的日期')
             ->setDescription('Amazon Finance List Financial Events Command');
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
      * @return void
      */
     public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
-        $posted_after = $this->input->getOption('posted_after');
-        $posted_before = $this->input->getOption('posted_before');
+        $posted_after = $this->input->getArgument('posted_after');
+        $posted_before = $this->input->getArgument('posted_before');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($posted_after, $posted_before) {
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
@@ -67,7 +67,7 @@ class ListFinancialEvents extends HyperfCommand
             $retry = 10;
 
             $max_results_per_page = 100;
-            $posted_after = $posted_after ? (new \DateTime($posted_after, new \DateTimeZone('UTC'))) : null;
+            $posted_after = new \DateTime($posted_after, new \DateTimeZone('UTC'));
             $posted_before = $posted_before ? (new \DateTime($posted_before, new \DateTimeZone('UTC'))) : null;
             $next_token = null;
 
@@ -107,6 +107,29 @@ class ListFinancialEvents extends HyperfCommand
                         break;
                     }
                 } catch (ApiException $e) {
+                    $can_retry_flag = true;
+                    $response_body = $e->getResponseBody();
+                    if (! is_null($response_body)) {
+                        $body = json_decode($response_body, true, 512, JSON_THROW_ON_ERROR);
+                        if (isset($body['errors'])) {
+                            $errors = $body['errors'];
+                            foreach ($errors as $error) {
+                                $code = $error['code'];
+                                $message = $error['message'];
+                                $details = $error['details'];
+                                $console->error(sprintf('ApiException Code:%s Message:%s', $code, $message));
+                                if ($code === 'InvalidInput') {
+                                    $console->error('当前错误无法重试，请检查请求参数. ');
+                                    $can_retry_flag = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (! $can_retry_flag) {
+                        break;
+                    }
+
                     --$retry;
                     if ($retry > 0) {
                         $console->warning(sprintf('Finance ApiException listFinancialEventGroups Failed. retry:%s merchant_id: %s merchant_store_id: %s ', $retry, $merchant_id, $merchant_store_id));

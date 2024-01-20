@@ -22,6 +22,7 @@ use App\Util\Log\AmazonFinanceLog;
 use App\Util\RuntimeCalculator;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use function Hyperf\Support\make;
 
 class ListFinancialEventsByGroupIdEngine implements EngineInterface
 {
@@ -82,8 +83,8 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
                 if (is_null($financialEvents)) {
                     break;
                 }
-
-                \Hyperf\Support\make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
+                //TODO 拉取一页就处理一页数据，这里可能会有点问题。如果处理时间过长，可能会导致next_token过期
+                make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
 
                 // 如果下一页没有数据，nextToken 会变成null
                 $next_token = $payload->getNextToken();
@@ -92,6 +93,29 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
                     break;
                 }
             } catch (ApiException $e) {
+                $can_retry_flag = true;
+                $response_body = $e->getResponseBody();
+                if (! is_null($response_body)) {
+                    $body = json_decode($response_body, true);
+                    if (isset($body['errors'])) {
+                        $errors = $body['errors'];
+                        foreach ($errors as $error) {
+                            $code = $error['code'];
+                            $message = $error['message'];
+                            $details = $error['details'];
+                            $console->error(sprintf('ApiException Code:%s Message:%s', $code, $message));
+                            if ($code === 'InvalidInput') {
+                                $console->error('当前错误无法重试，请检查请求参数. ');
+                                $can_retry_flag = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (! $can_retry_flag) {
+                    break;
+                }
+
                 --$retry;
                 if ($retry > 0) {
                     $console->warning(sprintf('Finance ApiException listFinancialEventsByGroupId Failed. retry:%s merchant_id: %s merchant_store_id: %s ', $retry, $merchant_id, $merchant_store_id));
