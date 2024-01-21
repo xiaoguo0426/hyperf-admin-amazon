@@ -22,13 +22,21 @@ use App\Util\Log\AmazonFinanceLog;
 use App\Util\RuntimeCalculator;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use JsonException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ListFinancialEventsByOrderIdEngine implements EngineInterface
 {
     /**
-     * @throws \JsonException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @param AmazonSDK $amazonSDK
+     * @param SellingPartnerSDK $sdk
+     * @param AccessToken $accessToken
+     * @param CreatorInterface $creator
+     * @throws ContainerExceptionInterface
+     * @throws JsonException
+     * @throws NotFoundExceptionInterface
+     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {

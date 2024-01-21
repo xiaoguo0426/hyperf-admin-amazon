@@ -19,13 +19,13 @@ class GetShipmentItems extends HyperfCommand
 {
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('amazon:fulfillment-inbound:get-inbound-guidance');
+        parent::__construct('amazon:fulfillment-inbound:get-shipment-items');
     }
 
     public function configure(): void
     {
         parent::configure();
-        $this->setDescription('Amazon Fulfillment Inbound Get Inbound Guidance Command');
+        $this->setDescription('Amazon Fulfillment Inbound Get Shipment Items Command');
     }
 
     public function handle(): void {}
