@@ -38,7 +38,6 @@ class GetShipmentsEngine implements EngineInterface
         $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
         $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetShipmentsLog::class);
 
-        $region = $amazonSDK->getRegion();
         /**
          * @var GetShipmentsCreator $creator
          */
@@ -59,6 +58,8 @@ class GetShipmentsEngine implements EngineInterface
         $collections = new Collection();
 
         $shipment_ids = [];
+
+        $region = $amazonSDK->getRegion();
 
         $merchant_id = $amazonSDK->getMerchantId();
         $merchant_store_id = $amazonSDK->getMerchantStoreId();
