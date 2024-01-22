@@ -22,6 +22,7 @@ use App\Util\Log\AmazonFulfillmentInboundGetTransportDetailsLog;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -43,7 +44,8 @@ class GetTransportDetails extends HyperfCommand
         // 指令配置
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
-            ->addArgument('shipment_id', InputArgument::OPTIONAL, '货件ID', null)
+            ->addArgument('region', InputArgument::REQUIRED, '地区')
+            ->addArgument('shipment_id', InputArgument::REQUIRED, '货件ID')
             ->setDescription('Amazon Fulfillment Inbound GetTransportDetails Command');
     }
 
@@ -58,30 +60,27 @@ class GetTransportDetails extends HyperfCommand
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
+        $region = $this->input->getArgument('region');
         $shipment_id = $this->input->getArgument('shipment_id');
 
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($shipment_id) {
+        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($shipment_id) {
             $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetTransportDetailsLog::class);
 
-            $amazonShipmentsCollections = AmazonShipmentModel::query()
-                ->where('merchant_id', $merchant_id)
-                ->where('merchant_store_id', $merchant_store_id)
-                ->when($shipment_id, function ($query, $value) {
-                    return $query->where('shipment_id', $value);
-                })
-                ->orderByDesc('id')
-                ->get();
-            if ($amazonShipmentsCollections->isEmpty()) {
-                if (is_null($shipment_id)) {
-                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s 没有符合条件的shipment数据', $merchant_id, $merchant_store_id));
-                } else {
-                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s shipment_id:%s 不存在', $merchant_id, $merchant_store_id, $shipment_id));
-                }
+            try {
+                $amazonShipmentsCollection = AmazonShipmentModel::query()
+                    ->where('merchant_id', $merchant_id)
+                    ->where('merchant_store_id', $merchant_store_id)
+                    ->where('region', $region)
+                    ->where('shipment_id', $shipment_id)
+                    ->firstOrFail();
+            } catch (ModelNotFoundException) {
+                $console->error(sprintf('merchant_id:%s merchant_store_id:%s shipment_id:%s 不存在', $merchant_id, $merchant_store_id, $shipment_id));
                 return true;
             }
-            foreach ($amazonShipmentsCollections as $amazonShipmentsCollection) {
-                $shipment_id = $amazonShipmentsCollection->shipment_id;
+
+            $retry = 10;
+            while (true) {
                 try {
                     $getTransportDetailsResponse = $sdk->fulfillmentInbound()->getTransportDetails($accessToken, $region, $shipment_id);
                     $payload = $getTransportDetailsResponse->getPayload();
@@ -351,20 +350,28 @@ class GetTransportDetails extends HyperfCommand
                     var_dump($transport_status);
                     var_dump($error_code);
                     var_dump($error_description);
-                } catch (ApiException $exception) {
-                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s shipment_id:%s %s', $merchant_id, $merchant_store_id, $shipment_id, $exception->getMessage()));
-                } catch (InvalidArgumentException $exception) {
-                    $console->error('InvalidArgumentException API请求错误', [
-                        'message' => $exception->getMessage(),
-                        'trace' => $exception->getTraceAsString(),
-                    ]);
 
-                    $logger->error('InvalidArgumentException API请求错误', [
-                        'message' => $exception->getMessage(),
-                        'trace' => $exception->getTraceAsString(),
-                    ]);
+                    break;
+                } catch (ApiException $exception) {
+                    --$retry;
+                    if ($retry > 0) {
+                        $console->warning(sprintf('FulfillmentInbound ApiException GetTransportDetails Failed. retry:%s merchant_id: %s merchant_store_id: %s region:%s ', $retry, $merchant_id, $merchant_store_id, $region));
+                        sleep(10);
+                        continue;
+                    }
+
+                    $log = sprintf('FulfillmentInbound ApiException GetTransportDetails Failed. merchant_id: %s merchant_store_id: %s region:%s', $merchant_id, $merchant_store_id, $region);
+                    $console->error($log);
+                    $logger->error($log);
+                    break;
+                } catch (InvalidArgumentException $exception) {
+                    $log = sprintf('FulfillmentInbound GetTransportDetails InvalidArgumentException Failed. merchant_id: %s merchant_store_id: %s region:%s', $merchant_id, $merchant_store_id, $region);
+                    $console->error($log);
+                    $logger->error($log);
+                    break;
                 }
             }
+
 
             return true;
         });

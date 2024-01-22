@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Command\Amazon\FulfillmentInbound;
 
-use _PHPStan_3d4486d07\Symfony\Component\Console\Input\InputOption;
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\Amazon\Creator\GetShipmentItemsCreator;
@@ -19,12 +18,15 @@ use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use function Hyperf\Support\make;
 
 #[Command]
@@ -41,7 +43,9 @@ class GetShipmentItems extends HyperfCommand
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
             ->addArgument('region', InputArgument::REQUIRED, '地区')
-            ->addOption('shipment_ids', null, \Symfony\Component\Console\Input\InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'ASIN 列表(英文逗号分隔)', null)
+            ->addArgument('marketplace_id', InputArgument::REQUIRED, '市场id')
+            ->addOption('last_updated_after', null, InputOption::VALUE_OPTIONAL, '用于选择在指定时间之后（或在）最后更新的入站货件的日期', null)
+            ->addOption('last_updated_before', null, InputOption::VALUE_OPTIONAL, '用于选择在指定时间之前（或在）最后更新的入站货件的日期', null)
             ->setDescription('Amazon Fulfillment Inbound Get Shipment Items Command');
     }
 
@@ -57,18 +61,22 @@ class GetShipmentItems extends HyperfCommand
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $region = $this->input->getArgument('region');
-        $shipment_ids = $this->input->getOption('shipment_ids');
+        $marketplace_id = $this->input->getArgument('marketplace_id');
+        $last_updated_after = $this->input->getOption('last_updated_after');
+        $last_updated_before = $this->input->getOption('last_updated_before');
+        if (is_null($last_updated_after) && is_null($last_updated_before)) {
+            $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+            $console->error('last_updated_after与last_updated_before 必须指定其中一个参数');
+            return;
+        }
 
-        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($shipment_ids) {
+        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($marketplace_id, $last_updated_after, $last_updated_before) {
 
-            $query_type = 'SHIPMENT';
-
-            $last_updated_after = null;
-            $last_updated_before = null;
+            $query_type = 'DATE_RANGE';
 
             $getShipmentItemsCreator = new GetShipmentItemsCreator();
             $getShipmentItemsCreator->setQueryType($query_type);
-            $getShipmentItemsCreator->setMarketplaceId('');
+            $getShipmentItemsCreator->setMarketplaceId($marketplace_id);
             $getShipmentItemsCreator->setLastUpdatedAfter($last_updated_after);
             $getShipmentItemsCreator->setLastUpdatedBefore($last_updated_before);
 

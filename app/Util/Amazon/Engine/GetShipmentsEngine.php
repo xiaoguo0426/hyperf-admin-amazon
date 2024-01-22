@@ -13,6 +13,8 @@ use App\Util\AmazonSDK;
 use App\Util\Log\AmazonFulfillmentInboundGetShipmentsLog;
 use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
+use DateTime;
+use DateTimeZone;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -28,9 +30,10 @@ class GetShipmentsEngine implements EngineInterface
      * @param SellingPartnerSDK $sdk
      * @param AccessToken $accessToken
      * @param CreatorInterface $creator
-     * @throws JsonException
      * @throws ContainerExceptionInterface
+     * @throws JsonException
      * @throws NotFoundExceptionInterface
+     * @throws \Exception
      * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
@@ -47,6 +50,14 @@ class GetShipmentsEngine implements EngineInterface
         $shipment_id_list = $creator->getShipmentIdList();
         $last_updated_after = $creator->getLastUpdatedAfter();
         $last_updated_before = $creator->getLastUpdatedBefore();
+
+        if (! is_null($last_updated_after)) {
+            $last_updated_after = (new DateTime($last_updated_after, new DateTimeZone('UTC')));
+
+        }
+        if (! is_null($last_updated_before)) {
+            $last_updated_before = (new DateTime($last_updated_before, new DateTimeZone('UTC')));
+        }
 
         $next_token = null;
 
@@ -142,15 +153,14 @@ class GetShipmentsEngine implements EngineInterface
                         'merchant_id' => $merchant_id,
                         'merchant_store_id' => $merchant_store_id,
                         'region' => $region,
-                        //                            'marketplace_id' => $marketplace_id,
-                        'marketplace_id' => '',
+                        'marketplace_id' => $marketplace_id,
                         'shipment_id' => $shipment_id,
                         'shipment_name' => $shipment_name,
                         'shipment_from_address' => json_encode($shipment_from_address, JSON_THROW_ON_ERROR),
                         'destination_fulfillment_center_id' => $destination_fulfillment_center_id,
                         'shipment_status' => $shipment_status,
                         'label_prep_type' => $label_prep_type,
-                        'are_cases_required' => $are_cases_required,
+                        'are_cases_required' => (int) $are_cases_required,
                         'confirmed_need_by_date' => $confirmed_need_by_date,
                         'box_contents_source' => $box_contents_source,
                         'total_units' => $total_units,
@@ -201,17 +211,17 @@ class GetShipmentsEngine implements EngineInterface
                 if ($collections->offsetExists($exist_shipment_id)) {
                     $collection = $collections->offsetGet($exist_shipment_id);
 
-                    //                        $existShipment->destination_fulfillment_center_id = $collection['destination_fulfillment_center_id'];
+                    $existShipment->destination_fulfillment_center_id = $collection['destination_fulfillment_center_id'];
                     $existShipment->shipment_status = $collection['shipment_status'];
-                    //                        $existShipment->label_prep_type = $collection['label_prep_type'];
-                    //                        $existShipment->are_cases_required = $collection['are_cases_required'];
-                    //                        $existShipment->confirmed_need_by_date = $collection['confirmed_need_by_date'];
-                    //                        $existShipment->box_contents_source = $collection['box_contents_source'];
-                    //                        $existShipment->total_units = $collection['total_units'];
-                    //                        $existShipment->fee_per_unit_currency = $collection['fee_per_unit_currency'];
-                    //                        $existShipment->fee_per_unit_value = $collection['fee_per_unit_value'];
-                    //                        $existShipment->total_fee_currency = $collection['total_fee_currency'];
-                    //                        $existShipment->total_fee_value = $collection['total_fee_value'];
+                    $existShipment->label_prep_type = $collection['label_prep_type'];
+                    $existShipment->are_cases_required = $collection['are_cases_required'];
+                    $existShipment->confirmed_need_by_date = $collection['confirmed_need_by_date'];
+                    $existShipment->box_contents_source = $collection['box_contents_source'];
+                    $existShipment->total_units = $collection['total_units'];
+                    $existShipment->fee_per_unit_currency = $collection['fee_per_unit_currency'];
+                    $existShipment->fee_per_unit_value = $collection['fee_per_unit_value'];
+                    $existShipment->total_fee_currency = $collection['total_fee_currency'];
+                    $existShipment->total_fee_value = $collection['total_fee_value'];
 
                     $existShipment->save();
                 } else {

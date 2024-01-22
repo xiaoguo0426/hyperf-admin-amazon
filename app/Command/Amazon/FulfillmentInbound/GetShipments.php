@@ -42,6 +42,8 @@ class GetShipments extends HyperfCommand
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
             ->addArgument('region', InputArgument::REQUIRED, '地区')
             ->addOption('shipment_ids', null, \Symfony\Component\Console\Input\InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'ASIN 列表(英文逗号分隔)', null)
+            ->addOption('last_updated_after', null, InputOption::VALUE_OPTIONAL, '指定时间之后', null)
+            ->addOption('last_updated_before', null, InputOption::VALUE_OPTIONAL, '指定时间之前', null)
             ->setDescription('Amazon Fulfillment Inbound Get Shipments Command');
     }
 
@@ -58,10 +60,10 @@ class GetShipments extends HyperfCommand
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $region = $this->input->getArgument('region');
         $shipment_ids = $this->input->getOption('shipment_ids');
+        $last_updated_after = $this->input->getOption('last_updated_after');
+        $last_updated_before = $this->input->getOption('last_updated_before');
 
-        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($shipment_ids) {
-
-            $query_type = 'SHIPMENT';
+        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($shipment_ids, $last_updated_after, $last_updated_before) {
 
             $shipment_status_list = [
                 'WORKING',
@@ -76,20 +78,46 @@ class GetShipments extends HyperfCommand
                 'DELIVERED',
                 'CHECKED_IN',
             ];
-            //            $last_updated_after = (new \DateTime('2023-01-01', new \DateTimeZone('UTC')));
-            //            $last_updated_before = (new \DateTime('2023-09-01', new \DateTimeZone('UTC')));
-            $last_updated_after = null;
-            $last_updated_before = null;
 
-            $getShipmentsCreator = new GetShipmentsCreator();
-            $getShipmentsCreator->setQueryType($query_type);
-            $getShipmentsCreator->setMarketplaceId('');
-            $getShipmentsCreator->setShipmentStatusList($shipment_status_list);
-            $getShipmentsCreator->setShipmentIdList($shipment_ids);
-            $getShipmentsCreator->setLastUpdatedAfter($last_updated_after);
-            $getShipmentsCreator->setLastUpdatedBefore($last_updated_before);
+            if (count($shipment_ids) > 0) {
+                //如果指定shipment_id，则不能指定marketplace_id,last_updated_after,last_updated_before
+                $query_type = 'SHIPMENT';
+                //TODO 优化 检查shipment_ids是否存在
+                $getShipmentsCreator = new GetShipmentsCreator();
+                $getShipmentsCreator->setQueryType($query_type);
+                $getShipmentsCreator->setMarketplaceId('');//如果指定shipment_id，则不能指定marketplace_id
+                $getShipmentsCreator->setShipmentStatusList($shipment_status_list);
+                $getShipmentsCreator->setShipmentIdList($shipment_ids);
+                $getShipmentsCreator->setLastUpdatedAfter(NULL);
+                $getShipmentsCreator->setLastUpdatedBefore(NULL);
 
-            make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
+                make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
+            } else if (! is_null($last_updated_after) || ! is_null($last_updated_before)) {
+                //如果指定last_updated_after,last_updated_before,则不能指定marketplace_id,shipment_id
+                $query_type = 'DATE_RANGE';
+                $getShipmentsCreator = new GetShipmentsCreator();
+                $getShipmentsCreator->setQueryType($query_type);
+                $getShipmentsCreator->setMarketplaceId('');
+                $getShipmentsCreator->setShipmentStatusList($shipment_status_list);
+                $getShipmentsCreator->setShipmentIdList([]);
+                $getShipmentsCreator->setLastUpdatedAfter($last_updated_after);
+                $getShipmentsCreator->setLastUpdatedBefore($last_updated_before);
+
+                make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
+            } else {
+                $query_type = 'SHIPMENT';
+                foreach ($marketplace_ids as $marketplace_id) {
+                    $getShipmentsCreator = new GetShipmentsCreator();
+                    $getShipmentsCreator->setQueryType($query_type);
+                    $getShipmentsCreator->setMarketplaceId($marketplace_id);
+                    $getShipmentsCreator->setShipmentStatusList($shipment_status_list);
+                    $getShipmentsCreator->setShipmentIdList([]);
+                    $getShipmentsCreator->setLastUpdatedAfter(NULL);
+                    $getShipmentsCreator->setLastUpdatedBefore(NULL);
+
+                    make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
+                }
+            }
             return true;
         });
     }
