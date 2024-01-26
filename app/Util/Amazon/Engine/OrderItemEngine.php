@@ -66,21 +66,46 @@ class OrderItemEngine implements EngineInterface
             $retry = 30;
             $orderItems = [];
 
+            $next_token = null;
+
             // https://developer-docs.amazon.com/sp-api/docs/orders-api-v0-reference#getorderitems
             while (true) {
                 try {
                     $response = $sdk->orders()->getOrderItems(
                         $accessToken,
                         $region,
-                        $amazon_order_id
+                        $amazon_order_id,
+                        $next_token
                     );
                     $payload = $response->getPayload();
                     if (is_null($payload)) {
                         // TODO Log
                         break;
                     }
-                    $orderItems = $payload->getOrderItems();
-                    break;
+                    $errorsList = $response->getErrors();
+                    if (! is_null($errorsList)) {
+                        $errors = [];
+                        foreach ($errorsList as $error) {
+                            $errors[] = [
+                                'code' => $error->getCode(),
+                                'message' => $error->getMessage() ?? '',
+                                'details' => $error->getDetails() ?? '',
+                            ];
+                        }
+                        $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s amazon_order_id:%s 出错，错误信息: %s', $merchant_id, $merchant_store_id, $region, $amazon_order_id, json_encode($errors, JSON_THROW_ON_ERROR)));
+                        break;
+                    }
+
+                    $list = $payload->getOrderItems();
+                    foreach ($list as $orderItem){
+                        $orderItems[] = $orderItem;
+                    }
+
+                    $next_token = $payload->getNextToken();
+                    if (is_null($next_token)) {
+                        break;
+                    }
+
                 } catch (ApiException $e) {
                     if (! is_null($e->getResponseBody())) {
                         $body = json_decode($e->getResponseBody(), true, 512, JSON_THROW_ON_ERROR);
@@ -409,23 +434,24 @@ class OrderItemEngine implements EngineInterface
             if (count($is_vine_order_flag_list) > 0) {
                 $is_vine_order_flag_list_unique = array_unique($is_vine_order_flag_list);
                 //如果数组有0，则不是vine订单
-                if (in_array(0, $is_vine_order_flag_list_unique)) {
-//                    AmazonOrderModel::query()->where('merchant_id', $merchant_id)
-//                        ->where('merchant_store_id', $merchant_store_id)
-//                        ->where('amazon_order_id', $amazon_order_id)
-//                        ->save(['is_vine_order' => 2]);
-                } else if (count($is_vine_order_flag_list_unique) === 1 && in_array(1, $is_vine_order_flag_list_unique)) {
+                if (in_array(0, $is_vine_order_flag_list_unique, true)) {
+                    AmazonOrderModel::query()->where('merchant_id', $merchant_id)
+                        ->where('merchant_store_id', $merchant_store_id)
+                        ->where('amazon_order_id', $amazon_order_id)
+                        ->update(['is_vine_order' => 2]);
+                } else if (count($is_vine_order_flag_list_unique) === 1 && in_array(1, $is_vine_order_flag_list_unique, true)) {
                     //如果数组数量只有1，且1在数组里，表示该订单为vine类型订单
-//                    AmazonOrderModel::query()->where('merchant_id', $merchant_id)
-//                        ->where('merchant_store_id', $merchant_store_id)
-//                        ->where('amazon_order_id', $amazon_order_id)
-//                        ->save(['is_vine_order' => 1]);
+                    AmazonOrderModel::query()->where('merchant_id', $merchant_id)
+                        ->where('merchant_store_id', $merchant_store_id)
+                        ->where('amazon_order_id', $amazon_order_id)
+                        ->update(['is_vine_order' => 1]);
                 }
             }
 
             $amazonOrderItemCollections = AmazonOrderItemModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('region', $region)
                 ->where('order_id', $amazon_order_id)
                 ->get();
 

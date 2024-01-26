@@ -66,6 +66,7 @@ use Hyperf\DbConnection\Model\Model;
  * @property string $automated_shipping_settings 包含有关配送设置自动程序的信息，例如订单的配送设置是否自动生成，以及这些设置是什么
  * @property string $has_regulated_items 订单是否包含在履行之前可能需要额外批准步骤的监管项目
  * @property string $electronic_invoice_status 电子发票的状态 NotRequired,NotFound,Processing,Errored,Accepted
+ * @property int $is_vine_order 电子发票的状态 NotRequired,NotFound,Processing,Errored,Accepted
  * @property \Carbon\Carbon $created_at 订单拉取入库时间(内部使用)
  * @property \Carbon\Carbon $updated_at 订单最后一次更新入库时间(内部使用)
  */

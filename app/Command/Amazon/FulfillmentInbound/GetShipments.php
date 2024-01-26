@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Command\Amazon\FulfillmentInbound;
 
-use _PHPStan_3d4486d07\Symfony\Component\Console\Input\InputOption;
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\Amazon\Creator\GetShipmentsCreator;
@@ -25,6 +24,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use function Hyperf\Support\make;
 
 #[Command]
