@@ -11,7 +11,7 @@
  Target Server Version : 50739
  File Encoding         : 65001
 
- Date: 04/09/2023 19:29:02
+ Date: 27/01/2024 00:18:26
 */
 
 SET NAMES utf8mb4;
@@ -34,15 +34,45 @@ CREATE TABLE `amazon_app` (
   `role_arn` varchar(255) NOT NULL DEFAULT '' COMMENT 'ROLE ARN',
   `lwa_client_id` varchar(255) NOT NULL DEFAULT '' COMMENT '客户端编码lwaClientId',
   `lwa_client_id_secret` varchar(255) NOT NULL DEFAULT '' COMMENT '客户端秘钥lwaClientIdSecret',
-  `region` varchar(20) NOT NULL DEFAULT '' COMMENT '地区',
-  `country_ids` varchar(255) NOT NULL DEFAULT '' COMMENT '市场(国家二字码)(英文逗号分割)',
-  `refresh_token` varchar(512) NOT NULL DEFAULT '' COMMENT '刷新令牌',
-  `config` longtext COMMENT '不同地区与refresh token关系配置',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '状态 0禁用 1啓用',
   `created_at` datetime NOT NULL COMMENT '创建时间',
   `updated_at` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for amazon_app_region
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_app_region`;
+CREATE TABLE `amazon_app_region` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商户id',
+  `merchant_store_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '店铺id',
+  `amazon_app_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'amazon_app.id',
+  `region` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '地区',
+  `country_codes` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '国家(二字码)',
+  `refresh_token` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '刷新令牌',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Table structure for amazon_coupon
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_coupon`;
+CREATE TABLE `amazon_coupon` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL,
+  `merchant_store_id` int(10) unsigned NOT NULL,
+  `promotion_id` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '优惠券ID',
+  `discount_type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '折扣类型 PERCENT_OFF_LIST_PRICE百分比折扣/AMOUNT_OFF_LIST_PRICE金额折扣',
+  `discount_amount` int(10) unsigned NOT NULL COMMENT '折扣比例或金额',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `promotion_idx` (`merchant_id`,`merchant_store_id`,`promotion_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for amazon_finance_group
@@ -52,6 +82,7 @@ CREATE TABLE `amazon_finance_group` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `merchant_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商户id',
   `merchant_store_id` int(10) NOT NULL COMMENT '店铺id',
+  `region` varchar(10) NOT NULL DEFAULT '' COMMENT '地区',
   `financial_event_group_id` varchar(128) NOT NULL DEFAULT '' COMMENT '财务事件组的唯一标识符',
   `processing_status` varchar(32) NOT NULL DEFAULT '' COMMENT '财务事件组的处理状态表示财务事件组的余额是否已结算。',
   `fund_transfer_status` varchar(32) NOT NULL DEFAULT '' COMMENT '资金转移的状态',
@@ -69,7 +100,7 @@ CREATE TABLE `amazon_finance_group` (
   `created_at` datetime DEFAULT NULL COMMENT '系统创建时间',
   `updated_at` datetime DEFAULT NULL COMMENT '系统更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊财务事件组';
+) ENGINE=InnoDB AUTO_INCREMENT=186 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊财务事件组';
 
 -- ----------------------------
 -- Table structure for amazon_finance_shipment_event_list
@@ -104,37 +135,42 @@ CREATE TABLE `amazon_inventory` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `merchant_id` int(10) unsigned NOT NULL COMMENT '商户id',
   `merchant_store_id` int(10) NOT NULL DEFAULT '0' COMMENT '店铺ID',
-  `asin` varchar(128) NOT NULL DEFAULT '',
-  `fn_sku` varchar(128) NOT NULL DEFAULT '',
-  `seller_sku` varchar(128) NOT NULL DEFAULT '',
-  `product_name` varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
-  `condition` varchar(20) NOT NULL DEFAULT '' COMMENT '商品状态，例如"NewItem"',
-  `fulfillable_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '可履行数量',
-  `inbound_working_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '运输中、待上架数量',
-  `inbound_shipped_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '已运抵、待上架数量',
-  `inbound_receiving_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '正在接收的数量',
-  `total_reserved_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '总预留数量',
-  `pending_customer_order_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '等待顾客订单数量',
-  `pending_transshipment_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '等待转运数量',
-  `fc_processing_quantity` int(11) NOT NULL DEFAULT '0' COMMENT 'FBA中心处理中数量',
-  `total_researching_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '总调查数量',
+  `region` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '地区',
+  `asin` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `fn_sku` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `seller_sku` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `product_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '商品名称',
+  `main_image` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '主图',
+  `product_type` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '产品类型',
+  `created_date` datetime DEFAULT NULL COMMENT 'listing创建时间',
+  `last_updated_date` datetime DEFAULT NULL COMMENT 'listing最后更新时间',
+  `condition` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '商品状态，例如"NewItem"',
+  `fulfillable_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '可履行数量',
+  `inbound_working_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '运输中、待上架数量',
+  `inbound_shipped_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '已运抵、待上架数量',
+  `inbound_receiving_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '正在接收的数量',
+  `total_reserved_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '总预留数量',
+  `pending_customer_order_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '等待顾客订单数量',
+  `pending_transshipment_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '等待转运数量',
+  `fc_processing_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'FBA中心处理中数量',
+  `total_researching_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '总调查数量',
   `researching_quantity_in_short_term` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '短期内调查数量',
   `researching_quantity_in_mid_term` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '中期内调查数量',
   `researching_quantity_in_long_term` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '长期内调查数量',
-  `total_unfulfillable_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '总不可履行数量',
-  `customer_damaged_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '顾客损坏数量',
-  `warehouse_damaged_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '仓库损坏数量',
-  `distributor_damaged_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '经销商损坏数量',
-  `carrier_damaged_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '运输商损坏数量',
-  `defective_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '有缺陷数量',
-  `expired_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '已过期数量',
-  `last_updated_time` datetime NOT NULL COMMENT '最后更新时间',
-  `total_quantity` int(11) NOT NULL DEFAULT '0' COMMENT '总数量',
-  `country_ids` varchar(255) NOT NULL DEFAULT '' COMMENT '市场',
+  `total_unfulfillable_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '总不可履行数量',
+  `customer_damaged_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '顾客损坏数量',
+  `warehouse_damaged_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '仓库损坏数量',
+  `distributor_damaged_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '经销商损坏数量',
+  `carrier_damaged_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '运输商损坏数量',
+  `defective_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '有缺陷数量',
+  `expired_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '已过期数量',
+  `last_updated_time` datetime DEFAULT NULL COMMENT '最后更新时间',
+  `total_quantity` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '总数量',
+  `country_ids` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '国家二字码',
   `created_at` datetime NOT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=295 DEFAULT CHARSET=utf8mb4 COMMENT='amazon-库存';
+) ENGINE=InnoDB AUTO_INCREMENT=323 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='amazon-库存';
 
 -- ----------------------------
 -- Table structure for amazon_order
@@ -144,7 +180,7 @@ CREATE TABLE `amazon_order` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `merchant_id` int(10) unsigned NOT NULL COMMENT '商户id',
   `merchant_store_id` int(10) unsigned NOT NULL COMMENT '店铺id',
-  `seller_id` varchar(128) NOT NULL DEFAULT '' COMMENT '卖家id',
+  `region` varchar(10) NOT NULL DEFAULT '' COMMENT '地区',
   `amazon_order_id` varchar(128) NOT NULL DEFAULT '' COMMENT '亚马逊定义的订单标识符，格式为3-7-7',
   `seller_order_id` varchar(128) NOT NULL DEFAULT '' COMMENT '卖家定义的订单标识符',
   `purchase_date` datetime DEFAULT NULL COMMENT '订单创建时间',
@@ -194,12 +230,12 @@ CREATE TABLE `amazon_order` (
   `automated_shipping_settings` text NOT NULL COMMENT '包含有关配送设置自动程序的信息，例如订单的配送设置是否自动生成，以及这些设置是什么',
   `has_regulated_items` varchar(255) NOT NULL DEFAULT '' COMMENT '订单是否包含在履行之前可能需要额外批准步骤的监管项目',
   `electronic_invoice_status` varchar(255) NOT NULL DEFAULT '' COMMENT '电子发票的状态 NotRequired,NotFound,Processing,Errored,Accepted',
-  `is_ignore_evaluation` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否跳过索评 1是 0否',
+  `is_vine_order` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否为VINE类型订单 1是2不是(初始值0)',
   `created_at` datetime NOT NULL COMMENT '订单拉取入库时间(内部使用)',
-  `updated_at` datetime NOT NULL COMMENT '订单最后一次更新入库时间(内部使用)',
+  `updated_at` datetime DEFAULT NULL COMMENT '订单最后一次更新入库时间(内部使用)',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `amazon_order_id_idx` (`amazon_order_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=37658 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊订单表';
+) ENGINE=InnoDB AUTO_INCREMENT=75130 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊订单表';
 
 -- ----------------------------
 -- Table structure for amazon_order_items
@@ -210,6 +246,8 @@ CREATE TABLE `amazon_order_items` (
   `merchant_id` int(10) unsigned NOT NULL COMMENT '商戶id',
   `merchant_store_id` int(10) unsigned NOT NULL COMMENT '商户店铺ID',
   `seller_id` varchar(128) NOT NULL DEFAULT '' COMMENT '卖家ID',
+  `region` varchar(10) NOT NULL DEFAULT '' COMMENT '地区',
+  `marketplace_id` varchar(30) NOT NULL DEFAULT '' COMMENT '市场id',
   `order_id` varchar(128) NOT NULL DEFAULT '' COMMENT '亚马逊订单id',
   `asin` varchar(128) NOT NULL DEFAULT '' COMMENT '物品的亚马逊标准标识号（ASIN）',
   `order_item_id` varchar(128) NOT NULL DEFAULT '' COMMENT 'Amazon定义的订单项标识符',
@@ -245,19 +283,127 @@ CREATE TABLE `amazon_order_items` (
   `deemed_reseller_category` varchar(255) NOT NULL DEFAULT '' COMMENT '被视为经销商的类别。这适用于不在欧盟的销售合作伙伴，用于帮助他们符合欧盟和英国的增值税视同经销商税法。',
   `buyer_info` text NOT NULL COMMENT '单个项目的买家信息',
   `buyer_requested_cancel` text NOT NULL COMMENT '关于买方是否要求取消的信息。\n\n',
-  `is_evaluation` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否索评 0未检测 1待索评 2索评失败 3已索评',
-  `evaluation` varchar(255) NOT NULL DEFAULT '' COMMENT '索评结果',
   `is_estimated_fba_fee` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否为预估费用 0否 1是',
   `fba_fee` varchar(255) NOT NULL DEFAULT '' COMMENT 'fba费用',
   `fba_fee_currency` varchar(10) NOT NULL DEFAULT '' COMMENT 'fba费用(货币)',
+  `is_estimated_commission` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否为预估佣金 0否 1是',
   `commission` varchar(255) NOT NULL DEFAULT '' COMMENT '佣金',
   `commission_currency` varchar(10) NOT NULL DEFAULT '' COMMENT '佣金(货币)',
   `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
+  KEY `order_id_idx` (`merchant_id`,`merchant_store_id`,`order_id`),
   KEY `order_item_asin_idx` (`asin`) USING BTREE,
   KEY `order_item_order_id_idx` (`order_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=34915 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊订单项表';
+) ENGINE=InnoDB AUTO_INCREMENT=76502 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊订单项表';
+
+-- ----------------------------
+-- Table structure for amazon_report_amazon_fulfilled_shipments_data_general
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_report_amazon_fulfilled_shipments_data_general`;
+CREATE TABLE `amazon_report_amazon_fulfilled_shipments_data_general` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL COMMENT '商户id',
+  `merchant_store_id` int(10) unsigned NOT NULL COMMENT '商户店铺id',
+  `amazon_order_id` varchar(50) NOT NULL DEFAULT '' COMMENT '亚马逊订单id',
+  `merchant_order_id` varchar(128) NOT NULL DEFAULT '' COMMENT '商户订单id',
+  `shipment_id` varchar(128) NOT NULL DEFAULT '' COMMENT '货件id',
+  `shipment_item_id` varchar(128) NOT NULL DEFAULT '' COMMENT '货件项id',
+  `amazon_order_item_id` varchar(128) NOT NULL DEFAULT '' COMMENT '亚马逊订单项id',
+  `merchant_order_item_id` varchar(128) NOT NULL DEFAULT '' COMMENT '商户订单项id',
+  `purchase_date` datetime DEFAULT NULL COMMENT '购买日期',
+  `payments_date` datetime DEFAULT NULL COMMENT '付款日期',
+  `shipment_date` datetime DEFAULT NULL COMMENT '送货日期',
+  `reporting_date` datetime DEFAULT NULL COMMENT '报告日期',
+  `buyer_email` varchar(128) NOT NULL DEFAULT '' COMMENT '买家邮箱',
+  `buyer_name` varchar(255) NOT NULL DEFAULT '' COMMENT '买家名称',
+  `buyer_phone_number` varchar(50) NOT NULL DEFAULT '' COMMENT '买家手机号',
+  `sku` varchar(128) NOT NULL DEFAULT '' COMMENT 'sku',
+  `product_name` varchar(255) NOT NULL DEFAULT '' COMMENT '商品名',
+  `quantity_shipped` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '配送数量',
+  `currency` varchar(5) NOT NULL DEFAULT '' COMMENT '货币',
+  `item_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '商品价格',
+  `item_tax` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '商品税',
+  `shipping_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '配送费',
+  `shipping_tax` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '配送费税',
+  `gift_wrap_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '包装费',
+  `gift_wrap_tax` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '包装费税',
+  `ship_service_level` varchar(30) NOT NULL DEFAULT '' COMMENT '配送服务等级',
+  `recipient_name` varchar(50) NOT NULL DEFAULT '' COMMENT '收件人姓名',
+  `ship_address_1` varchar(255) NOT NULL DEFAULT '' COMMENT '配送-地址1',
+  `ship_address_2` varchar(255) NOT NULL DEFAULT '' COMMENT '配送-地址2',
+  `ship_address_3` varchar(255) NOT NULL DEFAULT '' COMMENT '配送-地址3',
+  `ship_city` varchar(50) NOT NULL DEFAULT '' COMMENT '配送-城市',
+  `ship_state` varchar(20) NOT NULL DEFAULT '' COMMENT '配送-州',
+  `ship_postal_code` varchar(30) NOT NULL DEFAULT '' COMMENT '配送-邮编',
+  `ship_country` varchar(20) NOT NULL DEFAULT '' COMMENT '配送-国家',
+  `ship_phone_number` varchar(50) NOT NULL DEFAULT '' COMMENT '配送-手机号',
+  `bill_address_1` varchar(255) NOT NULL DEFAULT '' COMMENT '账单-地址1',
+  `bill_address_2` varchar(255) NOT NULL DEFAULT '' COMMENT '账单-地址2',
+  `bill_address_3` varchar(255) NOT NULL DEFAULT '' COMMENT '账单-地址3',
+  `bill_city` varchar(50) NOT NULL DEFAULT '' COMMENT '账单-城市',
+  `bill_state` varchar(50) NOT NULL DEFAULT '' COMMENT '账单-州',
+  `bill_postal_code` varchar(30) NOT NULL DEFAULT '' COMMENT '账单-邮编',
+  `bill_country` varchar(20) NOT NULL DEFAULT '' COMMENT '账单-国家',
+  `item_promotion_discount` varchar(20) NOT NULL DEFAULT '' COMMENT '商品项促销折扣',
+  `ship_promotion_discount` varchar(20) NOT NULL DEFAULT '' COMMENT '配送促销折扣',
+  `carrier` varchar(50) NOT NULL DEFAULT '' COMMENT '快递运营商',
+  `tracking_number` varchar(128) NOT NULL DEFAULT '' COMMENT '快递追踪号',
+  `estimated_arrival_date` datetime NOT NULL COMMENT '预计到达日期',
+  `fulfillment_center_id` varchar(30) NOT NULL DEFAULT '' COMMENT '配送中心ID',
+  `fulfillment_channel` varchar(30) NOT NULL DEFAULT '' COMMENT '配送渠道',
+  `sales_channel` varchar(30) NOT NULL DEFAULT '' COMMENT '销售渠道',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=608 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for amazon_report_coupon_performance
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_report_coupon_performance`;
+CREATE TABLE `amazon_report_coupon_performance` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商户ID',
+  `merchant_store_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '店铺ID',
+  `coupon_id` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '优惠券ID',
+  `amazon_merchant_id` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'Amazon商户ID',
+  `marketplace_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `currency_code` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '货币符号',
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '优惠券名称',
+  `website_message` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `start_date_time` datetime NOT NULL COMMENT '开始时间',
+  `end_date_time` datetime NOT NULL COMMENT '结束时间',
+  `discount_type` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '折扣类型',
+  `total_discount` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '总折扣',
+  `clips` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `redemptions` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `budget` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '预算',
+  `budget_spent` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '已花费的预算',
+  `budget_remaining` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '剩余预算',
+  `budget_percentage_used` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '已花费的预算比例',
+  `budget_sales` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '销售额',
+  `discount_amount` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '折扣总额',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=229 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Table structure for amazon_report_coupon_performance_asins
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_report_coupon_performance_asins`;
+CREATE TABLE `amazon_report_coupon_performance_asins` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) NOT NULL COMMENT '商户ID',
+  `merchant_store_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '店铺ID',
+  `coupon_performance_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'amazon_coupon_performance.id',
+  `asin` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `seller_sku` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=229 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for amazon_report_date_range_financial_transaction_data
@@ -265,85 +411,50 @@ CREATE TABLE `amazon_order_items` (
 DROP TABLE IF EXISTS `amazon_report_date_range_financial_transaction_data`;
 CREATE TABLE `amazon_report_date_range_financial_transaction_data` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `merchant_id` int(10) unsigned NOT NULL,
-  `merchant_store_id` int(10) unsigned NOT NULL,
-  `date` datetime NOT NULL,
+  `merchant_id` int(10) unsigned NOT NULL COMMENT '商户id',
+  `merchant_store_id` int(10) unsigned NOT NULL COMMENT '店铺id',
+  `report_id` varchar(128) NOT NULL DEFAULT '' COMMENT '报告id',
+  `currency` varchar(10) NOT NULL DEFAULT '' COMMENT '结算货币',
+  `date` datetime NOT NULL COMMENT '结算时间',
   `settlement_id` varchar(128) NOT NULL DEFAULT '' COMMENT '结算id',
-  `type` varchar(50) NOT NULL DEFAULT '',
-  `order_id` varchar(128) NOT NULL DEFAULT '',
-  `sku` varchar(50) NOT NULL DEFAULT '',
-  `description` varchar(1000) NOT NULL DEFAULT '',
-  `quantity` int(5) unsigned NOT NULL DEFAULT '0',
-  `marketplace` varchar(50) NOT NULL DEFAULT '',
-  `account_type` varchar(30) NOT NULL DEFAULT '',
-  `fulfillment` varchar(128) NOT NULL DEFAULT '',
-  `order_city` varchar(128) NOT NULL DEFAULT '',
-  `order_state` varchar(128) NOT NULL DEFAULT '',
-  `order_postal` varchar(128) NOT NULL DEFAULT '',
-  `tax_collection_model` varchar(128) NOT NULL DEFAULT '',
-  `product_sales` varchar(10) NOT NULL DEFAULT '',
-  `product_sales_tax` varchar(10) NOT NULL DEFAULT '',
-  `shipping_credits` varchar(10) NOT NULL DEFAULT '',
-  `shipping_credits_tax` varchar(10) NOT NULL DEFAULT '',
-  `gift_wrap_credits` varchar(10) NOT NULL DEFAULT '',
-  `giftwrap_credits_tax` varchar(10) NOT NULL DEFAULT '',
-  `regulatory_fee` varchar(10) NOT NULL DEFAULT '',
-  `tax_on_regulatory_fee` varchar(10) NOT NULL DEFAULT '',
-  `promotional_rebates` varchar(10) NOT NULL DEFAULT '',
-  `promotional_rebates_tax` varchar(10) NOT NULL DEFAULT '',
-  `marketplace_withheld_tax` varchar(10) NOT NULL DEFAULT '',
-  `selling_fees` varchar(10) NOT NULL DEFAULT '',
-  `fba_fees` varchar(10) NOT NULL DEFAULT '',
-  `other_transaction_fees` varchar(10) NOT NULL DEFAULT '',
-  `other` varchar(10) NOT NULL DEFAULT '',
-  `total` varchar(10) NOT NULL DEFAULT '',
+  `type` varchar(50) NOT NULL DEFAULT '' COMMENT '结算类型',
+  `order_id` varchar(128) NOT NULL DEFAULT '' COMMENT '订单ID(不一定是商品订单ID)',
+  `sku` varchar(50) NOT NULL DEFAULT '' COMMENT '订单商品sku(有可能是fn_sku)',
+  `description` varchar(1000) NOT NULL DEFAULT '' COMMENT '结算描述',
+  `quantity` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '数量',
+  `marketplace` varchar(50) NOT NULL DEFAULT '' COMMENT '市场',
+  `account_type` varchar(30) NOT NULL DEFAULT '' COMMENT '账户类型',
+  `fulfillment` varchar(50) NOT NULL DEFAULT '' COMMENT '配送',
+  `order_city` varchar(50) NOT NULL DEFAULT '' COMMENT '订单-城市',
+  `order_state` varchar(50) NOT NULL DEFAULT '' COMMENT '订单-州',
+  `order_postal` varchar(50) NOT NULL DEFAULT '' COMMENT '订单-邮编',
+  `tax_collection_model` varchar(50) NOT NULL DEFAULT '' COMMENT '征税模式',
+  `product_sales` varchar(20) NOT NULL DEFAULT '' COMMENT '产品销售',
+  `product_sales_tax` varchar(20) NOT NULL DEFAULT '' COMMENT '产品销售税',
+  `shipping_credits` varchar(20) NOT NULL DEFAULT '' COMMENT '运输信用',
+  `shipping_credits_tax` varchar(20) NOT NULL DEFAULT '' COMMENT '运输信用税',
+  `gift_wrap_credits` varchar(20) NOT NULL DEFAULT '' COMMENT '礼品包装信用',
+  `gift_wrap_credits_tax` varchar(20) NOT NULL DEFAULT '' COMMENT '礼品包装信用税',
+  `regulatory_fee` varchar(20) NOT NULL DEFAULT '' COMMENT '监管费',
+  `tax_on_regulatory_fee` varchar(20) NOT NULL DEFAULT '' COMMENT '监管费税',
+  `promotional_rebates` varchar(20) NOT NULL DEFAULT '' COMMENT '促销回扣',
+  `promotional_rebates_tax` varchar(20) NOT NULL DEFAULT '' COMMENT '促销回扣税',
+  `sales_tax_collected` varchar(20) NOT NULL DEFAULT '' COMMENT '征收的销售税',
+  `marketplace_facilitator_tax` varchar(20) NOT NULL DEFAULT '' COMMENT '市场促进税',
+  `marketplace_withheld_tax` varchar(20) NOT NULL DEFAULT '' COMMENT '市场预扣税',
+  `selling_fees` varchar(20) NOT NULL DEFAULT '' COMMENT '销售费用',
+  `fba_fees` varchar(20) NOT NULL DEFAULT '' COMMENT 'FBA费用',
+  `other_transaction_fees` varchar(20) NOT NULL DEFAULT '' COMMENT '其他交易费用',
+  `other` varchar(20) NOT NULL DEFAULT '' COMMENT '其他',
+  `total` varchar(20) NOT NULL DEFAULT '' COMMENT '总数',
+  `md5_hash` varchar(32) NOT NULL DEFAULT '' COMMENT 'hash值',
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Table structure for amazon_report_date_range_financial_transaction_data_copy1
--- ----------------------------
-DROP TABLE IF EXISTS `amazon_report_date_range_financial_transaction_data_copy1`;
-CREATE TABLE `amazon_report_date_range_financial_transaction_data_copy1` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `merchant_id` int(10) unsigned NOT NULL,
-  `merchant_store_id` int(10) unsigned NOT NULL,
-  `date` datetime NOT NULL,
-  `settlement_id` varchar(128) NOT NULL DEFAULT '' COMMENT '结算id',
-  `type` varchar(50) NOT NULL DEFAULT '',
-  `order_id` varchar(128) NOT NULL DEFAULT '',
-  `sku` varchar(50) NOT NULL DEFAULT '',
-  `description` varchar(1000) NOT NULL DEFAULT '',
-  `quantity` int(5) unsigned NOT NULL DEFAULT '0',
-  `marketplace` varchar(50) NOT NULL DEFAULT '',
-  `account_type` varchar(30) NOT NULL DEFAULT '',
-  `fulfillment` varchar(128) NOT NULL DEFAULT '',
-  `order_city` varchar(128) NOT NULL DEFAULT '',
-  `order_state` varchar(128) NOT NULL DEFAULT '',
-  `order_postal` varchar(128) NOT NULL DEFAULT '',
-  `tax_collection_model` varchar(128) NOT NULL DEFAULT '',
-  `product_sales` varchar(10) NOT NULL DEFAULT '',
-  `product_sales_tax` varchar(10) NOT NULL DEFAULT '',
-  `shipping_credits` varchar(10) NOT NULL DEFAULT '',
-  `shipping_credits_tax` varchar(10) NOT NULL DEFAULT '',
-  `gift_wrap_credits` varchar(10) NOT NULL DEFAULT '',
-  `giftwrap_credits_tax` varchar(10) NOT NULL DEFAULT '',
-  `regulatory_fee` varchar(10) NOT NULL DEFAULT '',
-  `tax_on_regulatory_fee` varchar(10) NOT NULL DEFAULT '',
-  `promotional_rebates` varchar(10) NOT NULL DEFAULT '',
-  `promotional_rebates_tax` varchar(10) NOT NULL DEFAULT '',
-  `marketplace_withheld_tax` varchar(10) NOT NULL DEFAULT '',
-  `selling_fees` varchar(10) NOT NULL DEFAULT '',
-  `fba_fees` varchar(10) NOT NULL DEFAULT '',
-  `other_transaction_fees` varchar(10) NOT NULL DEFAULT '',
-  `other` varchar(10) NOT NULL DEFAULT '',
-  `total` varchar(10) NOT NULL DEFAULT '',
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=63301 DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`id`),
+  KEY `idx` (`merchant_id`,`merchant_store_id`,`settlement_id`,`md5_hash`) USING BTREE,
+  KEY `report_idx` (`merchant_id`,`merchant_store_id`,`report_id`),
+  KEY `md5_hash` (`merchant_id`,`merchant_store_id`,`md5_hash`)
+) ENGINE=InnoDB AUTO_INCREMENT=7183 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Table structure for amazon_report_fba_estimated_fee
@@ -408,8 +519,37 @@ CREATE TABLE `amazon_report_fba_fulfillment_customer_return_data` (
   `customer_comments` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `created_at` datetime NOT NULL COMMENT '数据首次拉取时间',
   `updated_at` datetime NOT NULL COMMENT '数据更新时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=394 DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`id`),
+  KEY `multi_idx` (`merchant_id`,`merchant_store_id`,`return_date`,`order_id`,`sku`,`asin`,`fulfillment_center_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3338 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for amazon_report_fba_fulfillment_longterm_storage_fee_charges_data
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_report_fba_fulfillment_longterm_storage_fee_charges_data`;
+CREATE TABLE `amazon_report_fba_fulfillment_longterm_storage_fee_charges_data` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT ' ',
+  `merchant_id` int(10) unsigned NOT NULL,
+  `merchant_store_id` int(10) unsigned NOT NULL,
+  `snapshot_date` datetime NOT NULL COMMENT '快照日期',
+  `sku` varchar(128) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT 'sku',
+  `fnsku` varchar(128) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT 'fnsku',
+  `asin` varchar(128) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT 'asin',
+  `product_name` varchar(512) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '产品名词',
+  `condition` varchar(128) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `per_unit_volume` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `currency` varchar(5) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '货币符号',
+  `volume_unit` varchar(32) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `country` varchar(5) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '国家',
+  `qty_charged` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `amount_charged` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `surcharge_age_tier` varchar(32) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `rate_surcharge` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `snap-shot-date-idx` (`merchant_id`,`merchant_store_id`,`snapshot_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='Amazon-长期仓储费报表';
 
 -- ----------------------------
 -- Table structure for amazon_report_fba_inventory_planning_data
@@ -539,13 +679,13 @@ CREATE TABLE `amazon_report_fba_reimbursement` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `merchant_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '商户id',
   `merchant_store_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '店铺id',
+  `reimbursement_id` varchar(128) NOT NULL DEFAULT '' COMMENT '报销编号',
   `sku` varchar(128) NOT NULL DEFAULT '' COMMENT 'SKU',
   `fnsku` varchar(128) NOT NULL DEFAULT '' COMMENT 'FNSKU',
   `asin` varchar(32) NOT NULL DEFAULT '' COMMENT 'ASIN',
   `product_name` varchar(255) NOT NULL DEFAULT '' COMMENT '产品名称',
   `approval_date` datetime DEFAULT NULL COMMENT '日期',
   `amazon_order_id` varchar(128) NOT NULL DEFAULT '' COMMENT '亚马逊订单ID',
-  `reimbursement_id` varchar(128) NOT NULL DEFAULT '' COMMENT '报销编号',
   `case_id` varchar(128) NOT NULL DEFAULT '' COMMENT '问题编号',
   `reason` varchar(255) NOT NULL DEFAULT '' COMMENT '原因',
   `condition` varchar(128) NOT NULL DEFAULT '' COMMENT '状况',
@@ -560,7 +700,102 @@ CREATE TABLE `amazon_report_fba_reimbursement` (
   `created_at` datetime DEFAULT NULL COMMENT '创建时间',
   `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='亚马逊赔偿报告';
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='亚马逊赔偿报告';
+
+-- ----------------------------
+-- Table structure for amazon_report_fba_storage_fee_charges_data
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_report_fba_storage_fee_charges_data`;
+CREATE TABLE `amazon_report_fba_storage_fee_charges_data` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT ' ',
+  `merchant_id` int(10) unsigned NOT NULL,
+  `merchant_store_id` int(10) unsigned NOT NULL,
+  `month_of_charge` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `asin` varchar(128) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT 'asin',
+  `seller_sku` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'seller sku',
+  `fnsku` varchar(128) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT 'fnsku',
+  `product_name` varchar(512) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '产品名称',
+  `fulfillment_center` varchar(20) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `country_code` varchar(5) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '国家二字码',
+  `longest_side` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `median_side` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `shortest_side` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `measurement_units` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `weight` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `weight_units` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `item_volume` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `volume_units` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `average_quantity_on_hand` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `average_quantity_pending_removal` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `estimated_total_item_volume` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `storage_utilization_ratio` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `storage_utilization_ratio_units` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `base_rate` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `utilization_surcharge_rate` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `currency` varchar(5) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '货币符号',
+  `estimated_monthly_storage_fee` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `total_incentive_fee_amount` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `breakdown_incentive_fee_amount` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `average_quantity_customer_orders` varchar(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `dangerous_goods_storage_type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_size_tier` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `eligible_for_inventory_discount` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `qualifies_for_inventory_discount` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `md5_hash` varchar(33) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '唯一值',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `month-idx` (`merchant_id`,`merchant_store_id`,`month_of_charge`,`asin`,`seller_sku`,`fulfillment_center`) USING BTREE,
+  KEY `md5_idx` (`merchant_id`,`merchant_store_id`,`md5_hash`)
+) ENGINE=InnoDB AUTO_INCREMENT=9439 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='Amazon-月度仓储费报表';
+
+-- ----------------------------
+-- Table structure for amazon_report_promotion_performance
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_report_promotion_performance`;
+CREATE TABLE `amazon_report_promotion_performance` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL COMMENT '商户ID(ERP)',
+  `merchant_store_id` int(10) unsigned NOT NULL COMMENT '店铺ID',
+  `promotion_id` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '促销ID',
+  `promotion_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '促销标题',
+  `marketplace_id` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '市场ID',
+  `amazon_merchant_id` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'Amazon商户ID',
+  `type` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '促销类型',
+  `status` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '促销状态',
+  `glance_views` int(10) unsigned NOT NULL DEFAULT '0',
+  `units_sold` int(10) unsigned NOT NULL DEFAULT '0',
+  `revenue` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `revenue_currency_code` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'revenue货币符号',
+  `start_date_time` datetime NOT NULL COMMENT '开始时间',
+  `end_date_time` datetime NOT NULL COMMENT '结束时间',
+  `created_date_time` datetime NOT NULL COMMENT '创建时间',
+  `last_updated_date_time` datetime NOT NULL COMMENT '最后更新时间',
+  `created_at` datetime NOT NULL COMMENT '创建时间(表记录)',
+  `updated_at` datetime NOT NULL COMMENT '更新时间(表记录)',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Table structure for amazon_report_promotion_performance_products
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_report_promotion_performance_products`;
+CREATE TABLE `amazon_report_promotion_performance_products` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(11) unsigned NOT NULL COMMENT '商户ID',
+  `merchant_store_id` int(11) unsigned NOT NULL COMMENT '店铺ID',
+  `promotion_performance_id` int(10) unsigned NOT NULL COMMENT 'amazon_promotion_performance.id',
+  `asin` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `seller_sku` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `product_name` varchar(512) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `product_glance_views` int(10) unsigned NOT NULL DEFAULT '0',
+  `product_units_sold` int(10) unsigned NOT NULL DEFAULT '0',
+  `product_revenue` decimal(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `product_revenue_currency_code` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'revenue货币符号',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=186 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for amazon_report_sales_and_traffic_by_asin
@@ -614,7 +849,7 @@ CREATE TABLE `amazon_report_sales_and_traffic_by_asin` (
   `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `multi_index` (`merchant_id`,`merchant_store_id`,`marketplace_id`,`data_time`,`parent_asin`,`child_asin`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7199 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊-销售与流量(ASIN)';
+) ENGINE=InnoDB AUTO_INCREMENT=8331 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊-销售与流量(ASIN)';
 
 -- ----------------------------
 -- Table structure for amazon_report_sales_and_traffic_by_date
@@ -680,7 +915,7 @@ CREATE TABLE `amazon_report_sales_and_traffic_by_date` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `multi_idx` (`merchant_id`,`merchant_store_id`,`marketplace_id`,`data_time`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=776 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊-销售与流量(DATE)';
+) ENGINE=InnoDB AUTO_INCREMENT=857 DEFAULT CHARSET=utf8mb4 COMMENT='亚马逊-销售与流量(DATE)';
 
 -- ----------------------------
 -- Table structure for amazon_report_settlement_report_data_flat_file_v2
@@ -690,6 +925,7 @@ CREATE TABLE `amazon_report_settlement_report_data_flat_file_v2` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `merchant_id` int(10) unsigned NOT NULL,
   `merchant_store_id` int(10) unsigned NOT NULL,
+  `report_id` varchar(128) NOT NULL DEFAULT '' COMMENT '报告id',
   `settlement_id` varchar(128) NOT NULL DEFAULT '' COMMENT '结算id',
   `settlement_start_date` datetime DEFAULT NULL COMMENT '结算开始时间',
   `settlement_end_date` datetime DEFAULT NULL COMMENT '结算结束时间',
@@ -707,17 +943,174 @@ CREATE TABLE `amazon_report_settlement_report_data_flat_file_v2` (
   `amount` varchar(128) NOT NULL DEFAULT '' COMMENT '金额',
   `fulfillment_id` varchar(128) NOT NULL DEFAULT '' COMMENT '履行ID',
   `posted_date` varchar(128) NOT NULL DEFAULT '' COMMENT '发布日期',
-  `posted_date_time` varchar(128) DEFAULT '' COMMENT '发布日期时间',
+  `posted_date_time` varchar(128) NOT NULL DEFAULT '' COMMENT '发布日期时间',
   `order_item_code` varchar(128) NOT NULL DEFAULT '' COMMENT '订单商品代码',
   `merchant_order_item_id` varchar(128) NOT NULL DEFAULT '' COMMENT '商户订单项ID',
   `merchant_adjustment_item_id` varchar(128) NOT NULL DEFAULT '' COMMENT '商户调整项ID',
   `sku` varchar(128) NOT NULL DEFAULT '' COMMENT 'SKU',
   `quantity_purchased` varchar(128) NOT NULL DEFAULT '' COMMENT '购买数量',
   `promotion_id` varchar(128) NOT NULL DEFAULT '' COMMENT '促销ID',
+  `md5_hash` varchar(33) NOT NULL DEFAULT '' COMMENT '记录行md5哈希值',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx` (`merchant_id`,`merchant_store_id`,`settlement_id`,`transaction_type`,`order_id`,`amount_type`) USING BTREE,
+  KEY `report_idx` (`merchant_id`,`merchant_store_id`,`report_id`),
+  KEY `md5_idx` (`merchant_id`,`merchant_store_id`,`md5_hash`)
+) ENGINE=InnoDB AUTO_INCREMENT=342108 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Table structure for amazon_return_goods
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_return_goods`;
+CREATE TABLE `amazon_return_goods` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '商户ID',
+  `merchant_store_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '商户店铺ID',
+  `return_date` datetime NOT NULL COMMENT '退货日期',
+  `order_id` varchar(128) NOT NULL DEFAULT '' COMMENT '亚马逊订单ID',
+  `sku` varchar(128) NOT NULL DEFAULT '' COMMENT '亚马逊SKU',
+  `asin` varchar(128) NOT NULL DEFAULT '' COMMENT 'ASIN',
+  `fnsku` varchar(128) NOT NULL DEFAULT '' COMMENT 'FNSKU',
+  `product_name` varchar(255) NOT NULL DEFAULT '' COMMENT '产品名称',
+  `quantity` int(10) NOT NULL DEFAULT '0' COMMENT '数量',
+  `fulfillment_center_id` varchar(128) NOT NULL DEFAULT '' COMMENT '处理退货商品的运营中心',
+  `detailed_disposition` varchar(32) NOT NULL DEFAULT '' COMMENT '商品状态\r\n    - 1.Sellable：可售 \r\n    - 2.Damaged：已残损 \r\n    - 3.CUSTOMER_DAMAGED：买家导致残损\r\n    - 4. CARRIER_DAMAGED：物流承运方导致商品残损\r\n    - 5.DEFECTIVE：产品存在瑕疵；',
+  `reason` varchar(255) NOT NULL DEFAULT '' COMMENT '退货原因（买家原因简述）',
+  `status` varchar(128) NOT NULL DEFAULT '' COMMENT '退货状态\r\n    - Unit Returned to Inventory：商品已退回买家库存 —— 可售/不可售库存有显示；\r\n    - reimbursed：亚马逊已批准对商品进行赔偿，赔偿会在 5 天内支付 —— 不退回买家库存；\r\n    - Pending Repackaging 等待重新包装，完成后可重新销售；\r\n    - Repackaged Successfully 已成功重新包装，并可以销售 —— 已退回在售库存',
+  `license_plate_number` varchar(128) NOT NULL DEFAULT '' COMMENT '货箱',
+  `customer_comments` varchar(255) NOT NULL DEFAULT '' COMMENT '买家评论',
+  `fba_is_scan` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'FBA进销存是否已扫描 1是 0否',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `amazon_return_order_id_idx` (`order_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='亚马逊退货';
+
+-- ----------------------------
+-- Table structure for amazon_sales_and_traffic_by_asin
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_sales_and_traffic_by_asin`;
+CREATE TABLE `amazon_sales_and_traffic_by_asin` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL COMMENT '商户id',
+  `merchant_store_id` int(10) unsigned NOT NULL COMMENT '店铺id',
+  `marketplace_id` varchar(32) NOT NULL COMMENT '市场',
+  `data_time` datetime DEFAULT NULL COMMENT '数据时间',
+  `sku` varchar(256) NOT NULL DEFAULT '' COMMENT 'SKU',
+  `parent_asin` varchar(32) NOT NULL DEFAULT '' COMMENT '(父)ASIN',
+  `child_asin` varchar(32) NOT NULL DEFAULT '' COMMENT '(子)ASIN',
+  `units_ordered` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '已订购商品数',
+  `units_ordered_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '已订购商品数-B2B',
+  `ordered_product_sales_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '已订购商品销售额',
+  `ordered_product_sales_currency_code` varchar(20) NOT NULL DEFAULT '' COMMENT '已订购商品销售额(货币)',
+  `ordered_product_sales_b2b_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '已订购商品销售额-B2B',
+  `ordered_product_sales_b2b_amount_currency_code` varchar(20) NOT NULL DEFAULT '' COMMENT '已订购商品销售额-B2B(货币)',
+  `total_order_items` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '订单商品总数',
+  `total_order_items_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '订单商品总数-B2B',
+  `browser_sessions` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览器会话次数',
+  `browser_sessions_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览器会话次数-B2B',
+  `mobile_app_sessions` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '手机APP会话次数',
+  `mobile_app_sessions_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '手机APP会话次数-B2B',
+  `sessions` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '会话次数-总计',
+  `sessions_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '会话次数-总计-B2B',
+  `browser_session_percentage` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '浏览器会话次数百分比',
+  `browser_session_percentage_b2b` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '浏览器会话次数百分比-B2B',
+  `mobile_app_session_percentage` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '手机APP会话次数百分比',
+  `mobile_app_session_percentage_b2b` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '手机APP会话次数百分比-B2B',
+  `session_percentage` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '会话百分比-总计',
+  `session_percentage_b2b` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '会话百分比-总计-B2B',
+  `browser_page_views` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览器页面浏览量',
+  `browser_page_views_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览器页面浏览量-B2B',
+  `mobile_app_page_views` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '手机APP页面浏览量',
+  `mobile_app_page_views_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '手机APP页面浏览量-B2B',
+  `page_views` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '页面浏览量-总计',
+  `page_views_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '页面浏览量-总计-B2B',
+  `browser_page_views_percentage` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '浏览器页面浏览量百分比',
+  `browser_page_views_percentage_b2b` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '浏览器页面浏览量百分比-B2B',
+  `mobile_app_page_views_percentage` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '手机APP页面浏览量百分比',
+  `mobile_app_page_views_percentage_b2b` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '手机APP页面浏览量百分比-B2B',
+  `page_views_percentage` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '页面浏览量-总计百分比',
+  `page_views_percentage_b2b` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '页面浏览量-总计百分比-B2B',
+  `buy_box_percentage` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '推荐报价（购买按钮）百分比',
+  `buy_box_percentage_b2b` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '推荐报价（购买按钮）百分比 – B2B',
+  `unit_session_percentage` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '商品会话百分比',
+  `unit_session_percentage_b2b` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '商品会话百分比-B2B',
   `created_at` datetime DEFAULT NULL COMMENT '创建时间',
   `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=93913 DEFAULT CHARSET=utf8mb4;
+  `line_md5` char(32) NOT NULL DEFAULT '' COMMENT '拉取回来的特殊组合md5字符串',
+  `line_unique` char(32) NOT NULL DEFAULT '' COMMENT '拉取回来的数据md5字符串，用于校验变化',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `multi_index` (`merchant_id`,`merchant_store_id`,`marketplace_id`,`data_time`,`parent_asin`,`child_asin`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='亚马逊-销售与流量(ASIN)';
+
+-- ----------------------------
+-- Table structure for amazon_sales_and_traffic_by_date
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_sales_and_traffic_by_date`;
+CREATE TABLE `amazon_sales_and_traffic_by_date` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL COMMENT '商户id',
+  `merchant_store_id` int(10) unsigned NOT NULL COMMENT '店铺id',
+  `marketplace_id` varchar(32) NOT NULL COMMENT '市场',
+  `data_time` datetime DEFAULT NULL COMMENT '数据时间',
+  `ordered_product_sales_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '已订购商品销售总额',
+  `ordered_product_sales_currency_code` varchar(20) NOT NULL DEFAULT '' COMMENT '已订购商品销售总额(货币)',
+  `ordered_product_sales_b2b_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '已订购商品销售总额-B2B',
+  `ordered_product_sales_b2b_currency_code` varchar(20) NOT NULL DEFAULT '' COMMENT '已订购商品销售总额-B2B(货币)',
+  `units_ordered` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '已订购商品数',
+  `units_ordered_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '已订购商品数-B2B',
+  `total_order_items` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '订单商品总数',
+  `total_order_items_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '订单商品总数-B2B',
+  `average_sales_per_order_item_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `average_sales_per_order_item_currency_code` varchar(20) NOT NULL DEFAULT '',
+  `average_sales_per_order_item_b2b_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `average_sales_per_order_item_b2b_currency_code` varchar(20) NOT NULL DEFAULT '',
+  `average_units_per_order_item` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `average_units_per_order_item_b2b` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `average_selling_price_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `average_selling_price_currency_code` varchar(20) NOT NULL DEFAULT '',
+  `average_selling_price_b2b_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `average_selling_price_b2b_currency_code` varchar(20) NOT NULL DEFAULT '',
+  `units_refunded` int(10) unsigned NOT NULL DEFAULT '0',
+  `refund_rate` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `claims_granted` int(10) unsigned NOT NULL DEFAULT '0',
+  `claims_amount_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `claims_amount_currency_code` varchar(20) NOT NULL DEFAULT '',
+  `shipped_product_sales_amount` double(10,2) unsigned NOT NULL DEFAULT '0.00',
+  `shipped_product_sales_currency_code` varchar(20) NOT NULL DEFAULT '',
+  `units_shipped` int(10) unsigned NOT NULL DEFAULT '0',
+  `orders_shipped` int(10) unsigned NOT NULL DEFAULT '0',
+  `browser_page_views` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览器页面浏览量',
+  `browser_page_views_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览器页面浏览量-B2B',
+  `mobile_app_page_views` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '手机APP页面浏览量',
+  `mobile_app_page_views_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '手机APP页面浏览量-B2B',
+  `page_views` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '页面浏览量-总计',
+  `page_views_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '页面浏览量-总计-B2B',
+  `browser_sessions` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览器会话次数',
+  `browser_sessions_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '浏览器会话次数-B2B',
+  `mobile_app_sessions` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '手机APP会话次数',
+  `mobile_app_sessions_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '手机APP会话次数—B2B',
+  `sessions` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '会话次数-总计',
+  `sessions_b2b` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '会话次数-总计-B2B',
+  `buy_box_percentage` double(5,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '推荐报价（购买按钮）百分比',
+  `buy_box_percentage_b2b` double(5,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '推荐报价（购买按钮）百分比 – B2B',
+  `order_item_session_percentage` double(5,2) unsigned NOT NULL DEFAULT '0.00',
+  `order_item_session_percentage_b2b` double(5,2) unsigned NOT NULL DEFAULT '0.00',
+  `unit_session_percentage` double(5,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '商品会话百分比',
+  `unit_session_percentage_b2b` double(5,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '商品会话百分比-B2B',
+  `average_offer_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `average_parent_items` int(10) unsigned NOT NULL DEFAULT '0',
+  `feedback_received` int(10) unsigned NOT NULL DEFAULT '0',
+  `negative_feedback_received` int(10) unsigned NOT NULL DEFAULT '0',
+  `received_negative_feedback_rate` double(5,2) unsigned NOT NULL DEFAULT '0.00',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `line_md5` char(32) NOT NULL DEFAULT '' COMMENT '拉取回来的特殊组合md5字符串',
+  `line_unique` char(32) NOT NULL DEFAULT '' COMMENT '拉取回来的数据md5字符串，用于校验变化',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `multi_idx` (`merchant_id`,`merchant_store_id`,`marketplace_id`,`data_time`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='亚马逊-销售与流量(DATE)';
 
 -- ----------------------------
 -- Table structure for amazon_sales_order_metrics
@@ -741,7 +1134,7 @@ CREATE TABLE `amazon_sales_order_metrics` (
   `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `interval_idx` (`merchant_id`,`merchant_store_id`,`marketplace_id`,`interval_type`,`interval`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2169 DEFAULT CHARSET=utf8mb4 COMMENT='amazon-销售订单指标';
+) ENGINE=InnoDB AUTO_INCREMENT=754 DEFAULT CHARSET=utf8mb4 COMMENT='amazon-销售订单指标';
 
 -- ----------------------------
 -- Table structure for amazon_sales_order_metrics_asin
@@ -758,6 +1151,31 @@ CREATE TABLE `amazon_sales_order_metrics_asin` (
   `unit_count` int(10) NOT NULL COMMENT '单位数',
   `order_count` int(10) NOT NULL COMMENT ' 订单数',
   `order_item_count` int(10) NOT NULL COMMENT '订单项数',
+  `avg_unit_price_currency_code` varchar(10) NOT NULL DEFAULT '' COMMENT '平均单位价格(货币)',
+  `avg_unit_price` varchar(20) NOT NULL DEFAULT '' COMMENT '平均单位价格',
+  `total_sales_currency_code` varchar(10) NOT NULL DEFAULT '' COMMENT '销售总额(货币)',
+  `total_sales_amount` varchar(20) NOT NULL DEFAULT '' COMMENT '销售总额',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `interval_idx2` (`merchant_id`,`merchant_store_id`,`interval`) USING BTREE,
+  KEY `interval_idx` (`merchant_id`,`merchant_store_id`,`marketplace_id`,`interval`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=167418 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='amazon-asin销售订单指标';
+
+-- ----------------------------
+-- Table structure for amazon_sales_order_metrics_copy1
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_sales_order_metrics_copy1`;
+CREATE TABLE `amazon_sales_order_metrics_copy1` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL COMMENT '商户id',
+  `merchant_store_id` int(10) unsigned NOT NULL COMMENT '店铺id',
+  `marketplace_id` varchar(32) NOT NULL COMMENT '市场',
+  `interval_type` varchar(10) NOT NULL DEFAULT '' COMMENT '时间间隔类型 hour/day',
+  `interval` datetime NOT NULL COMMENT '时间间隔',
+  `unit_count` int(10) NOT NULL COMMENT '单位数',
+  `order_count` int(10) NOT NULL COMMENT ' 订单数',
+  `order_item_count` int(10) NOT NULL COMMENT '订单项数',
   `avg_unit_price_currency_code` varchar(10) NOT NULL COMMENT '平均单位价格(货币)',
   `avg_unit_price` varchar(20) NOT NULL COMMENT '平均单位价格',
   `total_sales_currency_code` varchar(10) NOT NULL COMMENT '销售总额(货币)',
@@ -766,37 +1184,80 @@ CREATE TABLE `amazon_sales_order_metrics_asin` (
   `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `interval_idx` (`merchant_id`,`merchant_store_id`,`marketplace_id`,`interval_type`,`interval`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='amazon-asin销售订单指标';
+) ENGINE=InnoDB AUTO_INCREMENT=2169 DEFAULT CHARSET=utf8mb4 COMMENT='amazon-销售订单指标';
 
 -- ----------------------------
--- Table structure for amazon_shipments
+-- Table structure for amazon_shipment
 -- ----------------------------
-DROP TABLE IF EXISTS `amazon_shipments`;
-CREATE TABLE `amazon_shipments` (
+DROP TABLE IF EXISTS `amazon_shipment`;
+CREATE TABLE `amazon_shipment` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `merchant_id` int(10) unsigned NOT NULL,
   `merchant_store_id` int(10) unsigned NOT NULL,
-  `marketplace_id` varchar(50) NOT NULL DEFAULT '',
-  `shipment_id` varchar(255) NOT NULL DEFAULT '',
-  `shipment_name` varchar(255) NOT NULL DEFAULT '',
-  `shipment_from_address` varchar(512) NOT NULL DEFAULT '',
-  `destination_fulfillment_center_id` varchar(128) NOT NULL DEFAULT '',
-  `shipment_status` varchar(50) NOT NULL DEFAULT '',
-  `label_prep_type` varchar(50) NOT NULL DEFAULT '',
-  `are_cases_required` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `confirmed_need_by_date` varchar(20) NOT NULL DEFAULT '',
-  `box_contents_source` varchar(50) NOT NULL DEFAULT '',
+  `marketplace_id` varchar(50) NOT NULL DEFAULT '' COMMENT '市场id',
+  `region` varchar(15) NOT NULL DEFAULT '' COMMENT '地区',
+  `shipment_id` varchar(255) NOT NULL DEFAULT '' COMMENT '货件ID',
+  `shipment_name` varchar(255) NOT NULL DEFAULT '' COMMENT '货件名称',
+  `shipment_from_address` varchar(512) NOT NULL DEFAULT '' COMMENT '退货地址',
+  `destination_fulfillment_center_id` varchar(128) NOT NULL DEFAULT '' COMMENT '由Amazon创建的Amazon履行中心标识符',
+  `shipment_status` varchar(50) NOT NULL DEFAULT '' COMMENT '发货状态',
+  `label_prep_type` varchar(50) NOT NULL DEFAULT '' COMMENT '货件所需的标签准备类型。NO_LABEL无标签,SELLER_LABEL卖方标签,AMAZON_LABEL标签',
+  `are_cases_required` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '指明入站货件是否包含装箱。对于入站货件，当AreCasesRequired = true时，入站货件中的所有项目都必须装箱。',
+  `confirmed_need_by_date` varchar(20) NOT NULL DEFAULT '' COMMENT '货件必须到达亚马逊履行中心的日期，以避免预购商品的交付承诺被打破。',
+  `box_contents_source` varchar(50) NOT NULL DEFAULT '' COMMENT '卖方提供了装运货物的包装箱内容信息。NONE/FEED/2D_BARCODE/INTERACTIVE',
   `total_units` int(10) unsigned NOT NULL DEFAULT '0',
   `fee_per_unit_currency` varchar(10) NOT NULL DEFAULT '',
   `fee_per_unit_value` float(10,2) unsigned NOT NULL DEFAULT '0.00',
   `total_fee_currency` varchar(10) NOT NULL DEFAULT '',
   `total_fee_value` float(10,2) unsigned NOT NULL,
-  `create_time` datetime DEFAULT NULL,
-  `last_updated_time` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `shipment_id_UNIQUE` (`shipment_id`),
   KEY `marketplace_id` (`marketplace_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=386 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for amazon_shipment_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_shipment_detail`;
+CREATE TABLE `amazon_shipment_detail` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL,
+  `merchant_store_id` int(10) unsigned NOT NULL,
+  `shipment_id` varchar(128) NOT NULL DEFAULT '',
+  `seller_sku` varchar(128) NOT NULL DEFAULT '',
+  `fulfillment_network_sku` varchar(128) NOT NULL DEFAULT '',
+  `quantity_shipped` int(10) unsigned NOT NULL DEFAULT '0',
+  `quantity_received` int(10) unsigned NOT NULL DEFAULT '0',
+  `quantity_in_case` int(10) unsigned NOT NULL DEFAULT '0',
+  `release_date` varchar(50) NOT NULL DEFAULT '',
+  `prep_details_list` varchar(512) NOT NULL DEFAULT '',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Table structure for amazon_shipment_items
+-- ----------------------------
+DROP TABLE IF EXISTS `amazon_shipment_items`;
+CREATE TABLE `amazon_shipment_items` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL,
+  `merchant_store_id` int(10) unsigned NOT NULL,
+  `shipment_id` varchar(128) NOT NULL DEFAULT '',
+  `seller_sku` varchar(128) NOT NULL DEFAULT '',
+  `fulfillment_network_sku` varchar(128) NOT NULL DEFAULT '',
+  `quantity_shipped` int(10) unsigned NOT NULL DEFAULT '0',
+  `quantity_received` int(10) unsigned NOT NULL DEFAULT '0',
+  `quantity_in_case` int(10) unsigned NOT NULL DEFAULT '0',
+  `release_date` varchar(50) NOT NULL DEFAULT '',
+  `prep_details_list` varchar(512) NOT NULL DEFAULT '',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Table structure for exchange_rate
@@ -1024,6 +1485,71 @@ CREATE TABLE `merchant` (
   `admin_id` int(10) unsigned NOT NULL COMMENT '管理员id',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='商户表';
+
+-- ----------------------------
+-- Table structure for merchant_sales_weekly_report
+-- ----------------------------
+DROP TABLE IF EXISTS `merchant_sales_weekly_report`;
+CREATE TABLE `merchant_sales_weekly_report` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `merchant_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '商户id',
+  `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
+  `spu` varchar(128) NOT NULL DEFAULT '' COMMENT 'SPU',
+  `seller_sku` varchar(128) NOT NULL DEFAULT '' COMMENT 'Seller SKU',
+  `product_status` varbinary(50) NOT NULL DEFAULT '' COMMENT '产品状态',
+  `week_date` varchar(64) NOT NULL DEFAULT '' COMMENT '周9.11-9.17',
+  `week_num` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '自然周数',
+  `period_start_date` datetime NOT NULL COMMENT '周期开始时间',
+  `period_end_date` datetime NOT NULL COMMENT '周期结束时间',
+  `country_code` varchar(5) NOT NULL DEFAULT '' COMMENT '站点(国家二字码)',
+  `merchant_store_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '店铺id',
+  `sales_amount` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '销售总览-销售额',
+  `sales_amount_currency` varchar(5) NOT NULL DEFAULT '' COMMENT '销售总览-销售额-货币',
+  `sales_quantity` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '销售总览-销量',
+  `ordered_product_sales_amount_compare_rate` float(10,2) NOT NULL DEFAULT '0.00' COMMENT '销售总览-销售额环比 (本周销售额 - 上周销售额)/上周销售额*100%',
+  `average_price` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '客单价',
+  `promotion_discount_amount` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '销售总览-推广折扣金额',
+  `promotion_discount_amount_currency` varchar(5) NOT NULL DEFAULT '' COMMENT '销售总览-推广折扣金额-货币',
+  `sales_amount_business` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '销售总览-成交额',
+  `sales_amount_business_currency` varchar(5) NOT NULL DEFAULT '' COMMENT '销售总览-成交额-货币',
+  `promotion_handling_fee` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '销售总览-促销手续费总额(VPC的Coupon手续费+站内秒杀报名费)',
+  `sales_gross_profit` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '销售总览-毛利',
+  `sales_gross_profit_rate` varchar(20) NOT NULL DEFAULT '' COMMENT '销售总览-毛利率',
+  `order_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '销售总览-订单量',
+  `refund_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '销售总览-退款数',
+  `refund_rate` varchar(20) NOT NULL DEFAULT '' COMMENT '销售总览-退款率',
+  `return` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '销售总览-退货数',
+  `return_rate` varchar(20) NOT NULL DEFAULT '' COMMENT '销售总览-退货率',
+  `session_total` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '流量表现-回话数',
+  `conversion_rate` varchar(20) NOT NULL DEFAULT '' COMMENT '流量表现-订单转化率',
+  `ad_cost` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '广告-广告花费',
+  `avg_cpc` varchar(20) NOT NULL DEFAULT '' COMMENT '广告-平均CPC',
+  `ad_order` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '广告-广告订单数',
+  `ad_order_sales_amount` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '广告-广告销售额',
+  `impression` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '广告-impression',
+  `ad_clicks` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '广告-点击次数',
+  `ad_cvr` varchar(10) NOT NULL DEFAULT '' COMMENT '广告-广告CVR',
+  `acos` varchar(10) NOT NULL DEFAULT '' COMMENT '广告-ACOS',
+  `tacos` varchar(10) NOT NULL DEFAULT '' COMMENT '广告-TACOS',
+  `asoas` varchar(10) NOT NULL DEFAULT '' COMMENT '广告-ASOAS',
+  `rank_category` varchar(50) NOT NULL DEFAULT '' COMMENT '表现-大类目排名',
+  `rank_sub1_category` varchar(50) NOT NULL DEFAULT '' COMMENT '表现-根类目1排名',
+  `rank_sub2_category` varchar(50) NOT NULL DEFAULT '' COMMENT '表现-根类目2排名',
+  `rank_sub3_category` varchar(50) NOT NULL DEFAULT '' COMMENT '表现-根类目3排名',
+  `score` varchar(10) NOT NULL DEFAULT '' COMMENT '表现-评分',
+  `reviews_count` varchar(20) NOT NULL DEFAULT '' COMMENT '表现-评论数',
+  `inventory_available_quantity` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '库存-在库库存',
+  `inventory_inbound_quantity` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '库存-在途库存',
+  `units_shipped_t7` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '库存-过去7天发货量',
+  `units_shipped_t30` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '库存-过去30天发货量',
+  `available_sales_days` varchar(10) NOT NULL DEFAULT '0' COMMENT '库存-FBA可售天数',
+  `available_inbound_sales` varchar(10) NOT NULL DEFAULT '0' COMMENT '库存-在途可售',
+  `inventory_age_90days_plus` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '库存-滞销库存(超过90天库龄的数量)',
+  `over_age_rate` varchar(10) NOT NULL DEFAULT '' COMMENT '库存-滞销率',
+  `created_at` datetime DEFAULT NULL COMMENT '创建时间',
+  `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='销售周报';
 
 -- ----------------------------
 -- Table structure for merchant_store
