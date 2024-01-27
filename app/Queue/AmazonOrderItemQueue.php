@@ -18,7 +18,10 @@ use App\Util\Amazon\Creator\OrderItemCreator;
 use App\Util\Amazon\Engine\OrderItemEngine;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
-use Hyperf\DB\DB;
+use Hyperf\Di\Exception\NotFoundException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 use function Hyperf\Support\make;
 
 class AmazonOrderItemQueue extends Queue
@@ -34,10 +37,11 @@ class AmazonOrderItemQueue extends Queue
     }
 
     /**
-     * @param \App\Queue\Data\QueueDataInterface $queueData
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RedisException
+     * @param QueueDataInterface $queueData
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
+     * @throws NotFoundException
      * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
@@ -61,7 +65,7 @@ class AmazonOrderItemQueue extends Queue
         });
 
         //更新 amazon_order_items的marketplace_id
-        DB::execute('UPDATE amazon_order_items LEFT JOIN amazon_order ON amazon_order_items.merchant_id = amazon_order.merchant_id AND amazon_order_items.merchant_store_id = amazon_order.merchant_store_id AND amazon_order_items.order_id = amazon_order.amazon_order_id SET amazon_order_items.marketplace_id = amazon_order.marketplace_id where amazon_order.merchant_id=? and amazon_order.merchant_store_id=? and amazon_order.region=?;', [$merchant_id, $merchant_store_id, $region]);
+//        \Hyperf\DB\DB::execute('UPDATE amazon_order_items LEFT JOIN amazon_order ON amazon_order_items.merchant_id = amazon_order.merchant_id AND amazon_order_items.merchant_store_id = amazon_order.merchant_store_id AND amazon_order_items.order_id = amazon_order.amazon_order_id SET amazon_order_items.marketplace_id = amazon_order.marketplace_id where amazon_order.merchant_id=? and amazon_order.merchant_store_id=? and amazon_order.region=?;', [$merchant_id, $merchant_store_id, $region]);
 
         return true;
     }

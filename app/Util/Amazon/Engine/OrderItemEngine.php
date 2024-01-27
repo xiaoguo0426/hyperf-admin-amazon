@@ -63,6 +63,18 @@ class OrderItemEngine implements EngineInterface
 
             $console->info(sprintf('merchant_id:%s merchant_store_id:%s region:%s amazon_order_id:%s 开始处理', $merchant_id, $merchant_store_id, $region, $amazon_order_id));
 
+            try {
+                $amazonOrderCollection = AmazonOrderModel::query()->where('merchant_id', $merchant_id)
+                    ->where('merchant_store_id', $merchant_store_id)
+                    ->where('region', $region)
+                    ->where('amazon_order_id', $amazon_order_id)
+                    ->firstOrFail();
+            } catch (ModelNotFoundException) {
+                $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s amazon_order_id:%s 订单不存在', $merchant_id, $merchant_store_id, $region, $amazon_order_id));
+                continue;
+            }
+
+
             $retry = 30;
             $orderItems = [];
 
@@ -97,7 +109,7 @@ class OrderItemEngine implements EngineInterface
                     }
 
                     $list = $payload->getOrderItems();
-                    foreach ($list as $orderItem){
+                    foreach ($list as $orderItem) {
                         $orderItems[] = $orderItem;
                     }
 
@@ -141,7 +153,9 @@ class OrderItemEngine implements EngineInterface
             $list = [];
 
             $is_vine_order_flag_list = [];//是否为vine订单标识集合
-            $order_status = '';//当前订单状态
+
+            $order_status = $amazonOrderCollection->order_status;//当前订单状态
+            $marketplace_id = $amazonOrderCollection->marketplace_id;//当前订单市场id
 
             foreach ($orderItems as $orderItem) {
                 $productInfo = $orderItem->getProductInfo();
@@ -181,49 +195,14 @@ class OrderItemEngine implements EngineInterface
 
                 $is_pending = false;
                 if (count($itemPriceJson) === 0) {
-                    // 查找原始订单的状态
-                    // TODO 如果订单状态为shipped且没有item_price，则为vine类型订单
-                    if ($order_status === '') {
-                        try {
-                            /**
-                             * @var AmazonOrderModel $amazonOrderCollection
-                             */
-                            $amazonOrderCollection = AmazonOrderModel::query()
-                                ->where('merchant_id', $merchant_id)
-                                ->where('merchant_store_id', $merchant_store_id)
-                                ->where('region', $region)
-                                ->where('amazon_order_id', $amazon_order_id)
-                                ->firstOrFail();
-                            $order_status = $amazonOrderCollection->order_status;
-                        } catch (ModelNotFoundException $modelNotFoundException) {
-
-                        }
-                    }
-
                     //查找原始订单的状态
                     if ($order_status === 'Pending') {
-                        //未支付的Pending订单是获取不到的订单项金额的，需要根据相同seller_sku订单项最新的历史数据计算订单项金额
-                        $other = DB::query("SELECT amazon_order.order_status,amazon_order.marketplace_id,amazon_order.order_total_currency,amazon_order_items.item_price FROM amazon_order INNER JOIN amazon_order_items ON amazon_order.amazon_order_id = amazon_order_items.order_id AND amazon_order_items.item_price <> '' AND   amazon_order_items.item_price <> '[]' AND amazon_order.marketplace_id = (select marketplace_id FROM amazon_order WHERE merchant_id = {$merchant_id} and merchant_store_id = {$merchant_store_id} and region = '{$region}' and amazon_order_id = '{$amazon_order_id}') AND amazon_order_items.seller_sku = '{$seller_sku}' AND amazon_order_items.quantity_ordered = 1 ORDER BY amazon_order_items.id DESC LIMIT 1;");
-                        if (! empty($other)) {
-                            $d = $other[0];
-                            $is_pending = true;
-                            try {
-                                $new_item_price = $d['item_price'];//单个商品价格
-                                $new_item_price_json = json_decode($new_item_price, true, 512, JSON_THROW_ON_ERROR);
-                                $new_item_price_amount = $new_item_price_json['amount'];//单个商品价格
-                                $new_item_price_currency_code = $d['order_total_currency'];
-                                if ($new_item_price_currency_code === '') {
-                                    $new_item_price_currency_code = $marketplace_currency_map[$d['marketplace_id']] ?? '';
-                                }
-
-                                $itemPriceJson = [
-                                    'fake_item_price' => 1,
-                                    'currency_code' => $new_item_price_currency_code,
-                                    'amount' => bcmul($new_item_price_amount, (string) $quantity_ordered, 2)
-                                ];
-                            } catch (\Exception $exception) {
-                            }
-                        }
+                        //未支付的Pending订单是获取不到的订单项金额的，需要根据listing价格 fake一个价格
+                        $itemPriceJson = [
+                            'fake_item_price' => 1,
+                            'currency_code' => '',
+                            'amount' => '0.00'
+                        ];
                     } elseif ($order_status === 'Canceled') {
                         $itemPriceJson = [];
                         $is_vine_order_flag_list[] = 0;
@@ -380,7 +359,7 @@ class OrderItemEngine implements EngineInterface
                     'merchant_id' => $merchant_id,
                     'merchant_store_id' => $merchant_store_id,
                     'region' => $region,
-                    'marketplace_id' => '',
+                    'marketplace_id' => $marketplace_id,
                     'order_id' => $amazon_order_id,
                     'asin' => $asin, // 物品的亚马逊标准标识号（ASIN）
                     'seller_sku' => $seller_sku, // 商品的卖方库存单位（SKU）
@@ -435,16 +414,12 @@ class OrderItemEngine implements EngineInterface
                 $is_vine_order_flag_list_unique = array_unique($is_vine_order_flag_list);
                 //如果数组有0，则不是vine订单
                 if (in_array(0, $is_vine_order_flag_list_unique, true)) {
-                    AmazonOrderModel::query()->where('merchant_id', $merchant_id)
-                        ->where('merchant_store_id', $merchant_store_id)
-                        ->where('amazon_order_id', $amazon_order_id)
-                        ->update(['is_vine_order' => 2]);
+                    $amazonOrderCollection->is_vine_order = 2;
+                    $amazonOrderCollection->save();
                 } else if (count($is_vine_order_flag_list_unique) === 1 && in_array(1, $is_vine_order_flag_list_unique, true)) {
                     //如果数组数量只有1，且1在数组里，表示该订单为vine类型订单
-                    AmazonOrderModel::query()->where('merchant_id', $merchant_id)
-                        ->where('merchant_store_id', $merchant_store_id)
-                        ->where('amazon_order_id', $amazon_order_id)
-                        ->update(['is_vine_order' => 1]);
+                    $amazonOrderCollection->is_vine_order = 1;
+                    $amazonOrderCollection->save();
                 }
             }
 

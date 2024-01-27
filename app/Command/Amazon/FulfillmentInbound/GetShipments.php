@@ -41,7 +41,7 @@ class GetShipments extends HyperfCommand
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
             ->addArgument('region', InputArgument::REQUIRED, '地区')
-            ->addOption('shipment_ids', null, \Symfony\Component\Console\Input\InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'ASIN 列表(英文逗号分隔)', null)
+            ->addOption('shipment_ids', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'ASIN 列表(英文逗号分隔)', null)
             ->addOption('last_updated_after', null, InputOption::VALUE_OPTIONAL, '指定时间之后', null)
             ->addOption('last_updated_before', null, InputOption::VALUE_OPTIONAL, '指定时间之前', null)
             ->setDescription('Amazon Fulfillment Inbound Get Shipments Command');
