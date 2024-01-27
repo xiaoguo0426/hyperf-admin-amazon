@@ -23,8 +23,12 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Stringable\Str;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -47,9 +51,11 @@ class GetListingsItem extends HyperfCommand
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
+     * @throws RedisException
+     * @return void
      */
     public function handle(): void
     {
@@ -118,20 +124,20 @@ class GetListingsItem extends HyperfCommand
                                     //                                    var_dump($created_date);
                                     //                                    var_dump($last_updated_date);
 
-                                    $country_id = Marketplace::fromId($marketplace_id)->countryCode();
-                                    if (! Str::contains($country_ids, $country_id)) {
-                                        $country_ids = trim($country_ids . ',' . $country_id, ',');
-                                    }
-                                    if ($marketplace_id === Marketplace::US()->id()) {
-                                        $amazonInventoryCollection->main_image = $link;
-                                        $amazonInventoryCollection->product_type = $product_type;
-                                        $amazonInventoryCollection->created_date = $created_date;
-                                        $amazonInventoryCollection->last_updated_date = $last_updated_date;
-                                    }
+//                                    $country_id = Marketplace::fromId($marketplace_id)->countryCode();
+//                                    if (! Str::contains($country_ids, $country_id)) {
+//                                        $country_ids = trim($country_ids . ',' . $country_id, ',');
+//                                    }
+//                                    if ($marketplace_id === Marketplace::US()->id()) {
+//                                        $amazonInventoryCollection->main_image = $link;
+//                                        $amazonInventoryCollection->product_type = $product_type;
+//                                        $amazonInventoryCollection->created_date = $created_date;
+//                                        $amazonInventoryCollection->last_updated_date = $last_updated_date;
+//                                    }
 
-                                    $amazonInventoryCollection->country_ids = $country_ids;
+//                                    $amazonInventoryCollection->country_ids = $country_ids;
 
-                                    $amazonInventoryCollection->save();
+//                                    $amazonInventoryCollection->save();
 
                                     break 2;
                                 }

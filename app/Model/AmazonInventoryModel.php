@@ -17,6 +17,8 @@ namespace App\Model;
  * @property $merchant_id
  * @property $merchant_store_id
  * @property $region
+ * @property $marketplace_id
+ * @property $country_code
  * @property $asin
  * @property $fn_sku
  * @property $seller_sku
@@ -47,7 +49,6 @@ namespace App\Model;
  * @property $expired_quantity
  * @property $last_updated_time
  * @property $total_quantity
- * @property $country_ids
  * @property $created_at
  * @property $updated_at
  */
