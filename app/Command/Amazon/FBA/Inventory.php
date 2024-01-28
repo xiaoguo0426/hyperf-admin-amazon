@@ -93,8 +93,7 @@ class Inventory extends HyperfCommand
                 $console->info(sprintf('merchant_id:%s merchant_store_id:%s region:%s 现在开始处理 %s 市场数据', $merchant_id, $merchant_store_id, $region, $country_code));
 
                 while (true) {
-                    $asin_list = [];
-                    $collections = new Collection();
+
                     try {
                         $response = $sdk->fbaInventory()->getInventorySummaries($accessToken, $region, $granularity_type, $marketplace_id, [$marketplace_id], true, $startDate, $seller_skus, null, $nextToken);
                         $payload = $response->getPayload();
@@ -214,7 +213,7 @@ class Inventory extends HyperfCommand
                                     ->firstOrFail();
                             } catch (ModelNotFoundException) {
                                 if (0 === $total_quantity) {
-                                    //有可能会获取到渠道商的asin信息，但无法获取到数量的，直接给过滤了
+                                    //有可能会获取到渠道商的asin信息，但无法获取到数量的，直接跳过处理. 但同时也有可能初始化店铺数据时无法获取历史已下架的数据
                                     continue;
                                 }
                                 $inventoryCollection = new AmazonInventoryModel();
