@@ -13,6 +13,7 @@ namespace App\Command\Amazon\Order;
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
+use AmazonPHP\SellingPartner\Model\Orders\PreferredDeliveryTime;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
@@ -61,10 +62,37 @@ class GetOrderAddress extends HyperfCommand
                         break;
                     }
 
-                    var_dump($orderAddress->getAmazonOrderId());
-                    var_dump($orderAddress->getBuyerCompanyName());
-                    var_dump($orderAddress->getShippingAddress());
-                    var_dump($orderAddress->getDeliveryPreferences());
+                    $amazon_order_id = $orderAddress->getAmazonOrderId();
+                    $buyer_company_name = $orderAddress->getBuyerCompanyName() ?? '';
+                    $deliveryPreferences = $orderAddress->getDeliveryPreferences();
+                    if (! is_null($deliveryPreferences)) {
+                        $preferredDeliveryTime = $deliveryPreferences->getPreferredDeliveryTime();
+                        if (! is_null($preferredDeliveryTime)) {
+                            $businessHours = $preferredDeliveryTime->getBusinessHours();
+                            if (! is_null($businessHours)) {
+                                foreach ($businessHours as $businessHour) {
+                                    $businessHour->getDayOfWeekAllowableValues();
+                                    $businessHour->getDayOfWeek() ?? '';
+                                    $businessHour->getOpenIntervals();
+                                }
+                            }
+                            $preferredDeliveryTime->getExceptionDates();
+                        }
+
+
+                        $address_instructions = $deliveryPreferences->getAddressInstructions() ?? '';
+                        $drop_off_location = $deliveryPreferences->getDropOffLocation() ?? '';
+                        $otherDeliveryAttributes = $deliveryPreferences->getOtherAttributes();
+                        $other_delivery_attributes = [];
+                        if (! is_null($otherDeliveryAttributes)) {
+                            foreach ($otherDeliveryAttributes as $otherDeliveryAttribute) {
+                                $other_delivery_attributes[] = $otherDeliveryAttribute->toString();
+                            }
+
+                        }
+                    }
+
+
                     break;
                 } catch (ApiException $e) {
                     if (! is_null($e->getResponseBody())) {

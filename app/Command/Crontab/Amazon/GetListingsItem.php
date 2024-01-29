@@ -1,19 +1,12 @@
 <?php
 
-declare(strict_types=1);
-/**
- *
- * @author   xiaoguo0426
- * @contact  740644717@qq.com
- * @license  MIT
- */
-
-namespace App\Command\Amazon\Listings;
+namespace App\Command\Crontab\Amazon;
 
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
+use App\Model\AmazonInventoryModel;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use App\Util\Log\AmazonListingGetListingItemLog;
@@ -21,61 +14,48 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Exception\NotFoundException;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
-use Symfony\Component\Console\Input\InputArgument;
+
 
 #[Command]
 class GetListingsItem extends HyperfCommand
 {
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('amazon:listings:get-listings-item');
+        parent::__construct('crontab:amazon:get-listings-item');
+        // 指令配置
+        $this->setDescription('Crontab Amazon Listing API Get Listings Item Command');
     }
 
-    public function configure(): void
-    {
-        parent::configure();
-
-        $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
-            ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
-            ->addArgument('region', InputArgument::REQUIRED, '地区')
-            ->addArgument('marketplace_ids', InputArgument::REQUIRED, '市场ID，多个以英文逗号分隔')
-            ->addArgument('seller_sku', InputArgument::REQUIRED, 'Seller SKU')
-            ->setDescription('Amazon Listings Get Listings Item Command');
-    }
-
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws NotFoundException
-     * @throws RedisException
-     * @return void
-     */
     public function handle(): void
     {
-        $merchant_id = (int) $this->input->getArgument('merchant_id');
-        $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
-        $region = $this->input->getArgument('region');
-        $real_marketplace_ids = $this->input->getArgument('marketplace_ids');
-        $seller_sku = $this->input->getArgument('seller_sku');
+        AmazonApp::each(static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
 
-        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($real_marketplace_ids, $seller_sku) {
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonListingGetListingItemLog::class);
 
             $seller_id = $amazonSDK->getSellerId();
 
-            $retry = 10;
 
-            $marketplace_id_list = explode(',', $real_marketplace_ids);
+            $amazonInventoryCollections = AmazonInventoryModel::query()
+                ->where('merchant_id', $merchant_id)
+                ->where('merchant_store_id', $merchant_store_id)
+                ->where('region', $region)
+                ->whereIn('marketplace_id', $marketplace_ids)
+                ->get();
 
-            foreach ($marketplace_id_list as $marketplace_id) {
+            if ($amazonInventoryCollections->isEmpty()) {
+                return true;
+            }
+
+            foreach ($amazonInventoryCollections as $amazonInventoryCollection) {
+
+                $marketplace_id = $amazonInventoryCollection->marketplace_id;
+                $seller_sku = $amazonInventoryCollection->seller_sku;
+
+                $retry = 10;
                 while (true) {
-                    $console->info(sprintf('GetListingsItem merchant_id:%s merchant_store_id:%s marketplace_id:%s seller_sku:%s', $merchant_id, $merchant_store_id, $real_marketplace_ids, $seller_sku));
+                    $console->info(sprintf('GetListingsItem merchant_id:%s merchant_store_id:%s region:%s marketplace_id:%s seller_sku:%s', $merchant_id, $merchant_store_id, $region, $marketplace_id, $seller_sku));
 
                     try {
                         $response = $sdk->listingsItems()->getListingsItem($accessToken, $region, $seller_id, $seller_sku, [$marketplace_id], null, null);
@@ -98,7 +78,6 @@ class GetListingsItem extends HyperfCommand
                                     $link = $itemImage->getLink();
                                     $height = $itemImage->getHeight();
                                     $width = $itemImage->getWidth();
-                                    var_dump($link);
                                 }
                                 var_dump($marketplace_id);
                                 var_dump($asin);
@@ -159,7 +138,6 @@ class GetListingsItem extends HyperfCommand
                 }
 
             }
-
 
             return true;
         });

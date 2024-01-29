@@ -21,9 +21,11 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -45,9 +47,10 @@ class GetOrder extends HyperfCommand
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
+     * @throws NotFoundException
      * @return void
      */
     public function handle(): void
@@ -75,8 +78,12 @@ class GetOrder extends HyperfCommand
                     $amazon_order_id = $order->getAmazonOrderId();
 
                     $orderTotal = $order->getOrderTotal();
-                    $order_total_currency_code = $orderTotal === null ? '' : ($orderTotal->getCurrencyCode() ?? ''); // 订单的总费用(货币)
-                    $order_total_amount = $orderTotal === null ? '' : ($orderTotal->getAmount() ?? ''); // 订单的总费用
+                    $order_total_currency_code = '';
+                    $order_total_amount = '';
+                    if (! is_null($orderTotal)) {
+                        $order_total_currency_code = $orderTotal->getCurrencyCode() ?? ''; // 订单的总费用(货币)
+                        $order_total_amount = $orderTotal->getAmount() ?? '0.00'; // 订单的总费用
+                    }
 
                     $purchase_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $order->getPurchaseDate())->format('Y-m-d H:i:s');
 
@@ -105,7 +112,7 @@ class GetOrder extends HyperfCommand
                     $defaultShipFromLocationAddressJson = [];
                     if ($defaultShipFromLocationAddress) {
                         $defaultShipFromLocationAddressJson = [
-                            'name' => '',
+                            'name' => $defaultShipFromLocationAddress->getName() ?? '',
                             'address_line1' => $defaultShipFromLocationAddress->getAddressLine1() ?? '',
                             'address_line2' => $defaultShipFromLocationAddress->getAddressLine2() ?? '',
                             'address_line3' => $defaultShipFromLocationAddress->getAddressLine3() ?? '',
@@ -144,8 +151,7 @@ class GetOrder extends HyperfCommand
                     $shippingAddressJson = [];
                     if ($shippingAddress) {
                         $shippingAddressJson = [
-                            //                                'name' => $shippingAddress->getName() ?? '',
-                            'name' => '',
+                            'name' => $shippingAddress->getName() ?? '',
                             'address_line1' => $shippingAddress->getAddressLine1() ?? '',
                             'address_line2' => $shippingAddress->getAddressLine2() ?? '',
                             'address_line3' => $shippingAddress->getAddressLine3() ?? '',
@@ -219,21 +225,6 @@ class GetOrder extends HyperfCommand
                             'tax_classifications' => $taxClassificationsJson,
                         ];
                     }
-
-                    var_dump($amazon_order_id);
-                    var_dump($order_total_currency_code);
-                    var_dump($order_total_amount);
-                    var_dump($purchase_date);
-                    var_dump($last_update_date);
-                    var_dump($paymentExecutionDetailJson);
-                    var_dump($paymentMethodDetailsJson);
-                    var_dump($defaultShipFromLocationAddressJson);
-                    var_dump($buyerTaxInformationJson);
-                    var_dump($fulfillmentInstructionJson);
-                    var_dump($shippingAddressJson);
-                    var_dump($buyerInfoJson);
-                    var_dump($automatedShippingSettingsJson);
-                    var_dump($marketplaceTaxInfoJson);
 
                     $that->table(
                         [

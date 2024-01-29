@@ -19,7 +19,6 @@ use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use App\Util\Log\AmazonFbaInventoryLog;
 use Carbon\Carbon;
-use Hyperf\Collection\Collection;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
@@ -282,7 +281,7 @@ class Inventory extends HyperfCommand
                             'trace' => $exception->getTraceAsString(),
                         ]);
 
-                        continue;
+                        break;
                     } catch (InvalidArgumentException $exception) {
                         $console->error('InvalidArgumentException API请求错误', [
                             'message' => $exception->getMessage(),
@@ -293,7 +292,7 @@ class Inventory extends HyperfCommand
                             'message' => $exception->getMessage(),
                             'trace' => $exception->getTraceAsString(),
                         ]);
-                        continue;
+                        break;
                     }
                 }
             }
