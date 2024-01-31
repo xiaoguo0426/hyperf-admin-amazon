@@ -10,10 +10,12 @@ declare(strict_types=1);
 
 namespace App\Util\Amazon\Finance;
 
+use function Hyperf\Support\make;
+
 class FinanceFactory
 {
     public static function getInstance(int $merchant_id, int $merchant_store_id, string $class): FinanceBase
     {
-        return \Hyperf\Support\make($class, [$merchant_id, $merchant_store_id]);
+        return make($class, [$merchant_id, $merchant_store_id]);
     }
 }

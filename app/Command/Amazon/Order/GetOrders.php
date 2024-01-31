@@ -27,7 +27,6 @@ use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use function Hyperf\Support\make;
-use function Sentry\continueTrace;
 
 #[Command]
 class GetOrders extends HyperfCommand

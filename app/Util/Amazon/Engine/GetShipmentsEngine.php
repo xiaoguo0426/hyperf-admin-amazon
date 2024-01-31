@@ -15,6 +15,7 @@ use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -33,7 +34,7 @@ class GetShipmentsEngine implements EngineInterface
      * @throws ContainerExceptionInterface
      * @throws JsonException
      * @throws NotFoundExceptionInterface
-     * @throws \Exception
+     * @throws Exception
      * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool

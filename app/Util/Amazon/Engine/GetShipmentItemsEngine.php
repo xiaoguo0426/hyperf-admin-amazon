@@ -13,6 +13,7 @@ use App\Util\AmazonSDK;
 use App\Util\Log\AmazonFulfillmentInboundGetShipmentItemsLog;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -29,7 +30,7 @@ class GetShipmentItemsEngine implements EngineInterface
      * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws \Exception
+     * @throws Exception
      * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool

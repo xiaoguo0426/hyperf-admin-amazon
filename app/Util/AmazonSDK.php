@@ -12,6 +12,7 @@ namespace App\Util;
 
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Configuration;
+use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\Extension;
 use AmazonPHP\SellingPartner\Marketplace;
@@ -21,13 +22,16 @@ use App\Model\AmazonAppModel;
 use App\Util\RedisHash\AmazonAccessTokenHash;
 use App\Util\RedisHash\AmazonSessionTokenHash;
 use Buzz\Client\Curl;
+use JsonException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LogLevel;
+use RedisException;
 use function Hyperf\Support\make;
 
 class AmazonSDK
@@ -262,12 +266,11 @@ class AmazonSDK
     /**
      * @param string $region
      * @param bool $force_refresh
-     * @throws \AmazonPHP\SellingPartner\Exception\ApiException
-     * @throws \Hyperf\Di\Exception\NotFoundException
-     * @throws \JsonException
-     * @throws \Psr\Http\Client\ClientExceptionInterface
-     * @throws \RedisException
-     * @return \AmazonPHP\SellingPartner\SellingPartnerSDK
+     * @throws ApiException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RedisException
+     * @return SellingPartnerSDK
      */
     public function getSdk(string $region, bool $force_refresh = false): SellingPartnerSDK
     {
@@ -340,10 +343,9 @@ class AmazonSDK
     /**
      * @param string $region
      * @param bool $force_refresh
-     * @throws \AmazonPHP\SellingPartner\Exception\ApiException
-     * @throws \Hyperf\Di\Exception\NotFoundException
-     * @throws \Psr\Http\Client\ClientExceptionInterface
-     * @return \AmazonPHP\SellingPartner\AccessToken
+     * @throws ApiException
+     * @throws ClientExceptionInterface
+     * @return AccessToken
      */
     public function getToken(string $region, bool $force_refresh = false): AccessToken
     {
