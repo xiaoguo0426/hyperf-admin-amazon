@@ -71,31 +71,45 @@ class FinancialEventsAction implements ActionInterface
         $dag = new Dag();
 
         $eventList = [
-            ShipmentEventList::class => $this->financialEvents->getShipmentEventList(),
+            //配送
+            ShipmentEventList::class => $this->financialEvents->getShipmentEventList(),//亚马逊订单交易，包含亚马逊的订单收入及订单费用
             ShipmentSettleEventList::class => $this->financialEvents->getShipmentSettleEventList(),
-            RefundEventList::class => $this->financialEvents->getRefundEventList(),
+            //退款
+            RefundEventList::class => $this->financialEvents->getRefundEventList(),//亚马逊订单退款，包含亚马逊的订单退款及订单退款
             GuaranteeClaimEventList::class => $this->financialEvents->getGuaranteeClaimEventList(),
-            ChargebackEventList::class => $this->financialEvents->getChargebackEventList(),
-            PayWithAmazonEventList::class => $this->financialEvents->getPayWithAmazonEventList(),
+            //拒付
+            ChargebackEventList::class => $this->financialEvents->getChargebackEventList(),//买家信用卡拒付
+            //亚马逊支付
+            PayWithAmazonEventList::class => $this->financialEvents->getPayWithAmazonEventList(),//用户使用亚马逊账户绑定第三方平台进行收款，亚马逊会提供收款服务在此服务中扣除手续费
             ServiceProviderCreditEventList::class => $this->financialEvents->getServiceProviderCreditEventList(),
-            RetroChargeEventList::class => $this->financialEvents->getRetrochargeEventList(),
+            //赔偿撤销
+            RetroChargeEventList::class => $this->financialEvents->getRetrochargeEventList(),//分两种 order撤销和赔偿撤销。属于已经赔偿后重新撤销的金额，目前此事件含税费
             RentalTransactionEventList::class => $this->financialEvents->getRentalTransactionEventList(),
-            ProductAdsPaymentEventList::class => $this->financialEvents->getProductAdsPaymentEventList(),
-            ServiceFeeEventList::class => $this->financialEvents->getServiceFeeEventList(),
-            SellerDealPaymentEventList::class => $this->financialEvents->getSellerDealPaymentEventList(),
-            DebtRecoveryEventList::class => $this->financialEvents->getDebtRecoveryEventList(),
+            //广告
+            ProductAdsPaymentEventList::class => $this->financialEvents->getProductAdsPaymentEventList(),//CPC广告服务，若卖家的广告服务使用卖家账户扣款则在此服务中结算，若选择信用卡支付则不在此服务中结算
+            //服务费
+            ServiceFeeEventList::class => $this->financialEvents->getServiceFeeEventList(),//亚马逊店铺或账号维度的服务费，主要包括订阅费、促销费等
+            //秒杀费用
+            SellerDealPaymentEventList::class => $this->financialEvents->getSellerDealPaymentEventList(),//亚马逊Lightning Deal Fee费用
+            //信用卡扣款
+            DebtRecoveryEventList::class => $this->financialEvents->getDebtRecoveryEventList(),//当用户应收金额不足以支付账单费用，在此类型中执行信用卡扣款业务，此类型不含广告费直接信用扣款
             LoanServicingEventList::class => $this->financialEvents->getLoanServicingEventList(),
-            AdjustmentEventList::class => $this->financialEvents->getAdjustmentEventList(),
+            //调整
+            AdjustmentEventList::class => $this->financialEvents->getAdjustmentEventList(),//亚马逊库存赔偿、亚马逊费用调整及预留金额
             SAFETReimbursementEventList::class => $this->financialEvents->getSafetReimbursementEventList(),
-            SellerReviewEnrollmentPaymentEventList::class => $this->financialEvents->getSellerReviewEnrollmentPaymentEventList(),
-            FbaLiquidationEventList::class => $this->financialEvents->getFbaLiquidationEventList(),
-            CouponPaymentEventList::class => $this->financialEvents->getCouponPaymentEventList(),
+            //早期评论人计划
+            SellerReviewEnrollmentPaymentEventList::class => $this->financialEvents->getSellerReviewEnrollmentPaymentEventList(),//亚马逊早期评论人计划扣款
+            //亚马逊库存清算服务
+            FbaLiquidationEventList::class => $this->financialEvents->getFbaLiquidationEventList(),//移除中类型为清算的订单，费用在此类型中结算
+            //优惠券手续费
+            CouponPaymentEventList::class => $this->financialEvents->getCouponPaymentEventList(),//产生促销订单后扣除优惠券的手续费用，0.06美元（美国）或60日元（日本）
             ImagingServicesFeeEventList::class => $this->financialEvents->getImagingServicesFeeEventList(),
             NetworkComminglingTransactionEventList::class => $this->financialEvents->getNetworkComminglingTransactionEventList(),
             AffordabilityExpenseEventList::class => $this->financialEvents->getAffordabilityExpenseEventList(),
             AffordabilityExpenseReversalEventList::class => $this->financialEvents->getAffordabilityExpenseReversalEventList(),
             RemovalShipmentEventList::class => $this->financialEvents->getRemovalShipmentEventList(),
-            RemovalShipmentAdjustmentEventList::class => $this->financialEvents->getRemovalShipmentAdjustmentEventList(),
+            //清算调整费用
+            RemovalShipmentAdjustmentEventList::class => $this->financialEvents->getRemovalShipmentAdjustmentEventList(),//对应summary中Liquidation Adjustment
             TrialShipmentEventList::class => $this->financialEvents->getTrialShipmentEventList(),
             TdsReimbursementEventList::class => $this->financialEvents->getTdsReimbursementEventList(),
             AdhocDisbursementEventList::class => $this->financialEvents->getAdhocDisbursementEventList(),

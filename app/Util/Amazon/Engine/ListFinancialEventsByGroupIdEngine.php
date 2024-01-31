@@ -35,6 +35,7 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
      * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws \JsonException
      * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
@@ -103,7 +104,7 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
                 $can_retry_flag = true;
                 $response_body = $e->getResponseBody();
                 if (! is_null($response_body)) {
-                    $body = json_decode($response_body, true);
+                    $body = json_decode($response_body, true, 512, JSON_THROW_ON_ERROR);
                     if (isset($body['errors'])) {
                         $errors = $body['errors'];
                         foreach ($errors as $error) {
