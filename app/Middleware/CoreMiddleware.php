@@ -17,6 +17,7 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use function Hyperf\Support\call;
 
 class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 {
@@ -74,7 +75,7 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
         $t1 = microtime(true);
 
         if ($dispatched->handler->callback instanceof \Closure) {
-            $response = \Hyperf\Support\call($dispatched->handler->callback);
+            $response = call($dispatched->handler->callback);
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);

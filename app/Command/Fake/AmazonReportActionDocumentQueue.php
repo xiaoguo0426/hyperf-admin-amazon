@@ -16,7 +16,10 @@ use App\Util\ConsoleLog;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use function Hyperf\Config\config;
 
@@ -39,6 +42,12 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
             ->setDescription('Fake Amazon Report Action Document Queue');
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
+     * @return void
+     */
     public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');

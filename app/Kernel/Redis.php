@@ -11,16 +11,15 @@ declare(strict_types=1);
 namespace App\Kernel;
 
 use Hyperf\Redis\RedisFactory;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Hyperf\Redis\RedisProxy;
 
 class Redis
 {
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @param mixed $group
+     * @return RedisProxy
      */
-    public static function get(mixed $group = 'default')
+    public static function get(mixed $group = 'default'): RedisProxy
     {
         return di(RedisFactory::class)->get($group);
     }

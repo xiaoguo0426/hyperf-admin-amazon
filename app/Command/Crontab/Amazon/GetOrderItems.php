@@ -13,9 +13,11 @@ namespace App\Command\Crontab\Amazon;
 use App\Queue\AmazonOrderItemQueue;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
+use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 
 #[Command]
 class GetOrderItems extends HyperfCommand
@@ -30,7 +32,9 @@ class GetOrderItems extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws JsonException
+     * @throws RedisException
+     * @return void
      */
     public function handle(): void
     {

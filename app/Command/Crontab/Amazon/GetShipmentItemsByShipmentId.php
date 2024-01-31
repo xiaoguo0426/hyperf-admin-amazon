@@ -2,11 +2,8 @@
 
 namespace App\Command\Crontab\Amazon;
 
-use _PHPStan_3d4486d07\Symfony\Component\Console\Input\InputOption;
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
-use App\Util\Amazon\Creator\GetShipmentsCreator;
-use App\Util\Amazon\Engine\GetShipmentsEngine;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use Hyperf\Command\Annotation\Command;
@@ -16,8 +13,6 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RedisException;
-use Symfony\Component\Console\Input\InputArgument;
-use function Hyperf\Support\make;
 
 #[Command]
 class GetShipmentItemsByShipmentId extends HyperfCommand

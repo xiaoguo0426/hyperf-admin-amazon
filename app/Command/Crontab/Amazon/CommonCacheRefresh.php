@@ -23,6 +23,9 @@ class CommonCacheRefresh extends HyperfCommand
         $this->setDescription('Crontab Amazon Common Cache Refresh Command');
     }
 
+    /**
+     * @return void
+     */
     public function handle(): void
     {
         AmazonApp::single(static function (AmazonAppModel $amazonAppCollection) {

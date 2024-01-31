@@ -30,7 +30,9 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -58,8 +60,11 @@ class ModelCommand extends \Hyperf\Command\Command
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @return int
      */
     public function run(InputInterface $input, OutputInterface $output): int
     {

@@ -14,8 +14,11 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Exception\NotFoundException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-
+use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 
 #[Command]
 class GetListingsItem extends HyperfCommand
@@ -27,6 +30,13 @@ class GetListingsItem extends HyperfCommand
         $this->setDescription('Crontab Amazon Listing API Get Listings Item Command');
     }
 
+    /**
+     * @throws NotFoundException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
+     * @return void
+     */
     public function handle(): void
     {
         AmazonApp::each(static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {

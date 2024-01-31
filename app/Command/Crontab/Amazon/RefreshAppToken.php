@@ -43,6 +43,7 @@ class RefreshAppToken extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @return void
      */
     public function handle(): void
     {

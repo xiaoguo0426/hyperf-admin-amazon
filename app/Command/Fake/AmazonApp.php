@@ -10,9 +10,6 @@ declare(strict_types=1);
 
 namespace App\Command\Fake;
 
-use AmazonPHP\SellingPartner\AccessToken;
-use AmazonPHP\SellingPartner\SellingPartnerSDK;
-use App\Util\AmazonSDK;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\DB\DB;
@@ -37,9 +34,7 @@ class AmazonApp extends HyperfCommand
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {
