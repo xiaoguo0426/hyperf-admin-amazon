@@ -26,6 +26,10 @@ use App\Util\Log\AmazonReportGetLog;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Di\Exception\NotFoundException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 
 class AmazonGetReportQueue extends Queue
 {
@@ -43,9 +47,12 @@ class AmazonGetReportQueue extends Queue
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RedisException
+     * @param QueueDataInterface $queueData
+     * @throws NotFoundException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RedisException
+     * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {

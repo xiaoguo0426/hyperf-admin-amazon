@@ -72,4 +72,8 @@ namespace App\Model;
 class AmazonReportSalesAndTrafficByDateModel extends Model
 {
     protected ?string $table = 'amazon_report_sales_and_traffic_by_date';
+
+    public const CREATED_AT = 'created_at';
+
+    public const UPDATED_AT = 'updated_at';
 }

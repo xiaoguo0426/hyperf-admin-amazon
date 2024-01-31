@@ -33,4 +33,8 @@ namespace App\Model;
 class AmazonReportFbaFulfillmentCustomerReturnDataModel extends Model
 {
     protected ?string $table = 'amazon_report_fba_fulfillment_customer_return_data';
+
+    public const CREATED_AT = 'created_at';
+
+    public const UPDATED_AT = 'updated_at';
 }

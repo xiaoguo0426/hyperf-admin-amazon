@@ -18,8 +18,11 @@ use App\Util\Amazon\Creator\ListFinancialEventsByOrderIdCreator;
 use App\Util\Amazon\Engine\ListFinancialEventsByOrderIdEngine;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
+use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
+use function Hyperf\Support\make;
 
 class AmazonFinanceFinancialListEventsByOrderIdQueue extends Queue
 {
@@ -34,8 +37,12 @@ class AmazonFinanceFinancialListEventsByOrderIdQueue extends Queue
     }
 
     /**
+     * @param QueueDataInterface $queueData
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
+     * @throws RedisException
+     * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
@@ -51,7 +58,7 @@ class AmazonFinanceFinancialListEventsByOrderIdQueue extends Queue
             $creator->setOrderId($order_id);
             $creator->setMaxResultsPerPage(100);
 
-            \Hyperf\Support\make(ListFinancialEventsByOrderIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
+            make(ListFinancialEventsByOrderIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
 
             return true;
         });

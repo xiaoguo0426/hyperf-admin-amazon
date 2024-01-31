@@ -93,4 +93,8 @@ namespace App\Model;
 class AmazonReportFbaInventoryPlanningDataModel extends Model
 {
     protected ?string $table = 'amazon_report_fba_inventory_planning_data';
+
+    public const CREATED_AT = 'created_at';
+
+    public const UPDATED_AT = 'updated_at';
 }

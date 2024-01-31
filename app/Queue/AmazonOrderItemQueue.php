@@ -39,9 +39,9 @@ class AmazonOrderItemQueue extends Queue
     /**
      * @param QueueDataInterface $queueData
      * @throws ContainerExceptionInterface
+     * @throws NotFoundException
      * @throws NotFoundExceptionInterface
      * @throws RedisException
-     * @throws NotFoundException
      * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool

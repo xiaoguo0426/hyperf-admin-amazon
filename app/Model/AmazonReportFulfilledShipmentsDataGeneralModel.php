@@ -67,9 +67,10 @@ namespace App\Model;
  */
 class AmazonReportFulfilledShipmentsDataGeneralModel extends Model
 {
+    protected ?string $table = 'amazon_report_amazon_fulfilled_shipments_data_general';
+
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
 
-    protected ?string $table = 'amazon_report_amazon_fulfilled_shipments_data_general';
 }

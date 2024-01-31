@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace App\Queue\Data;
 
-class AmazonActionReportData extends QueueData implements \JsonSerializable
+use JsonSerializable;
+
+class AmazonActionReportData extends QueueData implements JsonSerializable
 {
     private int $merchant_id;
 

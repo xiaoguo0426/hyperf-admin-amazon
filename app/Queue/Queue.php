@@ -15,8 +15,10 @@ use App\Queue\Data\QueueDataInterface;
 use App\Util\Log\QueueLog;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 
 class Queue extends AbstractQueue
 {
@@ -26,7 +28,7 @@ class Queue extends AbstractQueue
     }
 
     /**
-     * @throws \RedisException
+     * @throws RedisException
      */
     public function push(QueueDataInterface $queueData): bool
     {
@@ -36,8 +38,9 @@ class Queue extends AbstractQueue
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws \RedisException
-     * @throws \Exception
+     * @throws JsonException
+     * @throws RedisException
+     * @return bool
      */
     public function pop(): bool
     {
@@ -73,7 +76,7 @@ class Queue extends AbstractQueue
                     $console->info(sprintf('进程[%s] pid:%s 队列为空，自动退出', cli_get_process_title(), $pid));
                     break;
                 }
-            } catch (\RedisException $exception) {
+            } catch (RedisException $exception) {
                 $logger->error(sprintf('队列：%s 连接Redis异常.%s', $this->queue_name, $exception->getMessage()));
                 break;
             }
@@ -125,7 +128,8 @@ class Queue extends AbstractQueue
     }
 
     /**
-     * @throws \RuntimeException
+     * @param QueueDataInterface $queueData
+     * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
@@ -133,7 +137,7 @@ class Queue extends AbstractQueue
     }
 
     /**
-     * @throws \RuntimeException
+     * @return string
      */
     public function getQueueDataClass(): string
     {

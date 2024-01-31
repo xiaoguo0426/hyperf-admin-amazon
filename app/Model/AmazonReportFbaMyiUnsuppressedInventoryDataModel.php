@@ -43,4 +43,9 @@ namespace App\Model;
 class AmazonReportFbaMyiUnsuppressedInventoryDataModel extends Model
 {
     protected ?string $table = 'amazon_report_fba_myi_unsuppressed_inventory_data';
+
+    public const CREATED_AT = 'created_at';
+
+    public const UPDATED_AT = 'updated_at';
+
 }
