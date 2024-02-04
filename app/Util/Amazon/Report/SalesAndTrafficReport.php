@@ -13,18 +13,22 @@ namespace App\Util\Amazon\Report;
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
 use App\Model\AmazonReportSalesAndTrafficByAsinModel;
 use App\Model\AmazonReportSalesAndTrafficByDateModel;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use App\Util\Log\AmazonReportActionLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class SalesAndTrafficReport extends ReportBase
 {
     /**
      * @throws \Exception
      */
-    public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
+    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
-        parent::__construct($report_type, $merchant_id, $merchant_store_id);
+        parent::__construct($merchant_id, $merchant_store_id, $region, $report_type);
 
         $start_time = Carbon::yesterday('UTC')->format('Y-m-d 00:00:00');
         $end_time = Carbon::yesterday('UTC')->format('Y-m-d 23:59:59');
@@ -60,9 +64,9 @@ class SalesAndTrafficReport extends ReportBase
         }
     }
 
-    public function getReportFileName(array $marketplace_ids): string
+    public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
     {
-        return $this->getReportType() . '-' . $marketplace_ids[0];
+        return $this->getReportType() . '-' . $marketplace_ids[0] . '-' . $this->getReportStartDate()?->format('Ymd') . '-' . $this->getReportEndDate()?->format('Ymd');
     }
 
     /**
@@ -88,13 +92,18 @@ class SalesAndTrafficReport extends ReportBase
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @param RequestedReportRunner $reportRunner
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @return bool
      */
-    public function run(string $report_id, string $file): bool
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
+
+        $file = $reportRunner->getReportFilePath();
+        $report_id = $reportRunner->getReportId();
 
         $content = file_get_contents($file);
 

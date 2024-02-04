@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFbaReimbursementsDataModel;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use Carbon\Carbon;
 use Hyperf\Database\Model\ModelNotFoundException;
 
@@ -18,9 +20,9 @@ class FbaReimbursementsData extends ReportBase
 {
     private array $date_list;
 
-    public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
+    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
-        parent::__construct($report_type, $merchant_id, $merchant_store_id);
+        parent::__construct($merchant_id, $merchant_store_id, $region, $report_type);
 
         $last_7days_start_time = Carbon::now('UTC')->subDays(15)->format('Y-m-d 00:00:00'); // 最近7天
         $last_end_time = Carbon::yesterday('UTC')->format('Y-m-d 23:59:59');
@@ -33,12 +35,19 @@ class FbaReimbursementsData extends ReportBase
         ];
     }
 
-    public function run(string $report_id, string $file): bool
+    /**
+     * @param RequestedReportRunner $reportRunner
+     * @return bool
+     */
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         $config = $this->getHeaderMap();
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
+
+        $file = $reportRunner->getReportFilePath();
+        $report_id = $reportRunner->getReportId();
 
         $handle = fopen($file, 'rb');
         $header_line = str_replace("\r\n", '', fgets($handle));

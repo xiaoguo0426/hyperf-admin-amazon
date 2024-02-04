@@ -11,10 +11,11 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 
 class ConvergedFlatFilePendingOrdersDataReport extends ReportBase
 {
-    public function run(string $report_id, string $file): bool
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         // TODO: Implement run() method.
         return true;

@@ -11,26 +11,35 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonSettlementReportDataFlatFileV2Model;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+use App\Util\Amazon\Report\Runner\ScheduledReportRunner;
 use App\Util\ConsoleLog;
 use App\Util\Log\AmazonReportDocumentLog;
 use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class V2SettlementReportDataFlatFileV2 extends ReportBase
 {
     /**
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \Psr\Container\ContainerExceptionInterface
+     * @param ScheduledReportRunner $reportRunner
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @throws \JsonException
+     * @return bool
      */
-    public function run(string $report_id, string $file): bool
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         $config = $this->getHeaderMap();
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
+
+        $file = $reportRunner->getReportFilePath();
+        $report_id = $reportRunner->getReportDocumentId();
 
         $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
         $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
@@ -88,10 +97,29 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
                 $item['currency'] = $report_currency;
             }
 
-            $item['settlement_start_date'] = $this->formatDate($item['currency'], $item['settlement_start_date'] === '' ? $report_settlement_start_date : $item['settlement_start_date']);
-            $item['settlement_end_date'] = $this->formatDate($item['currency'], $item['settlement_end_date'] === '' ? $report_settlement_end_date : $item['settlement_end_date']);
-            $item['deposit_date'] = $this->formatDate($item['currency'], $item['deposit_date'] === '' ? $report_deposit_date : $item['deposit_date']);
-            $item['posted_date_time'] = $this->formatDate($item['currency'], $item['posted_date_time'] === '' ? $report_deposit_date : $item['posted_date_time']);
+            $item['settlement_start_date'] = $this->formatDate($item['currency'], $report_settlement_start_date);
+            $item['settlement_end_date'] = $this->formatDate($item['currency'], $report_settlement_end_date);
+
+            if ($item['deposit_date'] === '') {
+                $deposit_date = $this->formatDate($item['currency'], $report_deposit_date);
+            } else {
+                $deposit_date = $this->formatDate($item['currency'], $item['deposit_date']);
+            }
+
+            $posted_date = '';
+            if ($item['posted_date'] !== '') {
+                $posted_date = $this->formatDate2($item['currency'], $item['posted_date']);
+            }
+
+            $posted_date_time = '';
+            if ($item['posted_date_time'] !== '') {
+                $posted_date_time = $this->formatDate($item['currency'], $item['posted_date_time']);
+            }
+
+
+            $item['deposit_date'] = $deposit_date;
+            $item['posted_date'] = $posted_date;
+            $item['posted_date_time'] = $posted_date_time;
 
             $item['merchant_id'] = $merchant_id;
             $item['merchant_store_id'] = $merchant_store_id;
@@ -166,17 +194,48 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         return true;
     }
 
-    private function formatDate($currency, $val): string
+    private function formatDate($currency, $val, string $format = 'Y-m-d H:i:s'): string
     {
         if ($currency === 'USD') {
-            $val = Carbon::createFromFormat('Y-m-d H:i:s T', $val)->format('Y-m-d H:i:s');
-        } elseif ($currency === 'CAD') {
-            $val = Carbon::createFromFormat('d.m.Y H:i:s T', $val)->format('Y-m-d H:i:s');
-        } elseif ($currency === 'MXN') {
-            $val = Carbon::createFromFormat('d.m.Y H:i:s T', $val)->format('Y-m-d H:i:s');
+            $raw_format = 'Y-m-d H:i:s T';
+        } else if ($currency === 'CAD') {
+            $raw_format = 'd.m.Y H:i:s T';
+        } else if ($currency === 'MXN') {
+            $raw_format = 'd.m.Y H:i:s T';
+        } else if ($currency === 'EUR') {
+            $raw_format = 'd.m.Y H:i:s T';
+        } else if ($currency === 'GBP') {
+            $raw_format = 'd.m.Y H:i:s T';
+        } else {
+            return $val;
+        }
+        return Carbon::createFromFormat($raw_format, $val)->format($format);
+    }
+
+    private function formatDate2($currency, $val): string
+    {
+        $format = 'Y-m-d';
+        if ($currency === 'USD') {
+            return $val;
+        }
+
+        if ($currency === 'CAD') {
+            $val = Carbon::createFromFormat('d.m.Y', $val)->format($format);
+        } else if ($currency === 'MXN') {
+            $val = Carbon::createFromFormat('d.m.Y', $val)->format($format);
+        } else if ($currency === 'EUR') {
+            $val = Carbon::createFromFormat('d.m.Y', $val)->format($format);
+        } else if ($currency === 'GBP') {
+            $val = Carbon::createFromFormat('d.m.Y', $val)->format($format);
         } else {
             return $val;
         }
         return $val;
     }
+
+    public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
+    {
+        return $report_id . '-' . $region;
+    }
+
 }

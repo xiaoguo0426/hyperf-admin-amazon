@@ -11,10 +11,15 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 
 class FlatFileOpenListingsDataReport extends ReportBase
 {
-    public function run(string $report_id, string $file): bool
+    /**
+     * @param ReportRunnerInterface $reportRunner
+     * @return bool
+     */
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         // TODO: Implement run() method.
         return true;
@@ -34,5 +39,19 @@ class FlatFileOpenListingsDataReport extends ReportBase
             'data_end_time' => $this->getReportEndDate(), // 报告数据结束时间
             'marketplace_ids' => $marketplace_ids, // 市场标识符列表
         ]);
+    }
+
+    /**
+     * 请求报告
+     * @param array $marketplace_ids
+     * @param callable $func
+     * @throws \Exception
+     * @return void
+     */
+    public function requestReport(array $marketplace_ids, callable $func): void
+    {
+        foreach ($marketplace_ids as $marketplace_id) {
+            is_callable($func) && $func($this, $this->getReportType(), $this->buildReportBody($this->getReportType(), [$marketplace_id]), [$marketplace_id]);
+        }
     }
 }

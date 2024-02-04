@@ -67,6 +67,22 @@ class AmazonActionReportData extends QueueData implements JsonSerializable
         $this->merchant_store_id = $merchant_store_id;
     }
 
+    /**
+     * @return string
+     */
+    public function getRegion(): string
+    {
+        return $this->region;
+    }
+
+    /**
+     * @param string $region
+     */
+    public function setRegion(string $region): void
+    {
+        $this->region = $region;
+    }
+
     public function getMarketplaceIds(): array
     {
         return explode(',', $this->marketplace_ids);
@@ -132,6 +148,7 @@ class AmazonActionReportData extends QueueData implements JsonSerializable
         return json_encode([
             'merchant_id' => $this->merchant_id,
             'merchant_store_id' => $this->merchant_store_id,
+            'region' => $this->region,
             'marketplace_ids' => $this->marketplace_ids,
             'report_id' => $this->report_id,
             'report_type' => $this->report_type,
@@ -146,6 +163,7 @@ class AmazonActionReportData extends QueueData implements JsonSerializable
         return [
             'merchant_id' => $this->merchant_id,
             'merchant_store_id' => $this->merchant_store_id,
+            'region' => $this->region,
             'marketplace_ids' => $this->marketplace_ids,
             'report_id' => $this->report_id,
             'report_type' => $this->report_type,
@@ -159,6 +177,7 @@ class AmazonActionReportData extends QueueData implements JsonSerializable
     {
         $this->setMerchantId($arr['merchant_id']);
         $this->setMerchantStoreId($arr['merchant_store_id']);
+        $this->setRegion($arr['region']);
         $this->setMarketplaceIds(explode(',', $arr['marketplace_ids']));
         $this->setReportId($arr['report_id']);
         $this->setReportType($arr['report_type']);
@@ -176,6 +195,7 @@ class AmazonActionReportData extends QueueData implements JsonSerializable
         return new self(
             $data['merchant_id'],
             $data['merchant_store_id'],
+            $data['region'],
             $data['marketplace_ids'],
             $data['report_id'],
             $data['report_type'],

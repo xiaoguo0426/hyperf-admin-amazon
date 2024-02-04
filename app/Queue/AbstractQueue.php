@@ -13,8 +13,6 @@ namespace App\Queue;
 use App\Kernel\Redis;
 use App\Queue\Data\QueueDataInterface;
 use App\Util\Prefix;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 abstract class AbstractQueue implements QueueInterface
 {
@@ -31,10 +29,6 @@ abstract class AbstractQueue implements QueueInterface
      */
     protected bool $isLogHandleDataTime = false;
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     public function __construct()
     {
         $this->queue_name = Prefix::queue() . $this->getQueueName();

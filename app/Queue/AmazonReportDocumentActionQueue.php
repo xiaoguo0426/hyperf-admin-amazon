@@ -13,11 +13,13 @@ namespace App\Queue;
 use App\Queue\Data\AmazonReportDocumentActionData;
 use App\Queue\Data\QueueDataInterface;
 use App\Util\Amazon\Report\ReportFactory;
+use App\Util\Amazon\Report\Runner\ScheduledReportRunner;
 use App\Util\Log\AmazonReportDocumentLog;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use function Hyperf\Config\config;
 
 class AmazonReportDocumentActionQueue extends Queue
 {
@@ -44,6 +46,8 @@ class AmazonReportDocumentActionQueue extends Queue
          */
         $merchant_id = $queueData->getMerchantId();
         $merchant_store_id = $queueData->getMerchantStoreId();
+        $region = $queueData->getRegion();
+        $real_marketplace_ids = $queueData->getMarketplaceIds();
         $report_type = $queueData->getReportType();
         $report_document_id = $queueData->getReportDocumentId();
 
@@ -53,8 +57,10 @@ class AmazonReportDocumentActionQueue extends Queue
 
         $logger->info(sprintf('Action Document 报告队列数据： %s', $queueData->toJson()));
 
-        $file_base_name = $report_document_id;
-        $file_path = sprintf('%s%s/%s/%s-%s/%s.txt', \Hyperf\Config\config('amazon.report_template_path'), 'scheduled', $report_type, $merchant_id, $merchant_store_id, $file_base_name);
+        $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $region, $report_type);
+
+        $file_base_name = $instance->getReportFileName($real_marketplace_ids, $region, $report_document_id);
+        $file_path = sprintf('%s%s/%s/%s-%s/%s.txt', config('amazon.report_template_path'), 'scheduled', $report_type, $merchant_id, $merchant_store_id, $file_base_name);
         if (! file_exists($file_path)) {
             $log = sprintf('%s 文件不存在', $file_path);
             $console->error($log);
@@ -63,13 +69,22 @@ class AmazonReportDocumentActionQueue extends Queue
         }
 
         try {
-            $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $report_type);
 
             $log = sprintf('Action %s 处理文件 %s', $report_type, $file_path);
             $console->info($log);
             $logger->info($log);
 
-            $instance->run($report_document_id, $file_path);
+            $scheduledReportRunner = new ScheduledReportRunner();
+            $scheduledReportRunner->setMerchantId($merchant_id);
+            $scheduledReportRunner->setMerchantStoreId($merchant_store_id);
+            $scheduledReportRunner->setRegion($region);
+            $scheduledReportRunner->setMarketplaceIds($real_marketplace_ids);
+            $scheduledReportRunner->setReportType($report_type);
+            $scheduledReportRunner->setReportDocumentId($report_document_id);
+            $scheduledReportRunner->setReportFilePath($file_path);
+
+            $instance->run($scheduledReportRunner);
+
         } catch (\Exception $exception) {
             $logger->error(sprintf('Action Document 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $exception->getMessage()));
             $console->error(sprintf('Action Document 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $exception->getMessage()));

@@ -11,16 +11,25 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFulfilledShipmentsDataGeneralModel;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use Carbon\Carbon;
 use Hyperf\Collection\Collection;
 use Hyperf\Database\Model\ModelNotFoundException;
 
 class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
 {
-    public function run(string $report_id, string $file): bool
+    /**
+     * @param RequestedReportRunner $reportRunner
+     * @return bool
+     */
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         //        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
         //        $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
+
+        $file = $reportRunner->getReportFilePath();
+        $report_id = $reportRunner->getReportId();
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();

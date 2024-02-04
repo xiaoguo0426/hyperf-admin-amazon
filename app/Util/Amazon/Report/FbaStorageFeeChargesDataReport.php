@@ -11,7 +11,10 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFbaStorageFeeChargesDataModel;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use App\Util\RedisHash\AmazonInventoryFnSkuToSkuMapHash;
+use Carbon\Carbon;
 use Hyperf\Database\Model\ModelNotFoundException;
 use JsonException;
 use RedisException;
@@ -19,15 +22,32 @@ use function Hyperf\Support\make;
 
 class FbaStorageFeeChargesDataReport extends ReportBase
 {
+    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
+    {
+        parent::__construct($merchant_id, $merchant_store_id, $region, $report_type);
+        //默认获取上个月的报告
+        $data = Carbon::now('UTC')->subMonth();
+        $start_time = $data->firstOfMonth()->format('Y-m-d 00:00:00');
+        $end_time = $data->endOfMonth()->format('Y-m-d 23:59:59');
+
+        $this->setReportStartDate($start_time);
+        $this->setReportEndDate($end_time);
+    }
+
     /**
-     * @throws \JsonException
+     * @param RequestedReportRunner $reportRunner
+     * @throws JsonException
+     * @return bool
      */
-    public function run(string $report_id, string $file): bool
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         $config = $this->getHeaderMap();
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
+
+        $file = $reportRunner->getReportFilePath();
+        $report_id = $reportRunner->getReportId();
 
         $handle = fopen($file, 'rb');
         $header_line = str_replace("\r\n", '', fgets($handle));

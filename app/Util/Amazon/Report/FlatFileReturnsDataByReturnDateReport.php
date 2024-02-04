@@ -10,9 +10,15 @@ declare(strict_types=1);
 
 namespace App\Util\Amazon\Report;
 
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+
 class FlatFileReturnsDataByReturnDateReport extends ReportBase
 {
-    public function run(string $report_id, string $file): bool
+    /**
+     * @param ReportRunnerInterface $reportRunner
+     * @return bool
+     */
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         // TODO: Implement run() method.
         return true;

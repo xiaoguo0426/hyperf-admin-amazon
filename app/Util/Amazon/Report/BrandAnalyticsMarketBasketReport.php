@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 
@@ -19,9 +20,9 @@ class BrandAnalyticsMarketBasketReport extends ReportBase
     /**
      * @throws \Exception
      */
-    public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
+    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
-        parent::__construct($report_type, $merchant_id, $merchant_store_id);
+        parent::__construct($merchant_id, $merchant_store_id, $region, $report_type);
 
         $start_time = Carbon::now()->startOfWeek(CarbonInterface::SUNDAY)->format('Y-m-d 00:00:00');
         $end_time = Carbon::now()->endOfWeek(CarbonInterface::SATURDAY)->format('Y-m-d 23:59:59');
@@ -33,7 +34,7 @@ class BrandAnalyticsMarketBasketReport extends ReportBase
         $this->setReportEndDate($end_time);
     }
 
-    public function run(string $report_id, string $file): bool
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         // TODO: Implement run() method.
         return true;
@@ -67,9 +68,9 @@ class BrandAnalyticsMarketBasketReport extends ReportBase
         }
     }
 
-    public function getReportFileName(array $marketplace_ids): string
+    public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
     {
-        return $this->getReportType() . '-' . $marketplace_ids[0] . '-' . $this->getReportStartDate()->format('Ymd') . '-' . $this->getReportEndDate()->format('Ymd');
+        return $this->getReportType() . '-' . $marketplace_ids[0] . '-' . $this->getReportStartDate()?->format('Ymd') . '-' . $this->getReportEndDate()?->format('Ymd');
     }
 
     public function checkReportDate(): bool

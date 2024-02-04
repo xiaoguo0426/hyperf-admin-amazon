@@ -22,6 +22,7 @@ use App\Queue\Data\QueueDataInterface;
 use App\Util\Amazon\Report\ReportFactory;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
+use App\Util\Log\AmazonReportCreateLog;
 use App\Util\Log\AmazonReportGetLog;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -30,12 +31,10 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RedisException;
+use function Hyperf\Support\env;
 
 class AmazonGetReportQueue extends Queue
 {
-    #[Inject]
-    private AmazonReportGetLog $amazonReportLog;
-
     public function getQueueName(): string
     {
         return 'amazon-get-report';
@@ -61,23 +60,18 @@ class AmazonGetReportQueue extends Queue
          */
         $merchant_id = $queueData->getMerchantId();
         $merchant_store_id = $queueData->getMerchantStoreId();
-        $real_region = $queueData->getRegion();
+        $region = $queueData->getRegion();
         $marketplace_ids = $queueData->getMarketplaceIds();
         $report_type = $queueData->getReportType();
         $report_id = $queueData->getReportId();
         $start_time = $queueData->getDataStartTime();
         $end_time = $queueData->getDataEndTime();
 
-        $logger = $this->amazonReportLog;
+        $logger = di(AmazonReportGetLog::class);
 
         $logger->info(sprintf('Get 报告队列数据： %s', $queueData->toJson()));
 
-        return AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($real_region, $report_type, $report_id, $start_time, $end_time, $logger) {
-
-            if ($region !== $real_region) {
-                return true;
-            }
-
+        return AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($report_type, $report_id, $start_time, $end_time, $logger) {
             $queue = new AmazonActionReportQueue();
 
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
@@ -105,9 +99,17 @@ class AmazonGetReportQueue extends Queue
                         $logger->notice(sprintf('Get %s  %s 报告处理中 merchant_id: %s merchant_store_id: %s', $report_type, $report_id, $merchant_id, $merchant_store_id));
                         return false;
                     }
-                    if ($processing_status === Report::PROCESSING_STATUS_CANCELLED || $processing_status === Report::PROCESSING_STATUS_FATAL) {
+
+                    if ($processing_status === Report::PROCESSING_STATUS_CANCELLED) {
                         // 被取消和终止的，不处理
-                        $log = sprintf('Get %s  %s 报告被取消或出错 %s merchant_id: %s merchant_store_id: %s', $report_type, $report_id, $processing_status, $merchant_id, $merchant_store_id);
+                        $log = sprintf('Get %s  %s 报告被取消 %s merchant_id: %s merchant_store_id: %s', $report_type, $report_id, $processing_status, $merchant_id, $merchant_store_id);
+                        $logger->error($log);
+                        $console->error($log);
+                        return true;
+                    }
+                    if ($processing_status === Report::PROCESSING_STATUS_FATAL) {
+                        // 被取消和终止的，不处理
+                        $log = sprintf('Get %s  %s 报告出错 %s merchant_id: %s merchant_store_id: %s', $report_type, $report_id, $processing_status, $merchant_id, $merchant_store_id);
                         $logger->error($log);
                         $console->error($log);
                         return true;
@@ -120,7 +122,7 @@ class AmazonGetReportQueue extends Queue
                     $logger->info($log);
                     $console->info($log);
 
-                    $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $report_type);
+                    $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $region, $report_type);
                     $instance->setReportStartDate($start_time);
                     $instance->setReportEndDate($end_time);
 
@@ -130,11 +132,11 @@ class AmazonGetReportQueue extends Queue
                     }
                     $dir = $instance->getDir();
 
-                    $file_path = $instance->getReportFilePath($marketplace_ids);
+                    $file_path = $instance->getReportFilePath($marketplace_ids, $region);
 
                     $compression_algorithm = $document->getCompressionAlgorithm();
                     if ($compression_algorithm === ReportDocument::COMPRESSION_ALGORITHM_GZIP) {
-                        $file_base_name = $instance->getReportFileName($marketplace_ids);
+                        $file_base_name = $instance->getReportFileName($marketplace_ids, $region);
 
                         $file_path_gz = $dir . $file_base_name . '.gz';
                         file_put_contents($file_path_gz, file_get_contents($url)); // 保存gz文件
@@ -151,7 +153,7 @@ class AmazonGetReportQueue extends Queue
                         gzclose($handle_gz);
                         fclose($handle);
                         // 线上环境gz文件解压提取后需要删除
-                        if (\Hyperf\Support\env('APP_ENV') !== 'dev') {
+                        if (env('APP_ENV') !== 'dev') {
                             unlink($file_path_gz);
                         }
                     } else {
@@ -166,6 +168,7 @@ class AmazonGetReportQueue extends Queue
                     $amazonActionReportData = new AmazonActionReportData();
                     $amazonActionReportData->setMerchantId($merchant_id);
                     $amazonActionReportData->setMerchantStoreId($merchant_store_id);
+                    $amazonActionReportData->setRegion($region);
                     $amazonActionReportData->setMarketplaceIds($marketplace_ids);
                     $amazonActionReportData->setReportId($report_id);
                     $amazonActionReportData->setReportType($report_type);
@@ -204,14 +207,19 @@ class AmazonGetReportQueue extends Queue
 
                     break;
                 } catch (InvalidArgumentException $e) {
-                    $logger->error(sprintf('Get report_type: %s  report_id: %s merchant_id: %s merchant_store_id: %s 获取报告出错', $report_type, $report_id, $merchant_id, $merchant_store_id), [
+                    $log = sprintf('Get report_type: %s  report_id: %s merchant_id: %s merchant_store_id: %s 获取报告出错', $report_type, $report_id, $merchant_id, $merchant_store_id);
+                    $logger->error($log, [
                         'message' => 'InvalidArgumentException ' . $e->getMessage(),
                     ]);
+                    $console->error($log);
                     break;
                 } catch (\ErrorException $errorException) {
-                    $logger->error(sprintf('Get report_type: %s  report_id: %s merchant_id: %s merchant_store_id: %s 获取报告出错', $report_type, $report_id, $merchant_id, $merchant_store_id), [
+                    $log = sprintf('Get report_type: %s  report_id: %s merchant_id: %s merchant_store_id: %s 获取报告出错', $report_type, $report_id, $merchant_id, $merchant_store_id);
+                    $logger->error($log, [
                         'message' => 'ErrorException ' . $errorException->getMessage(),
                     ]);
+                    $console->error($log);
+                    break;
                 }
             }
 

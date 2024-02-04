@@ -10,10 +10,12 @@ declare(strict_types=1);
 
 namespace App\Util\Amazon\Report;
 
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+
 interface ReportInterface
 {
     /**
      * 处理报告内容.
      */
-    public function run(string $report_id, string $file): bool;
+    public function run(ReportRunnerInterface $reportRunner): bool;
 }

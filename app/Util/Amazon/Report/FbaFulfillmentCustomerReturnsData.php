@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFbaFulfillmentCustomerReturnDataModel;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 use Carbon\Carbon;
 use Hyperf\Database\Model\ModelNotFoundException;
 
@@ -19,23 +20,29 @@ class FbaFulfillmentCustomerReturnsData extends ReportBase
     /**
      * @throws \Exception
      */
-    public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
+    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
-        parent::__construct($report_type, $merchant_id, $merchant_store_id);
+        parent::__construct($merchant_id, $merchant_store_id, $region, $report_type);
 
-        $yesterday = Carbon::yesterday();
-        $start_time = $yesterday->format('Y-m-d 00:00:00');
-        $end_time = $yesterday->format('Y-m-d 23:59:59');
+        $start_time = date('Y-m-d 00:00:00', strtotime('-30 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime('-1 day'));
         $this->setReportStartDate($start_time);
         $this->setReportEndDate($end_time);
     }
 
-    public function run(string $report_id, string $file): bool
+    /**
+     * @param ReportRunnerInterface $reportRunner
+     * @return bool
+     */
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         $config = $this->getHeaderMap();
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
+
+        $file = $reportRunner->getReportFilePath();
+        $report_id = $reportRunner->getReportId();
 
         $handle = fopen($file, 'rb');
         $header_line = str_replace("\r\n", '', fgets($handle));

@@ -124,7 +124,7 @@ class ReportCreate extends HyperfCommand
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($report_type, $report_start_date, $report_end_date, $is_force_create) {
             $logger = di(AmazonReportCreateLog::class);
 
-            $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $report_type);
+            $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $region, $report_type);
 
             if (! is_null($report_start_date)) {
                 $instance->setReportStartDate($report_start_date);
@@ -144,9 +144,9 @@ class ReportCreate extends HyperfCommand
                 }
                 $dir = $instance->getDir();
 
-                $file_base_name = $instance->getReportFileName($marketplace_ids);
+                $file_base_name = $instance->getReportFileName($marketplace_ids, $region);
                 $file_path = $dir . $file_base_name . $instance->getFileExt();
-                if (($is_force_create === '0') && $instance->checkReportFile($marketplace_ids)) {
+                if (($is_force_create === '0') && $instance->checkReportFile($marketplace_ids, $region)) {
                     //减少每个周期创建报告的请求
                     //再判断每个类型的报告是否需要再请求 -- 可能上一个周期生成了报告文件，但数据可能不完整。需要每个类型报告自行判断是否需要再次生成
                     try {

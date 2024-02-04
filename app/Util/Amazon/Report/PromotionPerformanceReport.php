@@ -13,22 +13,50 @@ namespace App\Util\Amazon\Report;
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
 use App\Model\AmazonReportPromotionPerformanceModel;
 use App\Model\AmazonReportPromotionPerformanceProductsModel;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use App\Util\ConsoleLog;
 use App\Util\Log\AmazonReportLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\ModelNotFoundException;
 use JsonException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class PromotionPerformanceReport extends ReportBase
 {
-    public function run(string $report_id, string $file): bool
+
+    /**
+     * @throws \Exception
+     */
+    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
+    {
+        parent::__construct($merchant_id, $merchant_store_id, $region, $report_type);
+
+        $start_time = Carbon::now('UTC')->subDays(30)->format('Y-m-d 00:00:00');
+        $end_time = Carbon::now('UTC')->format('Y-m-d 23:59:59');
+
+        $this->setReportStartDate($start_time);
+        $this->setReportEndDate($end_time);
+    }
+
+    /**
+     * @param RequestedReportRunner $reportRunner
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @return bool
+     */
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         $logger = ApplicationContext::getContainer()->get(AmazonReportLog::class);
         $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
+
+        $file = $reportRunner->getReportFilePath();
+        $report_id = $reportRunner->getReportId();
 
         $content = file_get_contents($file);
         try {
@@ -140,11 +168,13 @@ class PromotionPerformanceReport extends ReportBase
     {
         return new CreateReportSpecification([
             'report_options' => [
-                'campaignStartDateFrom' => $this->getReportStartDate()?->format('Y-m-d\TH:i:s\Z'),
-                'campaignStartDateTo' => $this->getReportEndDate()?->format('Y-m-d\TH:i:s\Z'),
+                'promotionStartDateFrom' => $this->getReportStartDate()?->format('Y-m-d\TH:i:s\Z'),
+                'promotionStartDateTo' => $this->getReportEndDate()?->format('Y-m-d\TH:i:s\Z'),
             ],
             'report_type' => $report_type,//报告类型
-            'marketplace_ids' => $marketplace_ids//市场标识符列表
+            'marketplace_ids' => $marketplace_ids,//市场标识符列表
+            'data_start_time' => $this->getReportStartDate(),
+            'data_end_time' => $this->getReportEndDate(),
         ]);
     }
 
@@ -158,9 +188,9 @@ class PromotionPerformanceReport extends ReportBase
         }
     }
 
-    public function getReportFileName(array $marketplace_ids): string
+    public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
     {
-        return $this->getReportType() . '-' . $marketplace_ids[0];
+        return $this->getReportType() . '-' . $marketplace_ids[0] . '-' . $this->getReportStartDate()?->format('Ymd') . '-' . $this->getReportEndDate()?->format('Ymd');
     }
 
     /**

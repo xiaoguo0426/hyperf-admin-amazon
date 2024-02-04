@@ -11,39 +11,47 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 use App\Util\Log\AmazonReportLog;
 use App\Util\RedisHash\AmazonReportMarkCanceledHash;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Hyperf\Context\ApplicationContext;
+use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-
+use RedisException;
 use function Hyperf\Config\config;
 use function Hyperf\Support\make;
 
 abstract class ReportBase implements ReportInterface
 {
+
+    protected int $merchant_id;
+
+    protected int $merchant_store_id;
+
+    protected string $report_type;
+
+    protected string $region;
+
+    protected ?Carbon $report_start_date;
+
+    protected ?Carbon $report_end_date;
+
     protected string $dir;
 
-    private string $report_type;
+    protected array $header_map;
 
-    private int $merchant_id;
-
-    private int $merchant_store_id;
-
-    private ?Carbon $report_start_date;
-
-    private ?Carbon $report_end_date;
-
-    private array $header_map;
-
-    public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
+    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type,)
     {
-        $this->report_type = $report_type;
 
         $this->merchant_id = $merchant_id;
         $this->merchant_store_id = $merchant_store_id;
+
+        $this->region = $region;
+
+        $this->report_type = $report_type;
 
         $this->report_start_date = null;
         $this->report_end_date = null;
@@ -57,12 +65,17 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 处理报告内容.
+     * 处理报告内容
+     * @param ReportRunnerInterface $reportRunner
+     * @return bool
      */
-    abstract public function run(string $report_id, string $file): bool;
+    abstract public function run(ReportRunnerInterface $reportRunner): bool;
 
     /**
      * 构造报告请求报告参数(如果某些报告有特定参数，需要重写该方法).
+     * @param string $report_type
+     * @param array $marketplace_ids
+     * @return CreateReportSpecification
      */
     public function buildReportBody(string $report_type, array $marketplace_ids): CreateReportSpecification
     {
@@ -77,6 +90,9 @@ abstract class ReportBase implements ReportInterface
 
     /**
      * 请求报告(如果特定报告有时间分组请求，需要重写该方法，参考SalesAndTrafficReportCustom.php报告).
+     * @param array $marketplace_ids
+     * @param callable $func
+     * @return void
      */
     public function requestReport(array $marketplace_ids, callable $func): void
     {
@@ -84,23 +100,34 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 报告名称(如果特定报告有).
+     * 报告名称
+     * @param array $marketplace_ids
+     * @param string $region
+     * @param string $report_id
+     * @return string
      */
-    public function getReportFileName(array $marketplace_ids): string
+    public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
     {
-        return $this->report_type;
+        return $this->report_type . '-' . $region . '-' . implode('-', $marketplace_ids) . ($report_id !== '' ? ('-' . $report_id) : '');
     }
 
     /**
-     * 获得报告文件完整路径.
+     * 获得报告文件完整路径
+     * @param array $marketplace_ids
+     * @param string $region
+     * @return string
      */
-    public function getReportFilePath(array $marketplace_ids): string
+    public function getReportFilePath(array $marketplace_ids, string $region): string
     {
-        return $this->dir . $this->getReportFileName($marketplace_ids) . $this->getFileExt();
+        return $this->dir . $this->getReportFileName($marketplace_ids, $region) . $this->getFileExt();
     }
 
     /**
-     * 处理报告.
+     * 处理报告
+     * @param callable $func
+     * @param array $marketplace_ids
+     * @return void
+     * @deprecated
      */
     public function processReport(callable $func, array $marketplace_ids): void
     {
@@ -136,22 +163,25 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * @param ?string $date
-     * @throws \Exception
+     * @param string|null $date
+     * @return void
      */
     public function setReportStartDate(?string $date): void
     {
         $this->report_start_date = $date ? new Carbon($date, 'UTC') : null;
     }
 
+    /**
+     * @return Carbon|null
+     */
     public function getReportStartDate(): null|Carbon
     {
         return $this->report_start_date;
     }
 
     /**
-     * @param ?string $date
-     * @throws \Exception
+     * @param string|null $date
+     * @return void
      */
     public function setReportEndDate(?string $date): void
     {
@@ -181,6 +211,10 @@ abstract class ReportBase implements ReportInterface
         return true;
     }
 
+    /**
+     * 检查文件夹
+     * @return bool
+     */
     public function checkDir(): bool
     {
         $date = (new Carbon($this->getReportStartDate() ? $this->getReportStartDate()->format('Ymd') : '-1 day'))->setTimezone('UTC');
@@ -207,6 +241,8 @@ abstract class ReportBase implements ReportInterface
 
     /**
      * 检查report_type属于哪个类型  requested|scheduled.
+     * @param string $report_type
+     * @return string
      */
     public function checkReportTypeCategory(string $report_type): string
     {
@@ -222,11 +258,14 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 检查报告文件是否存在.
+     * 检查报告文件是否存在
+     * @param array $marketplace_ids
+     * @param string $region
+     * @return bool
      */
-    public function checkReportFile(array $marketplace_ids): bool
+    public function checkReportFile(array $marketplace_ids, string $region): bool
     {
-        return file_exists($this->getReportFilePath($marketplace_ids));
+        return file_exists($this->getReportFilePath($marketplace_ids, $region));
     }
 
     public function getFileExt(): string
@@ -246,6 +285,13 @@ abstract class ReportBase implements ReportInterface
 
     /**
      * 标记报告删除
+     * @param string $report_type
+     * @param array $marketplace_ids
+     * @param DateTimeInterface|null $dataStartTime
+     * @param DateTimeInterface|null $dataEndTime
+     * @throws JsonException
+     * @throws RedisException
+     * @return bool
      */
     public function markCanceled(string $report_type, array $marketplace_ids, ?DateTimeInterface $dataStartTime, ?DateTimeInterface $dataEndTime): bool
     {
@@ -253,16 +299,29 @@ abstract class ReportBase implements ReportInterface
         /**
          * @var AmazonReportMarkCanceledHash $amazonReportMarkCanceled
          */
-        $amazonReportMarkCanceled = make(AmazonReportMarkCanceledHash::class,[$this->merchant_id, $this->merchant_store_id]);
+        $amazonReportMarkCanceled = make(AmazonReportMarkCanceledHash::class, [$this->merchant_id, $this->merchant_store_id]);
         return $amazonReportMarkCanceled->mark($report_type, $marketplace_ids, $dataStartTime, $dataEndTime);
     }
 
     /**
      * 检查报告是否被标记删除
+     * @param array $marketplace_ids
+     * @return bool
      */
     public function checkMarkCanceled(array $marketplace_ids): bool
     {
-        $amazonReportMarkCanceled = make(AmazonReportMarkCanceledHash::class,[$this->merchant_id, $this->merchant_store_id]);
+        $amazonReportMarkCanceled = make(AmazonReportMarkCanceledHash::class, [$this->merchant_id, $this->merchant_store_id]);
         return $amazonReportMarkCanceled->check($this->report_type, $marketplace_ids, $this->getReportStartDate(), $this->getReportEndDate());
+    }
+
+    /**
+     * 是否检查报告是否存在多个市场的数据
+     * @param array $marketplace_ids
+     * @param string $report_id
+     * @return bool
+     */
+    public function checkMarketplaceIds(array $marketplace_ids, string $report_id): bool
+    {
+        return false;
     }
 }

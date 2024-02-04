@@ -13,6 +13,7 @@ namespace App\Queue;
 use App\Queue\Data\AmazonActionReportData;
 use App\Queue\Data\QueueDataInterface;
 use App\Util\Amazon\Report\ReportFactory;
+use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use App\Util\Log\AmazonReportLog;
 use App\Util\RuntimeCalculator;
 use Hyperf\Context\ApplicationContext;
@@ -45,6 +46,7 @@ class AmazonActionReportQueue extends Queue
          */
         $merchant_id = $queueData->getMerchantId();
         $merchant_store_id = $queueData->getMerchantStoreId();
+        $region = $queueData->getRegion();
         $marketplace_ids = $queueData->getMarketplaceIds();
         $report_type = $queueData->getReportType();
         $report_id = $queueData->getReportId();
@@ -61,7 +63,7 @@ class AmazonActionReportQueue extends Queue
         $logger->info(sprintf('Action 报告队列开始处理报告. report_id:%s report_type:%s merchant_id:%s merchant_store_id:%s data：%s', $report_id, $report_type, $merchant_id, $merchant_store_id, $queueData->toJson()));
 
         try {
-            $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $report_type);
+            $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $region, $report_type);
 
             $instance->setReportStartDate($data_start_time);
             $instance->setReportEndDate($data_end_time);
@@ -70,7 +72,18 @@ class AmazonActionReportQueue extends Queue
             $console->info($log);
             $logger->info($log);
 
-            $instance->run($report_id, $report_file_path);
+            $requestedReportedRunner = new RequestedReportRunner();
+            $requestedReportedRunner->setMerchantId($merchant_id);
+            $requestedReportedRunner->setMerchantStoreId($merchant_store_id);
+            $requestedReportedRunner->setMarketplaceIds($marketplace_ids);
+            $requestedReportedRunner->setReportType($report_type);
+            $requestedReportedRunner->setReportId($report_id);
+            $requestedReportedRunner->setRegion($region);
+            $requestedReportedRunner->setReportFilePath($report_file_path);
+            $requestedReportedRunner->setDataStartTime($data_start_time);
+            $requestedReportedRunner->setDataEndTime($data_end_time);
+
+            $instance->run($requestedReportedRunner);
         } catch (\Exception $e) {
             $logger->error(sprintf('Action 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $e->getMessage()));
             $console->error(sprintf('Action 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $e->getMessage()));

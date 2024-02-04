@@ -16,6 +16,7 @@ use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Queue\AmazonGetReportDocumentQueue;
 use App\Queue\Data\AmazonGetReportDocumentData;
+use App\Util\Amazon\Report\ReportFactory;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use App\Util\Log\AmazonReportLog;
@@ -91,6 +92,7 @@ class ReportGets extends HyperfCommand
 
                     foreach ($reports as $report) {
                         $report_type = $report->getReportType();
+                        $marketplace_ids = $report->getMarketplaceIds() ?? [];
                         $report_marketplace_ids = $report->getMarketplaceIds();
                         $data_start_time = $report->getDataStartTime()?->format('Y-m-d H:i:s') ?? '';
                         $data_end_time = $report->getDataEndTime()?->format('Y-m-d H:i:s') ?? '';
@@ -102,11 +104,13 @@ class ReportGets extends HyperfCommand
                             $logger->error(sprintf('Get Directory "%s" was not created', $dir));
                             break;
                         }
-                        $file_base_name = $report_document_id;
+
+                        $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $region, $report_type);
+                        $file_base_name = $instance->getReportFileName($marketplace_ids, $region, $report_document_id);
+
                         $file_path = $dir . $file_base_name . '.txt';
                         if (file_exists($file_path)) {
                             // 文件存在了直接返回 TODO 检查报告内容是否完整
-
                             $console->warning($file_path . ' 文件已存在');
                             continue;
                         }
@@ -116,9 +120,10 @@ class ReportGets extends HyperfCommand
                         $amazonGetReportDocumentData = new AmazonGetReportDocumentData();
                         $amazonGetReportDocumentData->setMerchantId($merchant_id);
                         $amazonGetReportDocumentData->setMerchantStoreId($merchant_store_id);
+                        $amazonGetReportDocumentData->setRegion($region);
+                        $amazonGetReportDocumentData->setMarketplaceIds($marketplace_ids);
                         $amazonGetReportDocumentData->setReportDocumentId($report_document_id);
                         $amazonGetReportDocumentData->setReportType($report_type);
-                        $amazonGetReportDocumentData->setMarketplaceIds($marketplace_ids);
 
                         // 将同一报告类型 的文档id投递到队列，异步拉取报告
                         $queue->push($amazonGetReportDocumentData);

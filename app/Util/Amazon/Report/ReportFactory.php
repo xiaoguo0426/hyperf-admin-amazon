@@ -14,23 +14,30 @@ use function Hyperf\Support\make;
 
 class ReportFactory
 {
-    public static function getInstance(int $merchant_id, int $merchant_store_id, string $report_type): ReportBase
+    /**
+     * @param int $merchant_id
+     * @param int $merchant_store_id
+     * @param string $region
+     * @param string $report_type
+     * @return ReportBase
+     */
+    public static function getInstance(int $merchant_id, int $merchant_store_id, string $region, string $report_type): ReportBase
     {
         $class = match ($report_type) {
 
             'GET_COUPON_PERFORMANCE_REPORT' => CouponPerformanceReport::class,//优惠券报告
             'GET_PROMOTION_PERFORMANCE_REPORT' => PromotionPerformanceReport::class,//促销报告
             // Inventory reports
-            'GET_FLAT_FILE_OPEN_LISTINGS_DATA' => FlatFileOpenListingsDataReport::class,// 请求不了
+            'GET_FLAT_FILE_OPEN_LISTINGS_DATA' => FlatFileOpenListingsDataReport::class,
             'GET_MERCHANT_LISTINGS_ALL_DATA' => MerchantListingsAllDataReport::class,
-            'GET_MERCHANT_LISTINGS_DATA' => MerchantListingsDataReport::class,// 请求不了
+            'GET_MERCHANT_LISTINGS_DATA' => MerchantListingsDataReport::class,
             'GET_MERCHANT_LISTINGS_INACTIVE_DATA' => MerchantListingsInactiveDataReport::class,
-            'GET_MERCHANT_LISTINGS_DATA_BACK_COMPAT' => MerchantListingsDataBackCompatReport::class,// 请求不了
-            'GET_MERCHANT_LISTINGS_DATA_LITE' => MerchantListingsDataLiteReport::class,// 请求不了
-            'GET_MERCHANT_LISTINGS_DATA_LITER' => MerchantListingsDataLiterReport::class,// 请求不了
-            'GET_MERCHANT_CANCELLED_LISTINGS_DATA' => MerchantCancelledListingsDataReport::class,// 请求不了
-            'GET_MERCHANTS_LISTINGS_FYP_REPORT' => MerchantListingsFypReport::class,// 请求不了
-            'GET_REFERRAL_FEE_PREVIEW_REPORT' => ReferralFeePreviewReport::class,// 请求不了
+            'GET_MERCHANT_LISTINGS_DATA_BACK_COMPAT' => MerchantListingsDataBackCompatReport::class,
+            'GET_MERCHANT_LISTINGS_DATA_LITE' => MerchantListingsDataLiteReport::class,
+            'GET_MERCHANT_LISTINGS_DATA_LITER' => MerchantListingsDataLiterReport::class,
+            'GET_MERCHANT_CANCELLED_LISTINGS_DATA' => MerchantCancelledListingsDataReport::class,
+            'GET_MERCHANTS_LISTINGS_FYP_REPORT' => MerchantListingsFypReport::class,
+            'GET_REFERRAL_FEE_PREVIEW_REPORT' => ReferralFeePreviewReport::class,
             // Analytics Reports
             'GET_BRAND_ANALYTICS_MARKET_BASKET_REPORT' => BrandAnalyticsMarketBasketReport::class,//市场采购行为分析报告
             'GET_BRAND_ANALYTICS_SEARCH_TERMS_REPORT' => BrandAnalyticsSearchTermsReport::class,// 亚马逊搜索词报告
@@ -93,6 +100,6 @@ class ReportFactory
             default => throw new \RuntimeException(sprintf('请定义%s报告处理类', $report_type)),
         };
 
-        return make($class, [$report_type, $merchant_id, $merchant_store_id]);
+        return make($class, [$merchant_id, $merchant_store_id, $region, $report_type]);
     }
 }

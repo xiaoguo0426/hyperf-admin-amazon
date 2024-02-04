@@ -11,15 +11,24 @@ declare(strict_types=1);
 namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFbaMyiUnsuppressedInventoryDataModel;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 
 class FbaMyiUnsuppressedInventoryDataReport extends ReportBase
 {
-    public function run(string $report_id, string $file): bool
+    /**
+     * @param RequestedReportRunner $reportRunner
+     * @return bool
+     */
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         $config = $this->getHeaderMap();
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
+
+        $file = $reportRunner->getReportFilePath();
+        $report_id = $reportRunner->getReportId();
 
         $handle = fopen($file, 'rb');
         $header_line = str_replace("\r\n", '', fgets($handle)); // 表头 需要处理换行符

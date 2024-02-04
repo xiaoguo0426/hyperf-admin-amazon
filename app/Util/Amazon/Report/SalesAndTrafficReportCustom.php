@@ -12,20 +12,23 @@ namespace App\Util\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Marketplace;
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
+use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use App\Util\Log\AmazonReportActionLog;
 use App\Util\RedisHash\AmazonAsinSaleVolumeHash;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 
 class SalesAndTrafficReportCustom extends ReportBase
 {
     private array $date_list;
 
-    public function __construct(string $report_type, int $merchant_id, int $merchant_store_id)
+    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
-        parent::__construct($report_type, $merchant_id, $merchant_store_id);
+        parent::__construct($$merchant_id, $merchant_store_id, $region, $report_type);
 
         $last_end_time = Carbon::now('UTC')->subDays(2)->format('Y-m-d 23:59:59');
         $last_3days_start_time = Carbon::now('UTC')->subDays(4)->format('Y-m-d 00:00:00'); // 最近3天
@@ -56,16 +59,20 @@ class SalesAndTrafficReportCustom extends ReportBase
     }
 
     /**
-     * @throws \RedisException
+     * @param RequestedReportRunner $reportRunner
+     * @throws RedisException
+     * @return bool
      */
-    public function run(string $report_id, string $file): bool
+    public function run(ReportRunnerInterface $reportRunner): bool
     {
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
-        $report_type = $this->getReportType();
+
+        $file = $reportRunner->getReportFilePath();
+        $report_id = $reportRunner->getReportId();
+        $report_type = $reportRunner->getReportType();
 
         $logger = di(AmazonReportActionLog::class);
-        //        $console = di(StdoutLoggerInterface::class);
 
         $content = file_get_contents($file);
 
@@ -171,9 +178,9 @@ class SalesAndTrafficReportCustom extends ReportBase
         }
     }
 
-    public function getReportFileName(array $marketplace_ids): string
+    public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
     {
-        return $this->getReportType() . '-' . $marketplace_ids[0] . '-' . $this->getReportStartDate()->format('Ymd') . '-' . $this->getReportEndDate()->format('Ymd');
+        return $this->getReportType() . '-' . $marketplace_ids[0] . '-' . $this->getReportStartDate()?->format('Ymd') . '-' . $this->getReportEndDate()?->format('Ymd');
     }
 
     /**
