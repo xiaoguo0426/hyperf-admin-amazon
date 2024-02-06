@@ -10,6 +10,9 @@ declare(strict_types=1);
 
 namespace App\Command\Fake;
 
+use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
+use AmazonPHP\SellingPartner\Marketplace;
+use AmazonPHP\SellingPartner\Regions;
 use App\Queue\AmazonReportDocumentActionQueue;
 use App\Queue\Data\AmazonReportDocumentActionData;
 use App\Util\ConsoleLog;
@@ -38,7 +41,7 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
             ->addArgument('report_type', InputArgument::REQUIRED, '报告类型')
-            ->addArgument('report_id', InputArgument::OPTIONAL, '报告ID')
+            ->addArgument('report_document_id', InputArgument::OPTIONAL, '报告ID')
             ->setDescription('Fake Amazon Report Action Document Queue');
     }
 
@@ -53,43 +56,79 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $report_type = (string) $this->input->getArgument('report_type');
-        $report_id = (string) $this->input->getArgument('report_id');
+        $report_document_id = (string) $this->input->getArgument('report_document_id');
 
         $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $amazonReportDocumentActionQueue = new AmazonReportDocumentActionQueue();
 
         $report_file_dir = sprintf('%s%s/%s/%s-%s/', config('amazon.report_template_path'), 'scheduled', $report_type, $merchant_id, $merchant_store_id);
-        if ($report_id) {
-            $file_path = sprintf('%s%s.txt', $report_file_dir, $report_id);
-            if (! file_exists($file_path)) {
-                $console->error(sprintf('%s 文件不存在', $file_path));
-                return;
+
+
+        $items = scandir($report_file_dir);
+
+        $region_list = [
+            Regions::EUROPE,
+            Regions::NORTH_AMERICA,
+            Regions::FAR_EAST,
+        ];
+
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
             }
 
-            $amazonReportDocumentActionData = new AmazonReportDocumentActionData();
-            $amazonReportDocumentActionData->setMerchantId($merchant_id);
-            $amazonReportDocumentActionData->setMerchantStoreId($merchant_store_id);
-            $amazonReportDocumentActionData->setReportType($report_type);
-            $amazonReportDocumentActionData->setReportDocumentId($report_id);
+            $report_document_id_raw = pathinfo($item, PATHINFO_FILENAME);
+            //如果指定了id，则优先过滤
+            if ($report_document_id && ! str_contains($report_document_id_raw, $report_document_id)) {
+                continue;
+            }
 
-            $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
-        } else {
-            $items = scandir($report_file_dir);
-            foreach ($items as $item) {
-                if ($item === '.' || $item === '..') {
+            if ($report_type === 'GET_DATE_RANGE_FINANCIAL_TRANSACTION_DATA') {
+                $pos = strrpos($report_document_id_raw, '-');
+                //解析marketplace_id
+                $marketplace_id = substr($report_document_id_raw, $pos + 1);
+
+                try {
+                    $region = Marketplace::fromId($marketplace_id)->region();
+                } catch (InvalidArgumentException $e) {
+                    $console->error(sprintf('report_document_id:%s 解析Region失败. marketplace_id:%s', $report_document_id_raw, $marketplace_id));
                     continue;
                 }
-                $report_document_id = pathinfo($item, PATHINFO_FILENAME);
+
+                $report_document_id_new = substr($report_document_id_raw, 0, $pos);
 
                 $amazonReportDocumentActionData = new AmazonReportDocumentActionData();
                 $amazonReportDocumentActionData->setMerchantId($merchant_id);
                 $amazonReportDocumentActionData->setMerchantStoreId($merchant_store_id);
+                $amazonReportDocumentActionData->setRegion($region);
+                $amazonReportDocumentActionData->setMarketplaceIds([$marketplace_id]);
                 $amazonReportDocumentActionData->setReportType($report_type);
-                $amazonReportDocumentActionData->setReportDocumentId($report_document_id);
+                $amazonReportDocumentActionData->setReportDocumentId($report_document_id_new);
 
                 $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
+
+            } else if ($report_type === 'GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE_V2') {
+
+                foreach ($region_list as $_region) {
+                    if (! str_contains($report_document_id_raw, $_region)) {
+                        continue;
+                    }
+
+                    $report_document_id_new = str_replace('-' . $_region, '', $report_document_id_raw);
+                    $amazonReportDocumentActionData = new AmazonReportDocumentActionData();
+                    $amazonReportDocumentActionData->setMerchantId($merchant_id);
+                    $amazonReportDocumentActionData->setMerchantStoreId($merchant_store_id);
+                    $amazonReportDocumentActionData->setRegion($_region);
+                    $amazonReportDocumentActionData->setMarketplaceIds([]);
+                    $amazonReportDocumentActionData->setReportType($report_type);
+                    $amazonReportDocumentActionData->setReportDocumentId($report_document_id_new);
+
+                    $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
+                }
+
             }
+
         }
     }
 }

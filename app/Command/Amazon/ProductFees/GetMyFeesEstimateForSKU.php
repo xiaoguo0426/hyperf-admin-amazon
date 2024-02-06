@@ -28,7 +28,10 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Exception\NotFoundException;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -59,6 +62,13 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
             ->setDescription('Amazon Product Fees API GetMyFeesEstimateForSKU Command');
     }
 
+    /**
+     * @throws NotFoundException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws \RedisException
+     * @return void
+     */
     public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');

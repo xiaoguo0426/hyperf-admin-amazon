@@ -66,6 +66,7 @@ class RefreshPendingOrder extends HyperfCommand
             $orders = AmazonOrderModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('region', $region)
                 ->select('amazon_order_id')
                 ->where('order_status', 'Pending')
                 ->get();

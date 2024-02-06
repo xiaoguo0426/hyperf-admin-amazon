@@ -25,6 +25,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use function Hyperf\Support\make;
 
 class ListFinancialEventsByOrderIdEngine implements EngineInterface
 {
@@ -91,7 +92,7 @@ class ListFinancialEventsByOrderIdEngine implements EngineInterface
                     break;
                 }
 
-                \Hyperf\Support\make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
+                make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
 
                 $next_token = $payload->getNextToken();
                 if (is_null($next_token)) {

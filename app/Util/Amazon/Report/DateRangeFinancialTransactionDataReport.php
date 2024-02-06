@@ -300,6 +300,19 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
         return true;
     }
 
+    public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
+    {
+        $file_base_name = $report_id;
+        $real_marketplace_ids_count = count($marketplace_ids);
+        if ($real_marketplace_ids_count === 1) {
+            $file_base_name = $report_id . '-' . $marketplace_ids[0];
+        } else if ($real_marketplace_ids_count > 1) {
+            $file_base_name = $report_id . '-' . implode('-', $marketplace_ids);
+        }
+        return $file_base_name;
+    }
+
+
     /**
      * @param array $marketplace_ids
      * @param string $report_id
