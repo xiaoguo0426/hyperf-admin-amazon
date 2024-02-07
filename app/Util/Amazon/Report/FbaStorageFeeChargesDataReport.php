@@ -63,7 +63,7 @@ class FbaStorageFeeChargesDataReport extends ReportBase
         }
 
         $data = [];
-        $item_hash_map = [];
+        $md5_hash_idx_map = [];
         while (! feof($handle)) {
             $row = explode("\t", str_replace("\r\n", '', fgets($handle)));
 

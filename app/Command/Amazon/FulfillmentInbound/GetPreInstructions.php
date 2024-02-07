@@ -94,7 +94,6 @@ class GetPreInstructions extends HyperfCommand
 
                     $getInboundGuidanceResult = $response->getPayload();
                     if (is_null($getInboundGuidanceResult)) {
-                        $console->warning(sprintf('merchant_id:%s merchant_store_id:%s marketplace_id:%s seller_sku_list:%s asin_list:%s API响应 payload为空', $merchant_id, $merchant_store_id, $marketplace_id, implode(',', $seller_sku_list), implode(',', $asin_list)));
                         continue;
                     }
                     $invalidSkuList = $getInboundGuidanceResult->getInvalidSkuList();

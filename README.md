@@ -40,5 +40,15 @@
 # 处理周期报告
 >
 
-
 ```
+
+
+##### 一些题外话
+
+Hyperf框架与ThinkPHP5相同逻辑处理同一个报告，差距也太大了。Swoole真的强
+
+但目前我没有实现常驻进程的平滑退出，这是我在这项目中困扰的点
+
+![Hyperf](assets/markdown-img-paste-20240207022923459.png)
+
+![Think5](assets/markdown-img-paste-20240207023112869.png)

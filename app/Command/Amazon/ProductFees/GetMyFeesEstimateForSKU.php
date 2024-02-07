@@ -239,7 +239,7 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
                             $errors = $body['errors'];
                             foreach ($errors as $error) {
                                 if ($error['code'] !== 'QuotaExceeded') {
-                                    $console->warning(sprintf('merchant_id:%s merchant_store_id:%s region:%s Page:%s code:%s message:%s', $merchant_id, $merchant_store_id, $region, $page, $error['code'], $error['message']));
+                                    $console->warning(sprintf('merchant_id:%s merchant_store_id:%s region:%s code:%s message:%s', $merchant_id, $merchant_store_id, $region, $error['code'], $error['message']));
                                     break 2;
                                 }
                             }
@@ -248,12 +248,12 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
 
                     --$retry;
                     if ($retry > 0) {
-                        $console->warning(sprintf('merchant_id:%s merchant_store_id:%s region:%s Page:%s 第 % s 次重试', $merchant_id, $merchant_store_id, $region, $page, $retry));
+                        $console->warning(sprintf('merchant_id:%s merchant_store_id:%s region:%s 第 % s 次重试', $merchant_id, $merchant_store_id, $region, $retry));
                         sleep(3);
                         continue;
                     }
 
-                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s Page:%s 重试次数已用完', $merchant_id, $merchant_store_id, $region, $page));
+                    $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s 重试次数已用完', $merchant_id, $merchant_store_id, $region));
                     break;
                 } catch (InvalidArgumentException $e) {
                     $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s InvalidArgumentException % s % s', $merchant_id, $merchant_store_id, $region, $e->getCode(), $e->getMessage()));

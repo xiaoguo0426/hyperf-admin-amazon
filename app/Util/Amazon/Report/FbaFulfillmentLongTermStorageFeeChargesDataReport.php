@@ -87,7 +87,8 @@ class FbaFulfillmentLongTermStorageFeeChargesDataReport extends ReportBase
             $country = $collection['country'];
 
             try {
-                $model = AmazonFbaFulfillmentLongTermStorageFeeChargesDataModel::where('merchant_id', $merchant_id)
+                $model = AmazonFbaFulfillmentLongTermStorageFeeChargesDataModel::query()
+                    ->where('merchant_id', $merchant_id)
                     ->where('merchant_store_id', $merchant_store_id)
                     ->where('snapshot_date', $snapshot_date)
                     ->where('sku', $sku)

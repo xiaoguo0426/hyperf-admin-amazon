@@ -63,9 +63,7 @@ class GetMessagingActionsForOrder extends HyperfCommand
         $real_region = $this->input->getArgument('region');
         $amazon_order_id = $this->input->getArgument('order_id');
 
-        $that = $this;
-
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($that, $real_region, $amazon_order_id) {
+        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($real_region, $amazon_order_id) {
             if ($region !== $real_region) {
                 return true;
             }

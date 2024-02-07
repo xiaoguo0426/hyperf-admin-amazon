@@ -125,22 +125,37 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
             $item['merchant_store_id'] = $merchant_store_id;
             $item['report_id'] = $report_id;
 
-            $new_item = $item;
+            $new = $item;
 
-            ksort($new_item);
+            $transaction_type = $new['transaction_type'];
 
-            $md5_hash = md5(json_encode($new_item, JSON_THROW_ON_ERROR));//TODO 注意hash的生成规则 有些类型不能排除
+            if ($transaction_type === 'Order') {
+                unset($new['amount']);
+            }
+
+            ksort($new);
+
+            $md5_hash = md5(json_encode($new, JSON_THROW_ON_ERROR));//TODO 注意hash的生成规则 有些类型不能排除
 
             if ($collection->offsetExists($md5_hash)) {
-                $idx = $md5_hash_idx_map[$md5_hash] ?? 1;
-                $md5_hash = md5(json_encode($new_item, JSON_THROW_ON_ERROR) . $idx);
-                $md5_hash_idx_map[$md5_hash] = $idx + 1;
+//                $idx = $md5_hash_idx_map[$md5_hash] ?? 1;
+//                $md5_hash = md5(json_encode($new_item, JSON_THROW_ON_ERROR) . $idx);
+//                $md5_hash_idx_map[$md5_hash] = $idx + 1;
+
+                if ($item['transaction_type'] === 'Order' || $item['transaction_type'] === 'other-transaction') {
+                    $offset = $collection->offsetGet($md5_hash);
+                    $offset['amount'] = bcadd($offset['amount'], $item['amount'], 4);
+                    $offset['quantity_purchased'] = bcadd($offset['quantity_purchased'], $item['quantity_purchased']);
+                    $collection->put($md5_hash, $offset);
+                } else {
+                    continue;
+                }
             } else {
                 $item['md5_hash'] = $md5_hash;
                 $item['created_at'] = $cur_date;
                 $item['updated_at'] = $cur_date;
 
-                $collection->push($item);
+                $collection->put($md5_hash, $item);
             }
         }
         $report_data_length = $collection->count();

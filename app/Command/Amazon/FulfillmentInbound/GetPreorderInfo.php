@@ -128,7 +128,7 @@ class GetPreorderInfo extends HyperfCommand
                 } catch (ApiException $exception) {
                     --$retry;
                     if ($retry > 0) {
-                        $console->warning(sprintf('merchant_id:%s merchant_store_id:%s Page:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $page, $retry));
+                        $console->warning(sprintf('merchant_id:%s merchant_store_id:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $retry));
                         sleep(3);
                         continue;
                     }
