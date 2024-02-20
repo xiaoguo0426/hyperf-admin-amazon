@@ -77,16 +77,16 @@
         },
         {
             "name": "doctrine/inflector",
-            "version": "2.0.9",
+            "version": "2.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "2930cd5ef353871c821d5c43ed030d39ac8cfe65"
+                "reference": "5817d0659c5b50c9b950feb9af7b9668e2c436bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/2930cd5ef353871c821d5c43ed030d39ac8cfe65",
-                "reference": "2930cd5ef353871c821d5c43ed030d39ac8cfe65",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/5817d0659c5b50c9b950feb9af7b9668e2c436bc",
+                "reference": "5817d0659c5b50c9b950feb9af7b9668e2c436bc",
                 "shasum": ""
             },
             "require": {
@@ -148,7 +148,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/inflector/issues",
-                "source": "https://github.com/doctrine/inflector/tree/2.0.9"
+                "source": "https://github.com/doctrine/inflector/tree/2.0.10"
             },
             "funding": [
                 {
@@ -164,7 +164,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-15T18:05:13+00:00"
+            "time": "2024-02-18T20:23:39+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -467,16 +467,16 @@
         },
         {
             "name": "friendsofhyperf/sentry",
-            "version": "v3.1.13",
+            "version": "v3.1.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/friendsofhyperf/sentry.git",
-                "reference": "e2c6861c60a0d7ab383a83afb222a586ddf791e5"
+                "reference": "cb45b066f46c2774c347ddd70c25b739f2f47cb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/friendsofhyperf/sentry/zipball/e2c6861c60a0d7ab383a83afb222a586ddf791e5",
-                "reference": "e2c6861c60a0d7ab383a83afb222a586ddf791e5",
+                "url": "https://api.github.com/repos/friendsofhyperf/sentry/zipball/cb45b066f46c2774c347ddd70c25b739f2f47cb0",
+                "reference": "cb45b066f46c2774c347ddd70c25b739f2f47cb0",
                 "shasum": ""
             },
             "require": {
@@ -514,6 +514,12 @@
             "license": [
                 "MIT"
             ],
+            "authors": [
+                {
+                    "name": "huangdijia",
+                    "email": "huangdijia@gmail.com"
+                }
+            ],
             "description": "The sentry component for Hyperf.",
             "keywords": [
                 "hyperf",
@@ -525,7 +531,7 @@
                 "issues": "https://github.com/friendsofhyperf/components/issues",
                 "source": "https://github.com/friendsofhyperf/components"
             },
-            "time": "2024-02-02T06:39:15+00:00"
+            "time": "2024-02-18T00:13:56+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -1693,19 +1699,20 @@
         },
         {
             "name": "hyperf/crontab",
-            "version": "v3.1.8",
+            "version": "v3.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/crontab.git",
-                "reference": "7ec5b96177eaa21c36ea8b11b147d45e4443ac0d"
+                "reference": "6100bab305636482186d21069b8a055f7b473ba3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/crontab/zipball/7ec5b96177eaa21c36ea8b11b147d45e4443ac0d",
-                "reference": "7ec5b96177eaa21c36ea8b11b147d45e4443ac0d",
+                "url": "https://api.github.com/repos/hyperf/crontab/zipball/6100bab305636482186d21069b8a055f7b473ba3",
+                "reference": "6100bab305636482186d21069b8a055f7b473ba3",
                 "shasum": ""
             },
             "require": {
+                "hyperf/conditionable": "~3.1.0",
                 "hyperf/framework": "~3.1.0",
                 "hyperf/support": "~3.1.0",
                 "hyperf/tappable": "~3.1.0",
@@ -1759,7 +1766,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-01-29T01:42:04+00:00"
+            "time": "2024-02-18T01:21:05+00:00"
         },
         {
             "name": "hyperf/dag",
@@ -2807,16 +2814,16 @@
         },
         {
             "name": "hyperf/logger",
-            "version": "v3.1.7",
+            "version": "v3.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/logger.git",
-                "reference": "338c6707e297a86f204b66c3d86d024105f79366"
+                "reference": "ce3aec89dc80eeb097c03a05b45cd49c50c2588b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/logger/zipball/338c6707e297a86f204b66c3d86d024105f79366",
-                "reference": "338c6707e297a86f204b66c3d86d024105f79366",
+                "url": "https://api.github.com/repos/hyperf/logger/zipball/ce3aec89dc80eeb097c03a05b45cd49c50c2588b",
+                "reference": "ce3aec89dc80eeb097c03a05b45cd49c50c2588b",
                 "shasum": ""
             },
             "require": {
@@ -2869,7 +2876,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-01-22T07:40:06+00:00"
+            "time": "2024-02-18T01:20:19+00:00"
         },
         {
             "name": "hyperf/macroable",
@@ -3463,16 +3470,16 @@
         },
         {
             "name": "hyperf/server",
-            "version": "v3.1.2",
+            "version": "v3.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/server.git",
-                "reference": "d92c3756ccadd02349fd417eef382d8d55c970bf"
+                "reference": "adc90c1889f23c7cf3eaf90ea86f216f94d63be1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/server/zipball/d92c3756ccadd02349fd417eef382d8d55c970bf",
-                "reference": "d92c3756ccadd02349fd417eef382d8d55c970bf",
+                "url": "https://api.github.com/repos/hyperf/server/zipball/adc90c1889f23c7cf3eaf90ea86f216f94d63be1",
+                "reference": "adc90c1889f23c7cf3eaf90ea86f216f94d63be1",
                 "shasum": ""
             },
             "require": {
@@ -3533,7 +3540,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2023-12-12T08:06:45+00:00"
+            "time": "2024-02-17T12:17:31+00:00"
         },
         {
             "name": "hyperf/signal",
@@ -8988,12 +8995,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "3e513f303c13a625befa037a23b5d1ac9bde2a52"
+                "reference": "624324975ceed0b788160bdec5b7f22125d8de14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/3e513f303c13a625befa037a23b5d1ac9bde2a52",
-                "reference": "3e513f303c13a625befa037a23b5d1ac9bde2a52",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/624324975ceed0b788160bdec5b7f22125d8de14",
+                "reference": "624324975ceed0b788160bdec5b7f22125d8de14",
                 "shasum": ""
             },
             "conflict": {
@@ -9241,7 +9248,7 @@
                 "joomla/archive": "<1.1.12|>=2,<2.0.1",
                 "joomla/filesystem": "<1.6.2|>=2,<2.0.1",
                 "joomla/filter": "<1.4.4|>=2,<2.0.1",
-                "joomla/framework": "<1.5.4|>=2.5.4,<=3.8.12",
+                "joomla/framework": "<1.5.7|>=2.5.4,<=3.8.12",
                 "joomla/input": ">=2,<2.0.2",
                 "joomla/joomla-cms": ">=2.5,<3.9.12",
                 "joomla/session": "<1.3.1",
@@ -9717,7 +9724,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-16T21:04:04+00:00"
+            "time": "2024-02-19T06:05:04+00:00"
         },
         {
             "name": "sebastian/cli-parser",
