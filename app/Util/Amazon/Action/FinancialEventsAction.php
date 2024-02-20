@@ -73,9 +73,11 @@ class FinancialEventsAction implements ActionInterface
         $eventList = [
             //配送
             ShipmentEventList::class => $this->financialEvents->getShipmentEventList(),//亚马逊订单交易，包含亚马逊的订单收入及订单费用
+            //一个关于货物结算财务事件的信息列表
             ShipmentSettleEventList::class => $this->financialEvents->getShipmentSettleEventList(),
             //退款
             RefundEventList::class => $this->financialEvents->getRefundEventList(),//亚马逊订单退款，包含亚马逊的订单退款及订单退款
+            //一个网络混合交易事件
             GuaranteeClaimEventList::class => $this->financialEvents->getGuaranteeClaimEventList(),
             //拒付
             ChargebackEventList::class => $this->financialEvents->getChargebackEventList(),//买家信用卡拒付
@@ -93,9 +95,11 @@ class FinancialEventsAction implements ActionInterface
             SellerDealPaymentEventList::class => $this->financialEvents->getSellerDealPaymentEventList(),//亚马逊Lightning Deal Fee费用
             //信用卡扣款
             DebtRecoveryEventList::class => $this->financialEvents->getDebtRecoveryEventList(),//当用户应收金额不足以支付账单费用，在此类型中执行信用卡扣款业务，此类型不含广告费直接信用扣款
+            //贷款服务事件的列表
             LoanServicingEventList::class => $this->financialEvents->getLoanServicingEventList(),
-            //调整
+            //对卖方帐户的调整
             AdjustmentEventList::class => $this->financialEvents->getAdjustmentEventList(),//亚马逊库存赔偿、亚马逊费用调整及预留金额
+            //一个SAFETReimbursementEvents.的列表
             SAFETReimbursementEventList::class => $this->financialEvents->getSafetReimbursementEventList(),
             //早期评论人计划
             SellerReviewEnrollmentPaymentEventList::class => $this->financialEvents->getSellerReviewEnrollmentPaymentEventList(),//亚马逊早期评论人计划扣款
@@ -103,16 +107,21 @@ class FinancialEventsAction implements ActionInterface
             FbaLiquidationEventList::class => $this->financialEvents->getFbaLiquidationEventList(),//移除中类型为清算的订单，费用在此类型中结算
             //优惠券手续费
             CouponPaymentEventList::class => $this->financialEvents->getCouponPaymentEventList(),//产生促销订单后扣除优惠券的手续费用，0.06美元（美国）或60日元（日本）
+            //与亚马逊成像服务相关的收费事件列表
             ImagingServicesFeeEventList::class => $this->financialEvents->getImagingServicesFeeEventList(),
+            //一个网络混合交易事件的列表
             NetworkComminglingTransactionEventList::class => $this->financialEvents->getNetworkComminglingTransactionEventList(),
+            //与负担能力促销有关的支出信息列表
             AffordabilityExpenseEventList::class => $this->financialEvents->getAffordabilityExpenseEventList(),
             AffordabilityExpenseReversalEventList::class => $this->financialEvents->getAffordabilityExpenseReversalEventList(),
             RemovalShipmentEventList::class => $this->financialEvents->getRemovalShipmentEventList(),
             //清算调整费用
             RemovalShipmentAdjustmentEventList::class => $this->financialEvents->getRemovalShipmentAdjustmentEventList(),//对应summary中Liquidation Adjustment
+            //关于试运财务事件的信息列表
             TrialShipmentEventList::class => $this->financialEvents->getTrialShipmentEventList(),
             TdsReimbursementEventList::class => $this->financialEvents->getTdsReimbursementEventList(),
             AdhocDisbursementEventList::class => $this->financialEvents->getAdhocDisbursementEventList(),
+            //预扣税款事件列表
             TaxWithholdingEventList::class => $this->financialEvents->getTaxWithholdingEventList(),
             ChargeRefundEventList::class => $this->financialEvents->getChargeRefundEventList(),
             CapacityReservationBillingEventList::class => $this->financialEvents->getCapacityReservationBillingEventList(),
@@ -138,7 +147,7 @@ class FinancialEventsAction implements ActionInterface
                 }
             }));
         }
-
+        //这两个事件返回的结果不是数组，所以单独处理
         $eventObjectList = [
             FailedAdhocDisbursementEventList::class => $this->financialEvents->getFailedAdhocDisbursementEventList(),
             ValueAddedServiceChargeEventList::class => $this->financialEvents->getValueAddedServiceChargeEventList(),

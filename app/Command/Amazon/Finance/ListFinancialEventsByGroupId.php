@@ -79,7 +79,7 @@ class ListFinancialEventsByGroupId extends HyperfCommand
             $creator = new ListFinancialEventsByGroupIdCreator();
             $creator->setGroupId($financial_event_group_id);
             $creator->setMaxResultsPerPage(100);
-
+            //https://spapi.vip/zh/references/finances-api-reference.html
             make(ListFinancialEventsByGroupIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
 
             return true;
