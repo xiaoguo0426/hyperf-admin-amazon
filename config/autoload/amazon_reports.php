@@ -89,6 +89,12 @@ return [
         'GET_FBA_FULFILLMENT_REMOVAL_ORDER_DETAIL_DATA', // FBA受损货物明细报告
         'GET_SELLER_FEEDBACK_DATA', // 评估卖方表现的买家的负面和中性反馈（一到三颗星）报告
         'GET_V2_SELLER_PERFORMANCE_REPORT', // 店铺绩效 详见 https://blog.csdn.net/qq594865227/article/details/123263007?spm=1001.2101.3001.6650.5&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-123263007-blog-117392280.235%5Ev31%5Epc_relevant_default_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-5-123263007-blog-117392280.235%5Ev31%5Epc_relevant_default_base3&utm_relevant_index=6
+        'GET_V1_SELLER_PERFORMANCE_REPORT',
+        'MARKETPLACE_ASIN_PAGE_VIEW_METRICS',
+        'GET_EPR_MONTHLY_REPORTS',
+        'GET_EPR_QUARTERLY_REPORTS',
+        'GET_EPR_ANNUAL_REPORTS',
+        'GET_VENDOR_REAL_TIME_INVENTORY_REPORT'
     ],
     // 周期报告
     'scheduled' => [

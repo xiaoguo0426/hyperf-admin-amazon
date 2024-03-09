@@ -424,6 +424,7 @@ return [
         'Rater Email' => 'rater_email',
     ],
     'GET_V2_SELLER_PERFORMANCE_REPORT' => [],
+    'GET_V1_SELLER_PERFORMANCE_REPORT' => [],
     'GET_REFERRAL_FEE_PREVIEW_REPORT' => [],
     'GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE_V2' => [
         'settlement-id' => 'settlement_id',
@@ -760,4 +761,5 @@ return [
 
     'GET_LEDGER_SUMMARY_VIEW_DATA' => [],
     'GET_LEDGER_DETAIL_VIEW_DATA' => [],
+    'GET_VENDOR_REAL_TIME_INVENTORY_REPORT' => [],
 ];

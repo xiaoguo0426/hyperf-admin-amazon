@@ -94,9 +94,15 @@ class ReportFactory
             'GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE' => V2SettlementReportDataFlatFile::class,
             'GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE_V2' => V2SettlementReportDataFlatFileV2::class,
             'GET_V2_SELLER_PERFORMANCE_REPORT' => V2SellerPerformanceReport::class,
+            'GET_V1_SELLER_PERFORMANCE_REPORT' => V1SellerPerformanceReport::class,
             'GET_DATE_RANGE_FINANCIAL_TRANSACTION_DATA' => DateRangeFinancialTransactionDataReport::class,
             'GET_LEDGER_SUMMARY_VIEW_DATA' => FbaLedgerSummaryViewDataReport::class,
             'GET_LEDGER_DETAIL_VIEW_DATA' => FbaLedgerDetailViewDataReport::class,
+            'MARKETPLACE_ASIN_PAGE_VIEW_METRICS' => '',
+            'GET_EPR_MONTHLY_REPORTS' => '',
+            'GET_EPR_QUARTERLY_REPORTS' => '',
+            'GET_EPR_ANNUAL_REPORTS' => '',
+            'GET_VENDOR_REAL_TIME_INVENTORY_REPORT' => VendorRealTimeInventoryReport::class,
             default => throw new \RuntimeException(sprintf('请定义%s报告处理类', $report_type)),
         };
 

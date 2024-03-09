@@ -12,6 +12,7 @@ namespace HyperfTest;
 
 use Hyperf\Testing\Client;
 use PHPUnit\Framework\TestCase;
+use function Hyperf\Support\make;
 
 /**
  * Class HttpTestCase.

@@ -65,7 +65,7 @@ class ListFinancialEventGroups extends HyperfCommand
 
             $retry = 10;
             $max_results_per_page = 100;
-            $financial_event_group_started_before = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -1 year')));
+            $financial_event_group_started_before = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -365 day')));
             $financial_event_group_started_after = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -3 minute')));
             $next_token = null;
 
@@ -104,6 +104,10 @@ class ListFinancialEventGroups extends HyperfCommand
                     }
 
                     $financialEventGroupList = $payload->getFinancialEventGroupList();
+                    if (is_null($financialEventGroupList)) {
+                        break;
+                    }
+
                     foreach ($financialEventGroupList as $financialEventGroup) {
                         $financial_event_group_id = $financialEventGroup->getFinancialEventGroupId() ?? '';
                         if ($financial_event_group_id === '') {
@@ -117,16 +121,16 @@ class ListFinancialEventGroups extends HyperfCommand
                         $original_total_currency_code = '';
                         $original_total_currency_amount = '';
                         if (! is_null($originalTotal)) {
-                            $original_total_currency_code = $originalTotal->getCurrencyCode();
-                            $original_total_currency_amount = $originalTotal->getCurrencyAmount();
+                            $original_total_currency_code = $originalTotal->getCurrencyCode() ?? '';
+                            $original_total_currency_amount = $originalTotal->getCurrencyAmount() ?? 0.00;
                         }
 
                         $convertedTotal = $financialEventGroup->getConvertedTotal();
                         $converted_total_currency_code = '';
                         $converted_total_currency_amount = '';
                         if (! is_null($convertedTotal)) {
-                            $converted_total_currency_code = $convertedTotal->getCurrencyCode();
-                            $converted_total_currency_amount = $convertedTotal->getCurrencyAmount();
+                            $converted_total_currency_code = $convertedTotal->getCurrencyCode() ?? '';
+                            $converted_total_currency_amount = $convertedTotal->getCurrencyAmount() ?? 0.00;
                         }
 
                         $fundTransferDate = $financialEventGroup->getFundTransferDate();
@@ -142,8 +146,8 @@ class ListFinancialEventGroups extends HyperfCommand
                         $beginning_balance_currency_code = '';
                         $beginning_balance_currency_amount = '';
                         if (! is_null($beginningBalance)) {
-                            $beginning_balance_currency_code = $beginningBalance->getCurrencyCode();
-                            $beginning_balance_currency_amount = $beginningBalance->getCurrencyAmount();
+                            $beginning_balance_currency_code = $beginningBalance->getCurrencyCode() ?? '';
+                            $beginning_balance_currency_amount = $beginningBalance->getCurrencyAmount() ?? 0.00;
                         }
 
                         $financialEventGroupStart = $financialEventGroup->getFinancialEventGroupStart();
@@ -163,32 +167,32 @@ class ListFinancialEventGroups extends HyperfCommand
                             ->where('financial_event_group_id', $financial_event_group_id)
                             ->first();
 
-                        $can_queue = false; // 是否可以入队
+                        $can_queue = true; // 是否可以入队
                         if (is_null($collection)) {
                             $collection = new AmazonFinancialGroupModel();
                             $collection->merchant_id = $merchant_id;
                             $collection->merchant_store_id = $merchant_store_id;
                             $collection->region = $region;
                             $collection->financial_event_group_id = $financial_event_group_id;
-                            $collection->processing_status = $processing_status;
-                            $collection->fund_transfer_status = $fund_transfer_status;
-                            $collection->original_total_amount = $original_total_currency_amount;
-                            $collection->original_total_code = $original_total_currency_code;
-                            $collection->converted_total_amount = $converted_total_currency_amount;
-                            $collection->converted_total_code = $converted_total_currency_code;
-                            $collection->fund_transfer_date = $fund_transfer_date;
-                            $collection->trace_id = $trace_id;
-                            $collection->account_tail = $account_tail;
-                            $collection->beginning_balance_amount = $beginning_balance_currency_amount;
-                            $collection->beginning_balance_code = $beginning_balance_currency_code;
-                            $collection->financial_event_group_start = $financial_event_group_start;
-                            $collection->financial_event_group_end = $financial_event_group_end;
 
-                            $can_queue = true;
-                        } elseif ($processing_status === AmazonConstants::FINANCE_GROUP_PROCESS_STATUS_CLOSED && $processing_status !== $collection->processing_status) {
-                            // 重新拉取该财务组数据
-                            $can_queue = true;
+                        } else if ($processing_status === AmazonConstants::FINANCE_GROUP_PROCESS_STATUS_CLOSED && $processing_status === $collection->processing_status) {
+                            //只有当前财务组的状态在API响应的数据中为Closed状态且数据库中也是Closed的状态，才不再需要拉取，其他的情况都需要进行拉取该财务组的数据
+                            $can_queue = false;
                         }
+
+                        $collection->processing_status = $processing_status;
+                        $collection->fund_transfer_status = $fund_transfer_status;
+                        $collection->original_total_amount = $original_total_currency_amount;
+                        $collection->original_total_code = $original_total_currency_code;
+                        $collection->converted_total_amount = $converted_total_currency_amount;
+                        $collection->converted_total_code = $converted_total_currency_code;
+                        $collection->fund_transfer_date = $fund_transfer_date;
+                        $collection->trace_id = $trace_id;
+                        $collection->account_tail = $account_tail;
+                        $collection->beginning_balance_amount = $beginning_balance_currency_amount;
+                        $collection->beginning_balance_code = $beginning_balance_currency_code;
+                        $collection->financial_event_group_start = $financial_event_group_start;
+                        $collection->financial_event_group_end = $financial_event_group_end;
 
                         $collection->save();
 
@@ -229,7 +233,7 @@ class ListFinancialEventGroups extends HyperfCommand
                     if (! $can_retry_flag) {
                         break;
                     }
-                    
+
                     --$retry;
                     if ($retry > 0) {
                         $console->warning(sprintf('Finance ApiException listFinancialEventGroups Failed. retry:%s merchant_id: %s merchant_store_id: %s ', $retry, $merchant_id, $merchant_store_id));
