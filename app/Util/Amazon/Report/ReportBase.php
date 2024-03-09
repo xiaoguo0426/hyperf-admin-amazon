@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Util\Amazon\Report;
 
+use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
 use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 use App\Util\Log\AmazonReportLog;
@@ -43,7 +44,7 @@ abstract class ReportBase implements ReportInterface
 
     protected array $header_map;
 
-    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type,)
+    public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
 
         $this->merchant_id = $merchant_id;
@@ -92,10 +93,15 @@ abstract class ReportBase implements ReportInterface
      * 请求报告(如果特定报告有时间分组请求，需要重写该方法，参考SalesAndTrafficReportCustom.php报告).
      * @param array $marketplace_ids
      * @param callable $func
+     * @throws InvalidArgumentException
      * @return void
      */
     public function requestReport(array $marketplace_ids, callable $func): void
     {
+        // 检查报告日期
+        if ($this->reportDateRequired() && ! $this->checkReportDate()) {
+            throw new InvalidArgumentException('Report Start/End Date Required,please check');
+        }
         is_callable($func) && $func($this, $this->report_type, $this->buildReportBody($this->report_type, $marketplace_ids), $marketplace_ids);
     }
 
@@ -131,9 +137,6 @@ abstract class ReportBase implements ReportInterface
      */
     public function processReport(callable $func, array $marketplace_ids): void
     {
-        if ($this->checkReportDate()) {
-            throw new \InvalidArgumentException('Report Start/End Date Required,please check');
-        }
         is_callable($func) && $func($this, $marketplace_ids);
     }
 
@@ -203,16 +206,11 @@ abstract class ReportBase implements ReportInterface
 
     public function checkReportDate(): bool
     {
-        if ($this->reportDateRequired()) {
-            if (is_null($this->report_start_date) || is_null($this->report_end_date)) {
-                return false;
-            }
-        }
-        return true;
+        return ! (is_null($this->report_start_date) || is_null($this->report_end_date));
     }
 
     /**
-     * 检查文件夹
+     * @throws InvalidArgumentException
      * @return bool
      */
     public function checkDir(): bool
@@ -227,7 +225,7 @@ abstract class ReportBase implements ReportInterface
         if (! is_dir($dir) && ! mkdir($dir, 0755, true) && ! is_dir($dir)) {
             try {
                 ApplicationContext::getContainer()->get(AmazonReportLog::class)->error(sprintf('Get Directory "%s" was not created', $dir));
-            } catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
+            } catch (ContainerExceptionInterface|NotFoundExceptionInterface) {
             }
         }
 
@@ -242,6 +240,7 @@ abstract class ReportBase implements ReportInterface
     /**
      * 检查report_type属于哪个类型  requested|scheduled.
      * @param string $report_type
+     * @throws InvalidArgumentException
      * @return string
      */
     public function checkReportTypeCategory(string $report_type): string
@@ -254,7 +253,7 @@ abstract class ReportBase implements ReportInterface
                 }
             }
         }
-        throw new \InvalidArgumentException('Invalid Report Type,please check');
+        throw new InvalidArgumentException('Invalid Report Type,please check');
     }
 
     /**
