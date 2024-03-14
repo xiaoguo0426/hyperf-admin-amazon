@@ -12,7 +12,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 
-/**
+/*
  * @contact  740644717@qq.com
  * @license  MIT
  */

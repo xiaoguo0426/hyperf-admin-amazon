@@ -21,6 +21,8 @@ class AmazonReportMarkCanceledHash extends AbstractRedisHash
     }
 
     /**
+     * @param ?\DateTimeInterface $dataStartTime
+     * @param ?\DateTimeInterface $dataEndTime
      * @throws \JsonException
      * @throws \RedisException
      */
@@ -38,6 +40,8 @@ class AmazonReportMarkCanceledHash extends AbstractRedisHash
     }
 
     /**
+     * @param ?\DateTimeInterface $dataStartTime
+     * @param ?\DateTimeInterface $dataEndTime
      * @throws \JsonException
      * @throws \RedisException
      */

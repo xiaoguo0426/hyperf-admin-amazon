@@ -243,6 +243,8 @@ abstract class ReportBase implements ReportInterface
 
     /**
      * 标记报告删除.
+     * @param ?\DateTimeInterface $dataStartTime
+     * @param ?\DateTimeInterface $dataEndTime
      * @throws \JsonException
      * @throws \RedisException
      */

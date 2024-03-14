@@ -10,7 +10,7 @@ declare(strict_types=1);
 use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Codec\Packer\PhpSerializerPacker;
 
-/**
+/*
  * @contact  740644717@qq.com
  * @license  MIT
  */

@@ -96,6 +96,7 @@ class GetShipmentsCreator implements CreatorInterface
     }
 
     /**
+     * @param ?string $last_updated_after
      * @return $this
      */
     public function setLastUpdatedAfter(?string $last_updated_after): GetShipmentsCreator
@@ -110,6 +111,7 @@ class GetShipmentsCreator implements CreatorInterface
     }
 
     /**
+     * @param ?string $last_updated_before
      * @return $this
      */
     public function setLastUpdatedBefore(?string $last_updated_before): GetShipmentsCreator

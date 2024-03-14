@@ -11,7 +11,7 @@ use Hyperf\Contract\ApplicationInterface;
 use Hyperf\Di\ClassLoader;
 use Swoole\Runtime;
 
-/**
+/*
  * @contact  740644717@qq.com
  * @license  MIT
  */

@@ -9,7 +9,7 @@ declare(strict_types=1);
  */
 use Hyperf\ModelCache\Handler\RedisHandler;
 
-/**
+/*
  * @contact  740644717@qq.com
  * @license  MIT
  */
