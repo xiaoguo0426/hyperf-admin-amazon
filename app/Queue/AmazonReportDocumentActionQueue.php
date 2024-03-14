@@ -19,6 +19,7 @@ use App\Util\Log\AmazonReportDocumentLog;
 use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+
 use function Hyperf\Config\config;
 
 class AmazonReportDocumentActionQueue extends Queue
@@ -34,10 +35,8 @@ class AmazonReportDocumentActionQueue extends Queue
     }
 
     /**
-     * @param QueueDataInterface $queueData
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @return bool
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
@@ -69,7 +68,6 @@ class AmazonReportDocumentActionQueue extends Queue
         }
 
         try {
-
             $log = sprintf('Action %s 处理文件 %s', $report_type, $file_path);
             $console->info($log);
             $logger->info($log);
@@ -86,7 +84,6 @@ class AmazonReportDocumentActionQueue extends Queue
             $instance->run($scheduledReportRunner);
 
             $console->newLine();
-
         } catch (\Exception $exception) {
             $logger->error(sprintf('Action Document 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $exception->getMessage()));
             $console->error(sprintf('Action Document 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $exception->getMessage()));

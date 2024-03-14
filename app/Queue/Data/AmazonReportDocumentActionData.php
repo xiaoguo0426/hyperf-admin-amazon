@@ -15,6 +15,7 @@ class AmazonReportDocumentActionData extends QueueData
     private int $merchant_id;
 
     private int $merchant_store_id;
+
     private string $region;
 
     private string $marketplace_ids;
@@ -48,33 +49,21 @@ class AmazonReportDocumentActionData extends QueueData
         return $this->report_document_id;
     }
 
-    /**
-     * @return string
-     */
     public function getRegion(): string
     {
         return $this->region;
     }
 
-    /**
-     * @param string $region
-     */
     public function setRegion(string $region): void
     {
         $this->region = $region;
     }
 
-    /**
-     * @return array
-     */
     public function getMarketplaceIds(): array
     {
         return explode(',', $this->marketplace_ids);
     }
 
-    /**
-     * @param array $marketplace_ids
-     */
     public function setMarketplaceIds(array $marketplace_ids): void
     {
         $this->marketplace_ids = implode(',', $marketplace_ids);

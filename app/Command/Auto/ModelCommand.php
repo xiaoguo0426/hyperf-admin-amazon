@@ -60,11 +60,8 @@ class ModelCommand extends \Hyperf\Command\Command
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @return int
      */
     public function run(InputInterface $input, OutputInterface $output): int
     {

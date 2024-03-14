@@ -16,8 +16,7 @@ use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use App\Util\RedisHash\AmazonInventoryFnSkuToSkuMapHash;
 use Carbon\Carbon;
 use Hyperf\Database\Model\ModelNotFoundException;
-use JsonException;
-use RedisException;
+
 use function Hyperf\Support\make;
 
 class FbaStorageFeeChargesDataReport extends ReportBase
@@ -25,7 +24,7 @@ class FbaStorageFeeChargesDataReport extends ReportBase
     public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
         parent::__construct($merchant_id, $merchant_store_id, $region, $report_type);
-        //默认获取上个月的报告
+        // 默认获取上个月的报告
         $data = Carbon::now('UTC')->subMonth();
         $start_time = $data->firstOfMonth()->format('Y-m-d 00:00:00');
         $end_time = $data->endOfMonth()->format('Y-m-d 23:59:59');
@@ -36,8 +35,7 @@ class FbaStorageFeeChargesDataReport extends ReportBase
 
     /**
      * @param RequestedReportRunner $reportRunner
-     * @throws JsonException
-     * @return bool
+     * @throws \JsonException
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
@@ -72,7 +70,7 @@ class FbaStorageFeeChargesDataReport extends ReportBase
                 $val = $row[$index];
                 if ($val === '--') {
                     $val = '0.00';
-                } else if ($val === 'product_name') {
+                } elseif ($val === 'product_name') {
                     $val = preg_replace('/[^a-zA-Z0-9 ]/i', '', $val);
                 }
                 $item[$value] = $val;
@@ -100,13 +98,12 @@ class FbaStorageFeeChargesDataReport extends ReportBase
         $hash = make(AmazonInventoryFnSkuToSkuMapHash::class, [$merchant_id, $merchant_store_id]);
 
         foreach ($data as $item) {
-
             $merchant_id = $item['merchant_id'];
             $merchant_store_id = $item['merchant_store_id'];
             $month_of_charge = $item['month_of_charge'];
             $asin = $item['asin'];
             $country_code = $item['country_code'];
-            $fulfillment_center = $item['fulfillment_center'];//转运中心标识码。 因为同一个商品会被Amazon分在不同的仓库中，所以同一个SKU在每个仓库都有可能产生月度仓储费. 查询条件一定要加上
+            $fulfillment_center = $item['fulfillment_center']; // 转运中心标识码。 因为同一个商品会被Amazon分在不同的仓库中，所以同一个SKU在每个仓库都有可能产生月度仓储费. 查询条件一定要加上
             $fn_sku = $item['fnsku'];
             $product_name = preg_replace('/[^a-zA-Z0-9 ]/i', '', $item['product_name']);
 
@@ -115,7 +112,7 @@ class FbaStorageFeeChargesDataReport extends ReportBase
             $seller_sku = '';
             try {
                 $seller_sku = $hash->getSellerSkuByFnSku($fn_sku) ?? '';
-            } catch (JsonException|RedisException $e) {
+            } catch (\JsonException|\RedisException $e) {
             }
 
             try {
@@ -154,8 +151,8 @@ class FbaStorageFeeChargesDataReport extends ReportBase
             $collection->utilization_surcharge_rate = $item['utilization_surcharge_rate'] ?? '';
             $collection->currency = $item['currency'];
             $collection->estimated_monthly_storage_fee = $item['estimated_monthly_storage_fee'];
-            $collection->total_incentive_fee_amount = sprintf("%1.2f", $item['total_incentive_fee_amount']);
-            $collection->breakdown_incentive_fee_amount = sprintf("%1.2f", $item['breakdown_incentive_fee_amount']);
+            $collection->total_incentive_fee_amount = sprintf('%1.2f', $item['total_incentive_fee_amount']);
+            $collection->breakdown_incentive_fee_amount = sprintf('%1.2f', $item['breakdown_incentive_fee_amount']);
             $collection->average_quantity_customer_orders = $item['average_quantity_customer_orders'];
             $collection->dangerous_goods_storage_type = $item['dangerous_goods_storage_type'];
             $collection->product_size_tier = $item['product_size_tier'];

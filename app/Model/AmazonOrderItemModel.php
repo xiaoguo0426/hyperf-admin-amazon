@@ -63,10 +63,9 @@ namespace App\Model;
  */
 class AmazonOrderItemModel extends Model
 {
-    protected ?string $table = 'amazon_order_items';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
 
+    protected ?string $table = 'amazon_order_items';
 }

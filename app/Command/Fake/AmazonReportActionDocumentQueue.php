@@ -22,8 +22,8 @@ use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
+
 use function Hyperf\Config\config;
 
 #[Command]
@@ -48,8 +48,7 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -63,7 +62,6 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
         $amazonReportDocumentActionQueue = new AmazonReportDocumentActionQueue();
 
         $report_file_dir = sprintf('%s%s/%s/%s-%s/', config('amazon.report_template_path'), 'scheduled', $report_type, $merchant_id, $merchant_store_id);
-
 
         $items = scandir($report_file_dir);
 
@@ -79,14 +77,14 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
             }
 
             $report_document_id_raw = pathinfo($item, PATHINFO_FILENAME);
-            //如果指定了id，则优先过滤
+            // 如果指定了id，则优先过滤
             if ($report_document_id && ! str_contains($report_document_id_raw, $report_document_id)) {
                 continue;
             }
 
             if ($report_type === 'GET_DATE_RANGE_FINANCIAL_TRANSACTION_DATA') {
                 $pos = strrpos($report_document_id_raw, '-');
-                //解析marketplace_id
+                // 解析marketplace_id
                 $marketplace_id = substr($report_document_id_raw, $pos + 1);
 
                 try {
@@ -107,9 +105,7 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
                 $amazonReportDocumentActionData->setReportDocumentId($report_document_id_new);
 
                 $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
-
-            } else if ($report_type === 'GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE_V2') {
-
+            } elseif ($report_type === 'GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE_V2') {
                 foreach ($region_list as $_region) {
                     if (! str_contains($report_document_id_raw, $_region)) {
                         continue;
@@ -126,9 +122,7 @@ class AmazonReportActionDocumentQueue extends HyperfCommand
 
                     $amazonReportDocumentActionQueue->push($amazonReportDocumentActionData);
                 }
-
             }
-
         }
     }
 }

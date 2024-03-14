@@ -25,8 +25,8 @@ use Hyperf\Database\Model\ModelNotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
+
 use function Hyperf\Support\make;
 
 #[Command]
@@ -50,7 +50,7 @@ class ListFinancialEventsByGroupId extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -60,11 +60,10 @@ class ListFinancialEventsByGroupId extends HyperfCommand
         $financial_event_group_id = (string) $this->input->getArgument('financial_event_group_id');
 
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($financial_event_group_id) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
             try {
-                //检查group_id对应的region
+                // 检查group_id对应的region
                 $amazonFinancialGroupCollection = AmazonFinancialGroupModel::query()
                     ->where('merchant_id', $merchant_id)
                     ->where('merchant_store_id', $merchant_store_id)
@@ -79,7 +78,7 @@ class ListFinancialEventsByGroupId extends HyperfCommand
             $creator = new ListFinancialEventsByGroupIdCreator();
             $creator->setGroupId($financial_event_group_id);
             $creator->setMaxResultsPerPage(100);
-            //https://spapi.vip/zh/references/finances-api-reference.html
+            // https://spapi.vip/zh/references/finances-api-reference.html
             make(ListFinancialEventsByGroupIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
 
             return true;

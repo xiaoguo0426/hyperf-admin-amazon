@@ -17,8 +17,6 @@ use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use App\Util\Log\AmazonFulfillmentOutboundListAllFulfillmentOrdersLog;
-use DateTime;
-use DateTimeZone;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
@@ -27,7 +25,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -52,31 +49,26 @@ class ListAllFulfillmentOrders extends HyperfCommand
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
-
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $query_start_date = $this->input->getOption('query_start_date');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($query_start_date) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentOutboundListAllFulfillmentOrdersLog::class);
 
             if (! is_null($query_start_date)) {
-                $query_start_date = (new DateTime($query_start_date, new DateTimeZone('UTC')));
+                $query_start_date = (new \DateTime($query_start_date, new \DateTimeZone('UTC')));
             }
 
             $retry = 10;
             $next_token = null;
             while (true) {
-
                 try {
-
                     $response = $sdk->fulfillmentOutbound()->listAllFulfillmentOrders($accessToken, $region, $query_start_date, $next_token);
 
                     $errorsList = $response->getErrors();
@@ -100,14 +92,14 @@ class ListAllFulfillmentOrders extends HyperfCommand
 
                     $fulfillmentOrders = $listAllFulfillmentOrdersResult->getFulfillmentOrders();
                     foreach ($fulfillmentOrders as $fulfillmentOrder) {
-                        $seller_fulfillment_order_id = $fulfillmentOrder->getSellerFulfillmentOrderId();//createFulfillmentOrder操作一起提交的履行订单标识符。
-                        $marketplace_id = $fulfillmentOrder->getMarketplaceId() ?? '';//执行订单所针对的市场的标识符。
-                        $displayable_order_id = $fulfillmentOrder->getDisplayableOrderId();//在面向客户的物料（如装箱单）中显示为订单标识符。
-                        $displayable_order_date = $fulfillmentOrder->getDisplayableOrderDate()->format('Y-m-d H:i:s');//在面向客户的物料（如装箱单）中显示为订单日期。
-                        $displayable_order_comment = $fulfillmentOrder->getDisplayableOrderComment();//使用提交子程序FulfillmentOrder操作提交的文本块。在包装单等面向客户的材料中显示。
-                        $shipping_speed_category = $fulfillmentOrder->getShippingSpeedCategory()->toString();//用于完成订单的发运方法。当此值为ScheduledDelivery时，为fulfillmentAction选择Ship。当shippingSpeedCategory值为ScheduledDelivery时，Hold不是有效的fulfillmentAction值。
+                        $seller_fulfillment_order_id = $fulfillmentOrder->getSellerFulfillmentOrderId(); // createFulfillmentOrder操作一起提交的履行订单标识符。
+                        $marketplace_id = $fulfillmentOrder->getMarketplaceId() ?? ''; // 执行订单所针对的市场的标识符。
+                        $displayable_order_id = $fulfillmentOrder->getDisplayableOrderId(); // 在面向客户的物料（如装箱单）中显示为订单标识符。
+                        $displayable_order_date = $fulfillmentOrder->getDisplayableOrderDate()->format('Y-m-d H:i:s'); // 在面向客户的物料（如装箱单）中显示为订单日期。
+                        $displayable_order_comment = $fulfillmentOrder->getDisplayableOrderComment(); // 使用提交子程序FulfillmentOrder操作提交的文本块。在包装单等面向客户的材料中显示。
+                        $shipping_speed_category = $fulfillmentOrder->getShippingSpeedCategory()->toString(); // 用于完成订单的发运方法。当此值为ScheduledDelivery时，为fulfillmentAction选择Ship。当shippingSpeedCategory值为ScheduledDelivery时，Hold不是有效的fulfillmentAction值。
 
-                        $deliveryWindow = $fulfillmentOrder->getDeliveryWindow();//计划交付履行订单应交付的时间范围。这只在JP市场上有售。
+                        $deliveryWindow = $fulfillmentOrder->getDeliveryWindow(); // 计划交付履行订单应交付的时间范围。这只在JP市场上有售。
                         $delivery_window_start_date = '';
                         $delivery_window_end_date = '';
                         if (! is_null($deliveryWindow)) {
@@ -115,31 +107,31 @@ class ListAllFulfillmentOrders extends HyperfCommand
                             $delivery_window_end_date = $deliveryWindow->getEndDate()->format('Y-m-d H:i:s');
                         }
 
-                        $destinationAddress = $fulfillmentOrder->getDestinationAddress();//通过createFulfillmentOrder操作提交的目标地址。
-                        $destinationAddress->getName();//地址中的个人、企业或机构的名称。
-                        $destinationAddress->getAddressLine1();//地址的第一行。
-                        $destinationAddress->getAddressLine2();//地址的第二行。
-                        $destinationAddress->getAddressLine3();//地址的第三行。
-                        $destinationAddress->getCity();//城市
-                        $destinationAddress->getDistrictOrCounty();//区或县
-                        $destinationAddress->getStateOrRegion();//州或地区
-                        $destinationAddress->getPostalCode();//地址的邮政编码
-                        $destinationAddress->getCountryCode();//国家二字码
-                        $destinationAddress->getPhone();//电话号码
+                        $destinationAddress = $fulfillmentOrder->getDestinationAddress(); // 通过createFulfillmentOrder操作提交的目标地址。
+                        $destinationAddress->getName(); // 地址中的个人、企业或机构的名称。
+                        $destinationAddress->getAddressLine1(); // 地址的第一行。
+                        $destinationAddress->getAddressLine2(); // 地址的第二行。
+                        $destinationAddress->getAddressLine3(); // 地址的第三行。
+                        $destinationAddress->getCity(); // 城市
+                        $destinationAddress->getDistrictOrCounty(); // 区或县
+                        $destinationAddress->getStateOrRegion(); // 州或地区
+                        $destinationAddress->getPostalCode(); // 地址的邮政编码
+                        $destinationAddress->getCountryCode(); // 国家二字码
+                        $destinationAddress->getPhone(); // 电话号码
 
-                        $fulfillmentAction = $fulfillmentOrder->getFulfillmentAction();//履行行动
+                        $fulfillmentAction = $fulfillmentOrder->getFulfillmentAction(); // 履行行动
                         $fulfillment_action = '';
                         if (! is_null($fulfillmentAction)) {
                             $fulfillment_action = $fulfillmentAction->toString();
                         }
 
-                        $fulfillmentPolicy = $fulfillmentOrder->getFulfillmentPolicy();//履行政策
+                        $fulfillmentPolicy = $fulfillmentOrder->getFulfillmentPolicy(); // 履行政策
                         $fulfillment_policy = '';
                         if (! is_null($fulfillmentPolicy)) {
                             $fulfillment_policy = $fulfillmentPolicy->toString();
                         }
 
-                        $codSettings = $fulfillmentOrder->getCodSettings();//您与COD履行订单关联的COD（货到付款）费用。
+                        $codSettings = $fulfillmentOrder->getCodSettings(); // 您与COD履行订单关联的COD（货到付款）费用。
                         $cod_settings = '';
                         if (! is_null($codSettings)) {
                             $is_cod_required = $codSettings->getIsCodRequired();
@@ -157,16 +149,15 @@ class ListAllFulfillmentOrders extends HyperfCommand
                             ], JSON_THROW_ON_ERROR);
                         }
 
-
-                        $fulfillmentOrder->getReceivedDate()->format('Y-m-d H:i:s');//接收日期
-                        $fulfillment_order_status = $fulfillmentOrder->getFulfillmentOrderStatus()->toString();//完成订单的当前状态。
-                        $fulfillmentOrder->getStatusUpdatedDate()->format('Y-m-d H:i:s');//状态更新日期
-                        $notification_emails = $fulfillmentOrder->getNotificationEmails();//通知电子邮件.家提供的电子邮件地址列表，亚马逊使用这些地址代表卖家向收件人发送发货完成通知。
-//                        $notificationEmails = $fulfillmentOrder->getNotificationEmails();
-//                        foreach ($notificationEmails as $notificationEmail){
-//                            $notificationEmail
-//                        }
-                        $featureConstraints = $fulfillmentOrder->getFeatureConstraints();//要应用于订单的功能及其履行策略的列表。
+                        $fulfillmentOrder->getReceivedDate()->format('Y-m-d H:i:s'); // 接收日期
+                        $fulfillment_order_status = $fulfillmentOrder->getFulfillmentOrderStatus()->toString(); // 完成订单的当前状态。
+                        $fulfillmentOrder->getStatusUpdatedDate()->format('Y-m-d H:i:s'); // 状态更新日期
+                        $notification_emails = $fulfillmentOrder->getNotificationEmails(); // 通知电子邮件.家提供的电子邮件地址列表，亚马逊使用这些地址代表卖家向收件人发送发货完成通知。
+                        //                        $notificationEmails = $fulfillmentOrder->getNotificationEmails();
+                        //                        foreach ($notificationEmails as $notificationEmail){
+                        //                            $notificationEmail
+                        //                        }
+                        $featureConstraints = $fulfillmentOrder->getFeatureConstraints(); // 要应用于订单的功能及其履行策略的列表。
                         $feature_constraints = [];
                         if (! is_null($featureConstraints)) {
                             foreach ($featureConstraints as $featureConstraint) {
@@ -192,7 +183,6 @@ class ListAllFulfillmentOrders extends HyperfCommand
                         var_dump($fulfillment_order_status);
                         var_dump($notification_emails);
                         var_dump($feature_constraints);
-
                     }
 
                     $next_token = $listAllFulfillmentOrdersResult->getNextToken();
@@ -217,7 +207,6 @@ class ListAllFulfillmentOrders extends HyperfCommand
                     $logger->error($log);
                     break;
                 }
-
             }
         });
     }

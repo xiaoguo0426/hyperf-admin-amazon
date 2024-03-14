@@ -32,9 +32,5 @@ class GetFulfillmentPreview extends HyperfCommand
             ->setDescription('Amazon Fulfillment Outbound API Get Fulfillment Outbound Preview Command');
     }
 
-    public function handle(): void
-    {
-
-
-    }
+    public function handle(): void {}
 }

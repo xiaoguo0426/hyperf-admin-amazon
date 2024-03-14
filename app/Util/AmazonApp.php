@@ -24,17 +24,13 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Client\ClientExceptionInterface;
-use RedisException;
+
 use function Hyperf\Support\make;
 
 class AmazonApp
 {
     /**
      * 单个Amazon应用配置回调.
-     * @param int $merchant_id
-     * @param int $merchant_store_id
-     * @param callable $func
-     * @return bool
      */
     public static function tick(int $merchant_id, int $merchant_store_id, callable $func): bool
     {
@@ -81,14 +77,10 @@ class AmazonApp
 
     /**
      * 单个Amazon应用配置回调并触发Amazon SDK.
-     * @param int $merchant_id
-     * @param int $merchant_store_id
-     * @param callable $func
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return bool
+     * @throws \RedisException
      */
     public static function tok(int $merchant_id, int $merchant_store_id, callable $func): bool
     {
@@ -108,7 +100,6 @@ class AmazonApp
                 return false;
             }
             foreach ($amazonAppRegionCollections as $amazonAppRegionCollection) {
-
                 $amazonAppModel->setAttribute('region', $amazonAppRegionCollection->region);
                 $amazonAppModel->setAttribute('country_ids', $amazonAppRegionCollection->country_codes);
                 $amazonAppModel->setAttribute('refresh_token', $amazonAppRegionCollection->refresh_token);
@@ -141,7 +132,6 @@ class AmazonApp
                 $marketplace_ids = $amazonSDK->getMarketplaceIds();
 
                 $func($amazonSDK, $merchant_id, $merchant_store_id, $sdk, $accessToken, $region, $marketplace_ids);
-
             }
 
             return true;
@@ -150,15 +140,10 @@ class AmazonApp
 
     /**
      * 单个Amazon应用配置回调并触发Amazon SDK(指定region).
-     * @param int $merchant_id
-     * @param int $merchant_store_id
-     * @param string $region
-     * @param callable $func
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return bool
+     * @throws \RedisException
      */
     public static function tok2(int $merchant_id, int $merchant_store_id, string $region, callable $func): bool
     {
@@ -218,9 +203,7 @@ class AmazonApp
     }
 
     /**
-     * 所有Amazon应用配置回调
-     * @param callable $func
-     * @return bool
+     * 所有Amazon应用配置回调.
      */
     public static function single(callable $func): bool
     {
@@ -238,12 +221,10 @@ class AmazonApp
 
     /**
      * 所有Amazon应用配置回调并触发Amazon SDK.
-     * @param callable $func
      * @throws ContainerExceptionInterface
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public static function each(callable $func): void
     {

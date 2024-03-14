@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+
 namespace App\Util\Amazon\Engine;
 
 use AmazonPHP\SellingPartner\AccessToken;
@@ -11,9 +19,6 @@ use App\Util\Amazon\Creator\CreatorInterface;
 use App\Util\Amazon\Creator\GetShipmentItemsCreator;
 use App\Util\AmazonSDK;
 use App\Util\Log\AmazonFulfillmentInboundGetShipmentItemsLog;
-use DateTime;
-use DateTimeZone;
-use Exception;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -24,14 +29,9 @@ use Psr\Container\NotFoundExceptionInterface;
 class GetShipmentItemsEngine implements EngineInterface
 {
     /**
-     * @param AmazonSDK $amazonSDK
-     * @param SellingPartnerSDK $sdk
-     * @param AccessToken $accessToken
-     * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws Exception
-     * @return bool
+     * @throws \Exception
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {
@@ -47,10 +47,10 @@ class GetShipmentItemsEngine implements EngineInterface
         $last_updated_before = $creator->getLastUpdatedBefore();
 
         if (! is_null($last_updated_after)) {
-            $last_updated_after = (new DateTime($last_updated_after, new DateTimeZone('UTC')));
+            $last_updated_after = (new \DateTime($last_updated_after, new \DateTimeZone('UTC')));
         }
         if (! is_null($last_updated_before)) {
-            $last_updated_before = (new DateTime($last_updated_before, new DateTimeZone('UTC')));
+            $last_updated_before = (new \DateTime($last_updated_before, new \DateTimeZone('UTC')));
         }
 
         $region = $amazonSDK->getRegion();
@@ -151,7 +151,6 @@ class GetShipmentItemsEngine implements EngineInterface
         }
 
         $collections->each(function ($collection) use ($merchant_id, $merchant_store_id) {
-
             $shipment_id = $collection['shipment_id'];
             $seller_sku = $collection['seller_sku'];
             $fulfillment_network_sku = $collection['fulfillment_network_sku'];
@@ -184,7 +183,6 @@ class GetShipmentItemsEngine implements EngineInterface
             $detailCollection->prep_details_list = json_encode($prep_details_list, JSON_THROW_ON_ERROR);
 
             $detailCollection->save();
-
         });
 
         return true;

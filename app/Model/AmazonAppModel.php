@@ -33,11 +33,11 @@ use App\Util\RegionRefreshTokenConfig;
  */
 class AmazonAppModel extends Model
 {
-    protected ?string $table = 'amazon_app';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
+
+    protected ?string $table = 'amazon_app';
 
     /**
      * @return array<RegionRefreshTokenConfig>

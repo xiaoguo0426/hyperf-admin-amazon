@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+
 namespace App\Command\Crontab\Amazon;
 
 use AmazonPHP\SellingPartner\AccessToken;
@@ -18,7 +26,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 
 #[Command]
 class GetListingsItem extends HyperfCommand
@@ -34,18 +41,15 @@ class GetListingsItem extends HyperfCommand
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
         AmazonApp::each(static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonListingGetListingItemLog::class);
 
             $seller_id = $amazonSDK->getSellerId();
-
 
             $amazonInventoryCollections = AmazonInventoryModel::query()
                 ->where('merchant_id', $merchant_id)
@@ -59,7 +63,6 @@ class GetListingsItem extends HyperfCommand
             }
 
             foreach ($amazonInventoryCollections as $amazonInventoryCollection) {
-
                 $marketplace_id = $amazonInventoryCollection->marketplace_id;
                 $seller_sku = $amazonInventoryCollection->seller_sku;
 
@@ -98,7 +101,6 @@ class GetListingsItem extends HyperfCommand
                                 var_dump($item_name);
                                 var_dump($created_date);
                                 var_dump($last_updated_date);
-
                             }
                         }
                         var_dump($response->getAttributes());
@@ -146,7 +148,6 @@ class GetListingsItem extends HyperfCommand
                         break;
                     }
                 }
-
             }
 
             return true;

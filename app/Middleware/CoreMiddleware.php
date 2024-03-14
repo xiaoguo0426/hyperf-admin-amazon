@@ -17,6 +17,7 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
+
 use function Hyperf\Support\call;
 
 class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware

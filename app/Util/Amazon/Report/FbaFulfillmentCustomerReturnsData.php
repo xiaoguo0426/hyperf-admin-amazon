@@ -30,10 +30,6 @@ class FbaFulfillmentCustomerReturnsData extends ReportBase
         $this->setReportEndDate($end_time);
     }
 
-    /**
-     * @param ReportRunnerInterface $reportRunner
-     * @return bool
-     */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
         $config = $this->getHeaderMap();

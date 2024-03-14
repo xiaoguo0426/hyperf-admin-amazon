@@ -14,6 +14,7 @@ namespace App\Model;
  * @property $id
  * @property $merchant_id
  * @property $merchant_store_id
+ * @property $region
  * @property $amazon_order_id
  * @property $merchant_order_id
  * @property $shipment_id
@@ -67,10 +68,9 @@ namespace App\Model;
  */
 class AmazonReportFulfilledShipmentsDataGeneralModel extends Model
 {
-    protected ?string $table = 'amazon_report_amazon_fulfilled_shipments_data_general';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
 
+    protected ?string $table = 'amazon_report_amazon_fulfilled_shipments_data_general';
 }

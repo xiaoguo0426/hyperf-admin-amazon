@@ -7,11 +7,18 @@ declare(strict_types=1);
  * @contact  740644717@qq.com
  * @license  MIT
  */
+use Hyperf\Cache\Driver\RedisDriver;
+use Hyperf\Codec\Packer\PhpSerializerPacker;
+
+/**
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
 return [
     'default' => [
-        'driver' => Hyperf\Cache\Driver\RedisDriver::class,
+        'driver' => RedisDriver::class,
         //        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
-        'packer' => \Hyperf\Codec\Packer\PhpSerializerPacker::class,
+        'packer' => PhpSerializerPacker::class,
         'prefix' => 'c:',
     ],
 ];

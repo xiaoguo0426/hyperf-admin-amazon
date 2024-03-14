@@ -61,14 +61,13 @@ class SearchCatalogItems extends HyperfCommand
             $locale = null;
             $seller_id = null; // TODO
             $keywords = [
-                'Sling Bag'
+                'Sling Bag',
             ];
             $brand_names = null;
             $classification_ids = null;
             $page_size = 10;
             $page_token = null;
             $keywords_locale = null;
-
 
             foreach ($marketplace_ids as $marketplace_id) {
                 $retry = 10;
@@ -486,10 +485,10 @@ class SearchCatalogItems extends HyperfCommand
                             ];
                         }
 
-//                    var_dump($number_of_results);
-//                    var_dump($classification_refinements);
-//                    var_dump($brands_refinements);
-//                    var_dump($items_list);
+                        //                    var_dump($number_of_results);
+                        //                    var_dump($classification_refinements);
+                        //                    var_dump($brands_refinements);
+                        //                    var_dump($items_list);
 
                         $pagination = $itemSearchResults->getPagination();
                         if (is_null($pagination)) {
@@ -497,8 +496,8 @@ class SearchCatalogItems extends HyperfCommand
                         }
                         $next_token = $pagination->getNextToken();
                         $previous_token = $pagination->getPreviousToken();
-//                    var_dump($next_token);
-//                    var_dump($previous_token);
+                        //                    var_dump($next_token);
+                        //                    var_dump($previous_token);
                         $retry = 10;
                     } catch (ApiException $e) {
                         var_dump($e->getResponseBody());
@@ -514,7 +513,7 @@ class SearchCatalogItems extends HyperfCommand
                         break;
                     } catch (InvalidArgumentException $e) {
                         var_dump($e->getMessage());
-                        die();
+                        exit;
                         $log = sprintf('Catalog Items InvalidArgumentException searchCatalogItems Failed. merchant_id: %s merchant_store_id: %s ', $merchant_id, $merchant_store_id);
                         $console->error($log);
                         $logger->error($log);

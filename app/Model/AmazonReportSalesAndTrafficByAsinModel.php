@@ -61,9 +61,9 @@ namespace App\Model;
  */
 class AmazonReportSalesAndTrafficByAsinModel extends Model
 {
-    protected ?string $table = 'amazon_report_sales_and_traffic_by_asin';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
+
+    protected ?string $table = 'amazon_report_sales_and_traffic_by_asin';
 }

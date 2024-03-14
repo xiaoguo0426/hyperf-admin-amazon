@@ -23,8 +23,8 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
+
 use function Hyperf\Support\make;
 
 #[Command]
@@ -48,9 +48,8 @@ class ListFinancialEventsByOrderId extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
+     * @throws \RedisException
      * @throws NotFoundException
-     * @return void
      */
     public function handle(): void
     {
@@ -59,9 +58,8 @@ class ListFinancialEventsByOrderId extends HyperfCommand
         $region = $this->input->getArgument('region');
         $amazon_order_ids = $this->input->getArgument('order_ids');
 
-        //amazon_order需要添加region属性
+        // amazon_order需要添加region属性
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
-
             if (! is_null($amazon_order_ids)) {
                 $amazon_order_ids = explode(',', $amazon_order_ids);
             }
@@ -86,7 +84,7 @@ class ListFinancialEventsByOrderId extends HyperfCommand
                 $creator = new ListFinancialEventsByOrderIdCreator();
                 $creator->setOrderId($amazon_order_id);
                 $creator->setMaxResultsPerPage(100);
-                //https://spapi.vip/zh/references/finances-api-reference.html
+                // https://spapi.vip/zh/references/finances-api-reference.html
                 make(ListFinancialEventsByOrderIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
             }
 

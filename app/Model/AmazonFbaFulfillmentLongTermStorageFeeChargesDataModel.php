@@ -33,9 +33,9 @@ namespace App\Model;
  */
 class AmazonFbaFulfillmentLongTermStorageFeeChargesDataModel extends Model
 {
-    protected ?string $table = 'amazon_report_fba_fulfillment_longterm_storage_fee_charges_data';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
+
+    protected ?string $table = 'amazon_report_fba_fulfillment_longterm_storage_fee_charges_data';
 }

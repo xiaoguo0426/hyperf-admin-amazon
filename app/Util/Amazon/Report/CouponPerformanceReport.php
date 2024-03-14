@@ -20,7 +20,6 @@ use App\Util\Log\AmazonReportLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\ModelNotFoundException;
-use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -44,7 +43,6 @@ class CouponPerformanceReport extends ReportBase
      * @param RequestedReportRunner $reportRunner
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
@@ -60,7 +58,7 @@ class CouponPerformanceReport extends ReportBase
         $content = file_get_contents($file);
         try {
             $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $jsonException) {
+        } catch (\JsonException $jsonException) {
             $log = sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $this->getReportType(), $merchant_id, $merchant_store_id);
             $console->error($log);
             $logger->error($log);
@@ -72,7 +70,6 @@ class CouponPerformanceReport extends ReportBase
             return true;
         }
         foreach ($coupons as $coupon) {
-
             $coupon_id = $coupon['couponId'];
             $amazon_merchant_id = $coupon['merchantId'];
             $marketplace_id = $coupon['marketplaceId'];
@@ -144,10 +141,9 @@ class CouponPerformanceReport extends ReportBase
                     $amazonReportCouponPerformanceAsinModel->coupon_performance_id = $coupon_performance_id;
                 }
                 $amazonReportCouponPerformanceAsinModel->asin = $asin_item['asin'];
-                $amazonReportCouponPerformanceAsinModel->seller_sku = '';//TODO
+                $amazonReportCouponPerformanceAsinModel->seller_sku = ''; // TODO
                 $amazonReportCouponPerformanceAsinModel->save();
             }
-
         }
 
         return true;
@@ -163,8 +159,8 @@ class CouponPerformanceReport extends ReportBase
                 'campaignStartDateFrom' => $this->getReportStartDate()?->format('Y-m-d\TH:i:s\Z'),
                 'campaignStartDateTo' => $this->getReportEndDate()?->format('Y-m-d\TH:i:s\Z'),
             ],
-            'report_type' => $report_type,//报告类型
-            'marketplace_ids' => $marketplace_ids,//市场标识符列表
+            'report_type' => $report_type, // 报告类型
+            'marketplace_ids' => $marketplace_ids, // 市场标识符列表
             'data_start_time' => $this->getReportStartDate(),
             'data_end_time' => $this->getReportEndDate(),
         ]);

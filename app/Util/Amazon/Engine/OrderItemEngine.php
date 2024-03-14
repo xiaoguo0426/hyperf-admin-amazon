@@ -25,22 +25,15 @@ use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\ModelNotFoundException;
-use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-
 
 class OrderItemEngine implements EngineInterface
 {
     /**
-     * @param AmazonSDK $amazonSDK
-     * @param SellingPartnerSDK $sdk
-     * @param AccessToken $accessToken
-     * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
-     * @throws JsonException
+     * @throws \JsonException
      * @throws NotFoundExceptionInterface
-     * @return bool
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {
@@ -59,7 +52,6 @@ class OrderItemEngine implements EngineInterface
         $cur_date = Carbon::now()->format('Y-m-d H:i:s');
 
         foreach ($amazon_order_ids as $amazon_order_id) {
-
             $console->info(sprintf('merchant_id:%s merchant_store_id:%s region:%s amazon_order_id:%s 开始处理', $merchant_id, $merchant_store_id, $region, $amazon_order_id));
 
             try {
@@ -72,7 +64,6 @@ class OrderItemEngine implements EngineInterface
                 $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s amazon_order_id:%s 订单不存在', $merchant_id, $merchant_store_id, $region, $amazon_order_id));
                 continue;
             }
-
 
             $retry = 30;
             $orderItems = [];
@@ -116,7 +107,6 @@ class OrderItemEngine implements EngineInterface
                     if (is_null($next_token)) {
                         break;
                     }
-
                 } catch (ApiException $e) {
                     if (! is_null($e->getResponseBody())) {
                         $body = json_decode($e->getResponseBody(), true, 512, JSON_THROW_ON_ERROR);
@@ -151,10 +141,10 @@ class OrderItemEngine implements EngineInterface
 
             $list = [];
 
-            $is_vine_order_flag_list = [];//是否为vine订单标识集合
+            $is_vine_order_flag_list = []; // 是否为vine订单标识集合
 
-            $order_status = $amazonOrderCollection->order_status;//当前订单状态
-            $marketplace_id = $amazonOrderCollection->marketplace_id;//当前订单市场id
+            $order_status = $amazonOrderCollection->order_status; // 当前订单状态
+            $marketplace_id = $amazonOrderCollection->marketplace_id; // 当前订单市场id
 
             foreach ($orderItems as $orderItem) {
                 $productInfo = $orderItem->getProductInfo();
@@ -194,19 +184,19 @@ class OrderItemEngine implements EngineInterface
 
                 $is_pending = false;
                 if (count($itemPriceJson) === 0) {
-                    //查找原始订单的状态
+                    // 查找原始订单的状态
                     if ($order_status === 'Pending') {
-                        //未支付的Pending订单是获取不到的订单项金额的，需要根据listing价格 fake一个价格
+                        // 未支付的Pending订单是获取不到的订单项金额的，需要根据listing价格 fake一个价格
                         $itemPriceJson = [
                             'fake_item_price' => 1,
                             'currency_code' => '',
-                            'amount' => '0.00'
+                            'amount' => '0.00',
                         ];
                     } elseif ($order_status === 'Canceled') {
                         $itemPriceJson = [];
                         $is_vine_order_flag_list[] = 0;
                     } elseif ($order_status === 'Shipped') {
-                        $is_vine_order_flag_list[] = 1;//要考虑订单有多items的情况;  如果一个订单中存在多个订单项，某一个取消的话，也是获取不了订单数据的
+                        $is_vine_order_flag_list[] = 1; // 要考虑订单有多items的情况;  如果一个订单中存在多个订单项，某一个取消的话，也是获取不了订单数据的
                     }
                 } else {
                     $is_vine_order_flag_list[] = 0;
@@ -267,8 +257,8 @@ class OrderItemEngine implements EngineInterface
                     ];
                 }
 
-                if ($is_pending === true && '' !== $promotion_ids && count($promotionDiscountJson) === 0) {
-                    //TODO Pending情况下即时有promotion_id也没法获取到对应的优惠信息，需要查询默认的优惠信息
+                if ($is_pending === true && $promotion_ids !== '' && count($promotionDiscountJson) === 0) {
+                    // TODO Pending情况下即时有promotion_id也没法获取到对应的优惠信息，需要查询默认的优惠信息
                 }
 
                 $promotionDiscountTax = $orderItem->getPromotionDiscountTax();
@@ -404,19 +394,19 @@ class OrderItemEngine implements EngineInterface
                 ];
             }
 
-            if (0 === count($list)) {
-                continue;//继续处理下一个order_id
+            if (count($list) === 0) {
+                continue; // 继续处理下一个order_id
             }
 
-            //判断订单是否为vine类型订单   -- 一定要要判断数组个数是否大于0，因为有些Pending状态订单无法获得item_price数据，该状态下不能判断是否为vine类型订单
+            // 判断订单是否为vine类型订单   -- 一定要要判断数组个数是否大于0，因为有些Pending状态订单无法获得item_price数据，该状态下不能判断是否为vine类型订单
             if (count($is_vine_order_flag_list) > 0) {
                 $is_vine_order_flag_list_unique = array_unique($is_vine_order_flag_list);
-                //如果数组有0，则不是vine订单
+                // 如果数组有0，则不是vine订单
                 if (in_array(0, $is_vine_order_flag_list_unique, true)) {
                     $amazonOrderCollection->is_vine_order = 2;
                     $amazonOrderCollection->save();
-                } else if (count($is_vine_order_flag_list_unique) === 1 && in_array(1, $is_vine_order_flag_list_unique, true)) {
-                    //如果数组数量只有1，且1在数组里，表示该订单为vine类型订单
+                } elseif (count($is_vine_order_flag_list_unique) === 1 && in_array(1, $is_vine_order_flag_list_unique, true)) {
+                    // 如果数组数量只有1，且1在数组里，表示该订单为vine类型订单
                     $amazonOrderCollection->is_vine_order = 1;
                     $amazonOrderCollection->save();
                 }

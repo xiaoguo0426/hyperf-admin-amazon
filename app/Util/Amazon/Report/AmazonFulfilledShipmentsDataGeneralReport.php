@@ -18,13 +18,11 @@ use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use Carbon\Carbon;
 use Hyperf\Collection\Collection;
 use Hyperf\Database\Model\ModelNotFoundException;
-use SplFileObject;
 
 class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
 {
     /**
      * @param RequestedReportRunner $reportRunner
-     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
@@ -37,9 +35,10 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
 
+        $region = $this->region;
         $config = $this->getHeaderMap();
 
-        $splFileObject = new SplFileObject($file, 'r');
+        $splFileObject = new \SplFileObject($file, 'r');
         // 处理映射关系
         $headers = explode("\t", str_replace("\r\n", '', $splFileObject->fgets()));
         $map = [];
@@ -58,9 +57,10 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
             foreach ($map as $index => $value) {
                 $val = trim($row[$index]);
                 if ($value === 'estimated_arrival_date' || $value === 'payments_date' || $value === 'purchase_date' || $value === 'reporting_date' || $value === 'shipment_date') {
-                    $val = str_replace('T', ' ', mb_substr($val, 0, 19));
                     if ($val === '') {
                         $val = null;
+                    } else {
+                        $val = str_replace('T', ' ', mb_substr($val, 0, 19));
                     }
                 } elseif (in_array($value, ['item_price', 'item_tax', 'shipping_price', 'shipping_tax', 'gift_wrap_price', 'gift_wrap_tax'], true)) {
                     if ($val === '') {
@@ -71,6 +71,7 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
             }
             $item['merchant_id'] = $merchant_id;
             $item['merchant_store_id'] = $merchant_store_id;
+            $item['region'] = $region;
             $item['created_at'] = $now;
 
             $data[] = $item;
@@ -86,6 +87,7 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
                 $model = AmazonReportFulfilledShipmentsDataGeneralModel::query()
                     ->where('merchant_id', $merchant_id)
                     ->where('merchant_store_id', $merchant_store_id)
+                    ->where('region', $this->region)
                     ->where('amazon_order_id', $amazon_order_id)
                     ->where('amazon_order_item_id', $amazon_order_item_id)
                     ->where('shipment_id', $shipment_id)
@@ -95,10 +97,10 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
                 continue;
             }
 
-//            $model->merchant_order_id = $item['merchant_order_id'];
-//            $model->shipment_id = $item['shipment_id'];
-//            $model->shipment_item_id = $item['shipment_item_id'];
-//            $model->amazon_order_item_id = $item['amazon_order_item_id'];
+            //            $model->merchant_order_id = $item['merchant_order_id'];
+            //            $model->shipment_id = $item['shipment_id'];
+            //            $model->shipment_item_id = $item['shipment_item_id'];
+            //            $model->amazon_order_item_id = $item['amazon_order_item_id'];
             $model->purchase_date = $item['purchase_date'];
             $model->payments_date = $item['payments_date'];
             $model->shipment_date = $item['shipment_date'];
@@ -145,7 +147,9 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
         }
 
         if ($collection->isNotEmpty()) {
-            AmazonReportFulfilledShipmentsDataGeneralModel::insert($collection->all());
+            $collection->chunk(1000)->each(function ($collections) {
+                AmazonReportFulfilledShipmentsDataGeneralModel::insert($collections->all());
+            });
         }
         return true;
     }
@@ -170,14 +174,17 @@ class AmazonFulfilledShipmentsDataGeneralReport extends ReportBase
 
     /**
      * @throws InvalidArgumentException
-     * @return bool
      */
     public function checkReportDate(): bool
     {
         if (is_null($this->report_start_date) || is_null($this->report_end_date)) {
             return false;
         }
-        //判断开始时间与结束时间是否大于30天
+        // 判断结束时间是否为今天
+        if (! $this->report_end_date->isToday()) {
+            throw new InvalidArgumentException('报告结束时间必须为今天');
+        }
+        // 判断开始时间与结束时间是否大于30天
         if ($this->report_start_date->diffInDays($this->report_end_date) > 30) {
             throw new InvalidArgumentException('报告开始时间与结束时间相差不能大于30天');
         }

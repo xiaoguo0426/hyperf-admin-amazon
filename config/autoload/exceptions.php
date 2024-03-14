@@ -7,11 +7,18 @@ declare(strict_types=1);
  * @contact  740644717@qq.com
  * @license  MIT
  */
+use App\Exception\Handler\AppExceptionHandler;
+use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+
+/**
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
 return [
     'handler' => [
         'http' => [
-            Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler::class,
-            App\Exception\Handler\AppExceptionHandler::class,
+            HttpExceptionHandler::class,
+            AppExceptionHandler::class,
         ],
     ],
 ];

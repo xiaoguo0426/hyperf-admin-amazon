@@ -15,10 +15,6 @@ use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 
 class PendingOrdersDataReport extends ReportBase
 {
-    /**
-     * @param ReportRunnerInterface $reportRunner
-     * @return bool
-     */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
         // TODO: Implement run() method.
@@ -32,8 +28,8 @@ class PendingOrdersDataReport extends ReportBase
     {
         return new CreateReportSpecification([
             'report_type' => $report_type, // 报告类型
-//            'data_start_time' => $this->getReportStartDate(), // 报告数据开始时间
-//            'data_end_time' => $this->getReportEndDate(), // 报告数据结束时间
+            //            'data_start_time' => $this->getReportStartDate(), // 报告数据开始时间
+            //            'data_end_time' => $this->getReportEndDate(), // 报告数据结束时间
             'marketplace_ids' => $marketplace_ids, // 市场标识符列表
         ]);
     }

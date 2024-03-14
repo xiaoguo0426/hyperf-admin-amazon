@@ -7,17 +7,26 @@ declare(strict_types=1);
  * @contact  740644717@qq.com
  * @license  MIT
  */
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+
+/**
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
 return [
     'default' => [
         'handler' => [
-            'class' => Monolog\Handler\StreamHandler::class,
+            'class' => StreamHandler::class,
             'constructor' => [
                 'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => Monolog\Level::Debug,
+                'level' => Level::Debug,
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -27,7 +36,7 @@ return [
     ],
     'sql' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -35,7 +44,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -46,7 +55,7 @@ return [
     // 队列日志 日志文件按日期轮转
     'queue' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -54,7 +63,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -64,7 +73,7 @@ return [
     ],
     'amazon-catalog' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -72,7 +81,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -83,7 +92,7 @@ return [
     // Amazon Report 日志文件按日期轮转
     'amazon-report' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -91,7 +100,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -101,7 +110,7 @@ return [
     ],
     'amazon-report-document' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -109,7 +118,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -119,7 +128,7 @@ return [
     ],
     'amazon-finance' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -127,7 +136,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -137,7 +146,7 @@ return [
     ],
     'amazon-fba' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -145,7 +154,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -155,7 +164,7 @@ return [
     ],
     'amazon-sales' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -163,7 +172,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -173,7 +182,7 @@ return [
     ],
     'amazon-sellers' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -181,7 +190,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -191,7 +200,7 @@ return [
     ],
     'amazon-fulfillment-inbound' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -199,7 +208,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -209,7 +218,7 @@ return [
     ],
     'amazon-fulfillment-outbound' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -217,7 +226,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -227,7 +236,7 @@ return [
     ],
     'amazon-orders' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -235,7 +244,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -245,7 +254,7 @@ return [
     ],
     'amazon-messaging' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -253,7 +262,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -263,7 +272,7 @@ return [
     ],
     'amazon-listing' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -271,7 +280,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
@@ -281,7 +290,7 @@ return [
     ],
     'amazon-product-pricing' => [
         'handler' => [
-            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'class' => RotatingFileHandler::class,
             'constructor' => [
                 'dateFormat' => 'Y-m-d',
                 'filenameFormat' => '{date}',
@@ -289,7 +298,7 @@ return [
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class' => LineFormatter::class,
             'constructor' => [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',

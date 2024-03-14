@@ -40,17 +40,11 @@ class AmazonOrderItemData extends QueueData implements \JsonSerializable
         $this->merchant_store_id = $merchant_store_id;
     }
 
-    /**
-     * @return string
-     */
     public function getRegion(): string
     {
         return $this->region;
     }
 
-    /**
-     * @param string $region
-     */
     public function setRegion(string $region): void
     {
         $this->region = $region;

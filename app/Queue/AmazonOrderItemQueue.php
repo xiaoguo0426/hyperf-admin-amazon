@@ -21,7 +21,7 @@ use App\Util\AmazonSDK;
 use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
+
 use function Hyperf\Support\make;
 
 class AmazonOrderItemQueue extends Queue
@@ -37,12 +37,10 @@ class AmazonOrderItemQueue extends Queue
     }
 
     /**
-     * @param QueueDataInterface $queueData
      * @throws ContainerExceptionInterface
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return bool
+     * @throws \RedisException
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
@@ -55,7 +53,6 @@ class AmazonOrderItemQueue extends Queue
         $amazon_order_ids = $queueData->getOrderId();
 
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
-
             $orderItemCreator = new OrderItemCreator();
             $orderItemCreator->setAmazonOrderIds($amazon_order_ids);
 
@@ -64,8 +61,8 @@ class AmazonOrderItemQueue extends Queue
             return true;
         });
 
-        //更新 amazon_order_items的marketplace_id
-//        \Hyperf\DB\DB::execute('UPDATE amazon_order_items LEFT JOIN amazon_order ON amazon_order_items.merchant_id = amazon_order.merchant_id AND amazon_order_items.merchant_store_id = amazon_order.merchant_store_id AND amazon_order_items.order_id = amazon_order.amazon_order_id SET amazon_order_items.marketplace_id = amazon_order.marketplace_id where amazon_order.merchant_id=? and amazon_order.merchant_store_id=? and amazon_order.region=?;', [$merchant_id, $merchant_store_id, $region]);
+        // 更新 amazon_order_items的marketplace_id
+        //        \Hyperf\DB\DB::execute('UPDATE amazon_order_items LEFT JOIN amazon_order ON amazon_order_items.merchant_id = amazon_order.merchant_id AND amazon_order_items.merchant_store_id = amazon_order.merchant_store_id AND amazon_order_items.order_id = amazon_order.amazon_order_id SET amazon_order_items.marketplace_id = amazon_order.marketplace_id where amazon_order.merchant_id=? and amazon_order.merchant_store_id=? and amazon_order.region=?;', [$merchant_id, $merchant_store_id, $region]);
 
         return true;
     }

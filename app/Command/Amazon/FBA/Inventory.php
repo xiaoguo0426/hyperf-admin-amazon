@@ -28,7 +28,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -53,8 +52,7 @@ class Inventory extends HyperfCommand
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -92,7 +90,6 @@ class Inventory extends HyperfCommand
                 $console->info(sprintf('merchant_id:%s merchant_store_id:%s region:%s 现在开始处理 %s 市场数据', $merchant_id, $merchant_store_id, $region, $country_code));
 
                 while (true) {
-
                     try {
                         $response = $sdk->fbaInventory()->getInventorySummaries($accessToken, $region, $granularity_type, $marketplace_id, [$marketplace_id], true, $startDate, $seller_skus, null, $nextToken);
                         $payload = $response->getPayload();
@@ -211,8 +208,8 @@ class Inventory extends HyperfCommand
                                     ->where('seller_sku', $seller_sku)
                                     ->firstOrFail();
                             } catch (ModelNotFoundException) {
-                                if (0 === $total_quantity) {
-                                    //有可能会获取到渠道商的asin信息，但无法获取到数量的，直接跳过处理. 但同时也有可能初始化店铺数据时无法获取历史已下架的数据
+                                if ($total_quantity === 0) {
+                                    // 有可能会获取到渠道商的asin信息，但无法获取到数量的，直接跳过处理. 但同时也有可能初始化店铺数据时无法获取历史已下架的数据
                                     continue;
                                 }
                                 $inventoryCollection = new AmazonInventoryModel();
@@ -224,7 +221,6 @@ class Inventory extends HyperfCommand
                                 $inventoryCollection->asin = $asin;
                                 $inventoryCollection->fn_sku = $fn_sku;
                                 $inventoryCollection->seller_sku = $seller_sku;
-
                             }
 
                             $inventoryCollection->product_name = $product_name;
@@ -252,7 +248,6 @@ class Inventory extends HyperfCommand
                             $inventoryCollection->total_quantity = $total_quantity;
 
                             $inventoryCollection->save();
-
                         }
 
                         $pagination = $response->getPagination();

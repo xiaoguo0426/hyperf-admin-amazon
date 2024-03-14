@@ -20,13 +20,11 @@ use App\Util\Log\AmazonReportLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Database\Model\ModelNotFoundException;
-use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class PromotionPerformanceReport extends ReportBase
 {
-
     /**
      * @throws \Exception
      */
@@ -45,7 +43,6 @@ class PromotionPerformanceReport extends ReportBase
      * @param RequestedReportRunner $reportRunner
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
@@ -61,7 +58,7 @@ class PromotionPerformanceReport extends ReportBase
         $content = file_get_contents($file);
         try {
             $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $jsonException) {
+        } catch (\JsonException $jsonException) {
             $log = sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $this->getReportType(), $merchant_id, $merchant_store_id);
             $console->error($log);
             $logger->error($log);
@@ -74,7 +71,6 @@ class PromotionPerformanceReport extends ReportBase
         }
 
         foreach ($promotions as $promotion) {
-
             $promotion_id = $promotion['promotionId'];
             $promotion_name = $promotion['promotionName'];
             $marketplace_id = $promotion['marketplaceId'];
@@ -124,7 +120,6 @@ class PromotionPerformanceReport extends ReportBase
 
             $include_products = $promotion['includedProducts'];
             foreach ($include_products as $include_product) {
-
                 $asin = $include_product['asin'];
                 $product_name = $include_product['productName'];
                 $product_glance_views = $include_product['productGlanceViews'];
@@ -147,7 +142,7 @@ class PromotionPerformanceReport extends ReportBase
                     $model->asin = $asin;
                 }
 
-                $model->seller_sku = '';//TODO
+                $model->seller_sku = ''; // TODO
                 $model->product_name = $product_name;
                 $model->product_glance_views = $product_glance_views;
                 $model->product_units_sold = $product_units_sold;
@@ -171,8 +166,8 @@ class PromotionPerformanceReport extends ReportBase
                 'promotionStartDateFrom' => $this->getReportStartDate()?->format('Y-m-d\TH:i:s\Z'),
                 'promotionStartDateTo' => $this->getReportEndDate()?->format('Y-m-d\TH:i:s\Z'),
             ],
-            'report_type' => $report_type,//报告类型
-            'marketplace_ids' => $marketplace_ids,//市场标识符列表
+            'report_type' => $report_type, // 报告类型
+            'marketplace_ids' => $marketplace_ids, // 市场标识符列表
             'data_start_time' => $this->getReportStartDate(),
             'data_end_time' => $this->getReportEndDate(),
         ]);

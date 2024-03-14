@@ -24,7 +24,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 
 class GetShipmentDetails extends HyperfCommand
@@ -47,8 +46,7 @@ class GetShipmentDetails extends HyperfCommand
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws NotFoundException
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {

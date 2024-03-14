@@ -14,10 +14,6 @@ use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 
 class VendorRealTimeInventoryReport extends ReportBase
 {
-    /**
-     * @param ReportRunnerInterface $reportRunner
-     * @return bool
-     */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
         // TODO: Implement run() method.

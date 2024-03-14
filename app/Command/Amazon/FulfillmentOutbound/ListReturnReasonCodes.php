@@ -16,10 +16,7 @@ use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
-use App\Util\Log\AmazonFulfillmentOutboundListAllFulfillmentOrdersLog;
 use App\Util\Log\AmazonFulfillmentOutboundListReturnReasonCodesLog;
-use DateTime;
-use DateTimeZone;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
@@ -28,7 +25,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -47,7 +43,7 @@ class ListReturnReasonCodes extends HyperfCommand
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
             ->addArgument('region', InputArgument::REQUIRED, '地区')
             ->addArgument('seller_sku', InputArgument::REQUIRED, 'Seller SKU')
-            ->addArgument('language', InputArgument::REQUIRED, 'Language')//en_US,fr_CA,fr_FR 这个数未测试
+            ->addArgument('language', InputArgument::REQUIRED, 'Language')// en_US,fr_CA,fr_FR 这个数未测试
             ->addOption('marketplace_id', null, InputOption::VALUE_OPTIONAL, '市场id', null)
             ->addOption('seller_fulfillment_order_id', null, InputOption::VALUE_OPTIONAL, '创建履行订单时卖家分配给商品的标识符。该服务使用此值来确定卖家想要返回原因代码的市场。', null)
             ->setDescription('Amazon Fulfillment Outbound API List Return Reason Codes Command');
@@ -57,12 +53,10 @@ class ListReturnReasonCodes extends HyperfCommand
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
-
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $region = $this->input->getArgument('region');
@@ -72,16 +66,13 @@ class ListReturnReasonCodes extends HyperfCommand
         $seller_fulfillment_order_id = $this->input->getOption('seller_fulfillment_order_id');
 
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($seller_sku, $language, $marketplace_id, $seller_fulfillment_order_id) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentOutboundListReturnReasonCodesLog::class);
 
             $retry = 10;
-            //当前接口没有测试通过
+            // 当前接口没有测试通过
             while (true) {
-
                 try {
-
                     $response = $sdk->fulfillmentOutbound()->listReturnReasonCodes($accessToken, $region, $seller_sku, $language, $marketplace_id, $seller_fulfillment_order_id);
 
                     $errorsList = $response->getErrors();
@@ -123,7 +114,6 @@ class ListReturnReasonCodes extends HyperfCommand
 
                     break;
                 } catch (ApiException $e) {
-
                     $can_retry_flag = true;
                     $response_body = $e->getResponseBody();
                     if (! is_null($response_body)) {
@@ -164,7 +154,6 @@ class ListReturnReasonCodes extends HyperfCommand
                     $logger->error($log);
                     break;
                 }
-
             }
         });
     }

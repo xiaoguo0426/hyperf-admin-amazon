@@ -29,7 +29,6 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws \JsonException
-     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
@@ -68,21 +67,21 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         $cur_date = Carbon::now()->format('Y-m-d H:i:s');
         $collection = new Collection();
 
-        //seek的bug在8.0.1中修复，且hyperf3.1框架要求>=8.1,所以此处仅作记录，其他php版本在在使用时注意甄别
-        //统计行不入库
+        // seek的bug在8.0.1中修复，且hyperf3.1框架要求>=8.1,所以此处仅作记录，其他php版本在在使用时注意甄别
+        // 统计行不入库
         // https://bugs.php.net/bug.php?id=62004   https://github.com/php/php-src/pull/6434
-//        $currentVersion = phpversion();
-//        if (version_compare($currentVersion, '8.0.1', '>=')) {
-//            $splFileObject->seek(2); // 从第2行开始读取数据
-//        } else {
-//            $splFileObject->seek(1); // 从第2行开始读取数据
-//        }
+        //        $currentVersion = phpversion();
+        //        if (version_compare($currentVersion, '8.0.1', '>=')) {
+        //            $splFileObject->seek(2); // 从第2行开始读取数据
+        //        } else {
+        //            $splFileObject->seek(1); // 从第2行开始读取数据
+        //        }
         $splFileObject->seek(2); // 从第2行开始读取数据
 
         $md5_hash_idx_map = [];
         while (! $splFileObject->eof()) {
             $fgets = str_replace("\r\n", '', $splFileObject->fgets());
-            if ('' === $fgets) {
+            if ($fgets === '') {
                 continue;
             }
             $item = [];
@@ -116,7 +115,6 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
                 $posted_date_time = $this->formatDate($item['currency'], $item['posted_date_time']);
             }
 
-
             $item['deposit_date'] = $deposit_date;
             $item['posted_date'] = $posted_date;
             $item['posted_date_time'] = $posted_date_time;
@@ -135,12 +133,12 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
 
             ksort($new);
 
-            $md5_hash = md5(json_encode($new, JSON_THROW_ON_ERROR));//TODO 注意hash的生成规则 有些类型不能排除
+            $md5_hash = md5(json_encode($new, JSON_THROW_ON_ERROR)); // TODO 注意hash的生成规则 有些类型不能排除
 
             if ($collection->offsetExists($md5_hash)) {
-//                $idx = $md5_hash_idx_map[$md5_hash] ?? 1;
-//                $md5_hash = md5(json_encode($new_item, JSON_THROW_ON_ERROR) . $idx);
-//                $md5_hash_idx_map[$md5_hash] = $idx + 1;
+                //                $idx = $md5_hash_idx_map[$md5_hash] ?? 1;
+                //                $md5_hash = md5(json_encode($new_item, JSON_THROW_ON_ERROR) . $idx);
+                //                $md5_hash_idx_map[$md5_hash] = $idx + 1;
 
                 if ($item['transaction_type'] === 'Order' || $item['transaction_type'] === 'other-transaction') {
                     $offset = $collection->offsetGet($md5_hash);
@@ -181,9 +179,9 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
                 $final = $list->toArray();
             } else {
                 $exist_md5_hash_list = $collections->toArray();
-                $new_list = $list->pluck([], 'md5_hash')->toArray();//因为分片后索引了，需要重新修正集合的索引
+                $new_list = $list->pluck([], 'md5_hash')->toArray(); // 因为分片后索引了，需要重新修正集合的索引
 
-                //差集  需要插入的数据
+                // 差集  需要插入的数据
                 $array_diff = array_diff($md5_hash_list, $exist_md5_hash_list);
                 if (count($array_diff)) {
                     foreach ($array_diff as $diff) {
@@ -194,7 +192,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
             $final_data_length = count($final);
             if ($final_data_length) {
                 AmazonSettlementReportDataFlatFileV2Model::insert($final);
-                //当前分页数量与实际写入数量不相等时才需要高亮提示
+                // 当前分页数量与实际写入数量不相等时才需要高亮提示
                 if ($page_date_length !== $final_data_length) {
                     $console->warning(sprintf('当前分页实际写入数据长度 %s.', $final_data_length));
                     $console->newLine();
@@ -209,17 +207,22 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         return true;
     }
 
+    public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
+    {
+        return $report_id . '-' . $region;
+    }
+
     private function formatDate($currency, $val, string $format = 'Y-m-d H:i:s'): string
     {
         if ($currency === 'USD') {
             $raw_format = 'Y-m-d H:i:s T';
-        } else if ($currency === 'CAD') {
+        } elseif ($currency === 'CAD') {
             $raw_format = 'd.m.Y H:i:s T';
-        } else if ($currency === 'MXN') {
+        } elseif ($currency === 'MXN') {
             $raw_format = 'd.m.Y H:i:s T';
-        } else if ($currency === 'EUR') {
+        } elseif ($currency === 'EUR') {
             $raw_format = 'd.m.Y H:i:s T';
-        } else if ($currency === 'GBP') {
+        } elseif ($currency === 'GBP') {
             $raw_format = 'd.m.Y H:i:s T';
         } else {
             return $val;
@@ -236,21 +239,15 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
 
         if ($currency === 'CAD') {
             $val = Carbon::createFromFormat('d.m.Y', $val)->format($format);
-        } else if ($currency === 'MXN') {
+        } elseif ($currency === 'MXN') {
             $val = Carbon::createFromFormat('d.m.Y', $val)->format($format);
-        } else if ($currency === 'EUR') {
+        } elseif ($currency === 'EUR') {
             $val = Carbon::createFromFormat('d.m.Y', $val)->format($format);
-        } else if ($currency === 'GBP') {
+        } elseif ($currency === 'GBP') {
             $val = Carbon::createFromFormat('d.m.Y', $val)->format($format);
         } else {
             return $val;
         }
         return $val;
     }
-
-    public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
-    {
-        return $report_id . '-' . $region;
-    }
-
 }

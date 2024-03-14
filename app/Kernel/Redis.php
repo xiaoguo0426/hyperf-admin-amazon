@@ -15,10 +15,6 @@ use Hyperf\Redis\RedisProxy;
 
 class Redis
 {
-    /**
-     * @param mixed $group
-     * @return RedisProxy
-     */
     public static function get(mixed $group = 'default'): RedisProxy
     {
         return di(RedisFactory::class)->get($group);

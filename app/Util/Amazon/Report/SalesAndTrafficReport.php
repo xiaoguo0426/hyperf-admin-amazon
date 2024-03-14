@@ -95,7 +95,6 @@ class SalesAndTrafficReport extends ReportBase
      * @param RequestedReportRunner $reportRunner
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {

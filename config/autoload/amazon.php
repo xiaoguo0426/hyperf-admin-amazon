@@ -1,14 +1,12 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  *
  * @author   xiaoguo0426
  * @contact  740644717@qq.com
  * @license  MIT
  */
-
 use function Hyperf\Support\env;
 
 return [
@@ -48,12 +46,11 @@ return [
         ],
         'ES' => [
             'Pedido' => 'Order',
-
         ],
         'IT' => [
             'Ordine' => 'Order',
             'Costo di stoccaggio Logistica di Amazon' => 'Amazon Logistics Security Cost',
             'Tariffa di stoccaggio Logistica di Amazon' => 'Amazon Logistics Return Rate',
-        ]
-    ]
+        ],
+    ],
 ];

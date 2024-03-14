@@ -22,7 +22,6 @@ use App\Model\AmazonAppModel;
 use App\Util\RedisHash\AmazonAccessTokenHash;
 use App\Util\RedisHash\AmazonSessionTokenHash;
 use Buzz\Client\Curl;
-use JsonException;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
@@ -31,7 +30,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LogLevel;
-use RedisException;
+
 use function Hyperf\Support\make;
 
 class AmazonSDK
@@ -264,13 +263,10 @@ class AmazonSDK
     //    }
 
     /**
-     * @param string $region
-     * @param bool $force_refresh
      * @throws ApiException
-     * @throws JsonException
+     * @throws \JsonException
      * @throws ClientExceptionInterface
-     * @throws RedisException
-     * @return SellingPartnerSDK
+     * @throws \RedisException
      */
     public function getSdk(string $region, bool $force_refresh = false): SellingPartnerSDK
     {
@@ -322,16 +318,16 @@ class AmazonSDK
 
         $configuration->setDefaultLogLevel(LogLevel::INFO);
 
-        $configuration->registerExtension(new class implements Extension {
+        $configuration->registerExtension(new class() implements Extension {
             public function preRequest(string $api, string $operation, RequestInterface $request): void
             {
-                echo "pre: " . $api . "::" . $operation . " " . $request->getUri() . "\n";
+                echo 'pre: ' . $api . '::' . $operation . ' ' . $request->getUri() . "\n";
             }
 
             public function postRequest(string $api, string $operation, RequestInterface $request, ResponseInterface $response): void
             {
-                echo "post: " . $api . "::" . $operation . " " . $request->getUri() . " "
-                    . $response->getStatusCode() . " rate limit: " . implode(' ', $response->getHeader('x-amzn-RateLimit-Limit')) . "\n";
+                echo 'post: ' . $api . '::' . $operation . ' ' . $request->getUri() . ' '
+                    . $response->getStatusCode() . ' rate limit: ' . implode(' ', $response->getHeader('x-amzn-RateLimit-Limit')) . "\n";
             }
         });
 
@@ -341,15 +337,11 @@ class AmazonSDK
     }
 
     /**
-     * @param string $region
-     * @param bool $force_refresh
      * @throws ApiException
      * @throws ClientExceptionInterface
-     * @return AccessToken
      */
     public function getToken(string $region, bool $force_refresh = false): AccessToken
     {
-
         $hash = make(AmazonAccessTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
         $token = $hash->token;
 

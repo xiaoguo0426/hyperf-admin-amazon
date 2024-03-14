@@ -10,9 +10,7 @@ declare(strict_types=1);
 
 namespace App\Queue\Data;
 
-use JsonSerializable;
-
-class AmazonActionReportData extends QueueData implements JsonSerializable
+class AmazonActionReportData extends QueueData implements \JsonSerializable
 {
     private int $merchant_id;
 
@@ -67,17 +65,11 @@ class AmazonActionReportData extends QueueData implements JsonSerializable
         $this->merchant_store_id = $merchant_store_id;
     }
 
-    /**
-     * @return string
-     */
     public function getRegion(): string
     {
         return $this->region;
     }
 
-    /**
-     * @param string $region
-     */
     public function setRegion(string $region): void
     {
         $this->region = $region;
@@ -123,22 +115,22 @@ class AmazonActionReportData extends QueueData implements JsonSerializable
         $this->report_file_path = $report_file_path;
     }
 
-    public function getDataStartTime(): null|string
+    public function getDataStartTime(): ?string
     {
         return $this->data_start_time;
     }
 
-    public function setDataStartTime(null|string $data_start_time): void
+    public function setDataStartTime(?string $data_start_time): void
     {
         $this->data_start_time = $data_start_time;
     }
 
-    public function getDataEndTime(): null|string
+    public function getDataEndTime(): ?string
     {
         return $this->data_end_time;
     }
 
-    public function setDataEndTime(null|string $data_end_time): void
+    public function setDataEndTime(?string $data_end_time): void
     {
         $this->data_end_time = $data_end_time;
     }

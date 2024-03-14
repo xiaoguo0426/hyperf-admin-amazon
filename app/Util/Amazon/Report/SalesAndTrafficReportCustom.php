@@ -20,7 +20,6 @@ use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 
 class SalesAndTrafficReportCustom extends ReportBase
 {
@@ -28,7 +27,7 @@ class SalesAndTrafficReportCustom extends ReportBase
 
     public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
-        parent::__construct($$merchant_id, $merchant_store_id, $region, $report_type);
+        parent::__construct(${$merchant_id}, $merchant_store_id, $region, $report_type);
 
         $last_end_time = Carbon::now('UTC')->subDays(2)->format('Y-m-d 23:59:59');
         $last_3days_start_time = Carbon::now('UTC')->subDays(4)->format('Y-m-d 00:00:00'); // 最近3天
@@ -60,8 +59,7 @@ class SalesAndTrafficReportCustom extends ReportBase
 
     /**
      * @param RequestedReportRunner $reportRunner
-     * @throws RedisException
-     * @return bool
+     * @throws \RedisException
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {

@@ -12,6 +12,7 @@ namespace App\Util;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Stringable;
+
 use function Hyperf\Support\env;
 
 /**

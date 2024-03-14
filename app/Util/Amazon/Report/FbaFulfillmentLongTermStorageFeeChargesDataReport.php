@@ -22,7 +22,7 @@ class FbaFulfillmentLongTermStorageFeeChargesDataReport extends ReportBase
     public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
         parent::__construct($merchant_id, $merchant_store_id, $region, $report_type);
-        //默认获取上个月的报告
+        // 默认获取上个月的报告
         $data = Carbon::now('UTC')->subMonth();
         $start_time = $data->firstOfMonth()->format('Y-m-d 00:00:00');
         $end_time = $data->endOfMonth()->format('Y-m-d 23:59:59');
@@ -33,7 +33,6 @@ class FbaFulfillmentLongTermStorageFeeChargesDataReport extends ReportBase
 
     /**
      * @param RequestedReportRunner $reportRunner
-     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
@@ -69,7 +68,6 @@ class FbaFulfillmentLongTermStorageFeeChargesDataReport extends ReportBase
                     $val = Carbon::createFromFormat('Y-m-d\TH:i:s+P', $val)->format('Y-m-d H:i:s');
                 }
                 $item[$value] = $val;
-
             }
             $item['merchant_id'] = $merchant_id;
             $item['merchant_store_id'] = $merchant_store_id;
@@ -78,7 +76,6 @@ class FbaFulfillmentLongTermStorageFeeChargesDataReport extends ReportBase
         fclose($handle);
 
         $collections->each(function ($collection) {
-
             $merchant_id = $collection['merchant_id'];
             $merchant_store_id = $collection['merchant_store_id'];
             $snapshot_date = $collection['snapshot_date'];

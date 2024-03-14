@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Util;
 
 use Carbon\Carbon;
+
 use function Hyperf\Config\config;
 
 class Prefix

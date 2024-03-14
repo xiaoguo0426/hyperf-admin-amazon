@@ -47,7 +47,7 @@ class BrandAnalyticsMarketBasketReport extends ReportBase
     {
         return new CreateReportSpecification([
             'report_options' => [
-//                'reportPeriod' => 'DAY',
+                //                'reportPeriod' => 'DAY',
                 'reportPeriod' => 'WEEK',
                 //                'reportPeriod' => 'MONTH',
             ],

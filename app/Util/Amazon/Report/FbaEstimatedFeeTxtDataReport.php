@@ -14,13 +14,13 @@ use App\Model\AmazonReportFbaEstimatedFeeModel;
 use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use App\Util\RedisHash\AmazonFbaEstimatedFeeHash;
+
 use function Hyperf\Support\make;
 
 class FbaEstimatedFeeTxtDataReport extends ReportBase
 {
     /**
      * @param RequestedReportRunner $reportRunner
-     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {

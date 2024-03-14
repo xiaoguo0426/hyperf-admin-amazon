@@ -7,7 +7,14 @@ declare(strict_types=1);
  * @contact  740644717@qq.com
  * @license  MIT
  */
+use Hyperf\Command\Listener\FailToHandleListener;
+use Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler;
+
+/**
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
 return [
-    Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler::class,
-    Hyperf\Command\Listener\FailToHandleListener::class,
+    ErrorExceptionHandler::class,
+    FailToHandleListener::class,
 ];

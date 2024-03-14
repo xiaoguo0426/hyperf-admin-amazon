@@ -25,9 +25,9 @@ namespace App\Model;
  */
 class AmazonAppRegionModel extends Model
 {
-    protected ?string $table = 'amazon_app_region';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
+
+    protected ?string $table = 'amazon_app_region';
 }

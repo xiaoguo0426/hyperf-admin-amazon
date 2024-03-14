@@ -28,8 +28,8 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
+
 use function Hyperf\Config\config;
 
 #[Command]
@@ -52,20 +52,16 @@ class ReportGets extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
+     * @throws \RedisException
      * @throws NotFoundException
-     * @return void
      */
     public function handle(): void
     {
-
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $report_type = (string) $this->input->getArgument('report_type');
 
         AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($report_type) {
-
-
             $logger = ApplicationContext::getContainer()->get(AmazonReportLog::class);
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
@@ -92,7 +88,6 @@ class ReportGets extends HyperfCommand
 
                     foreach ($reports as $report) {
                         $report_type = $report->getReportType();
-                        $marketplace_ids = $report->getMarketplaceIds() ?? [];
                         $report_marketplace_ids = $report->getMarketplaceIds();
                         $data_start_time = $report->getDataStartTime()?->format('Y-m-d H:i:s') ?? '';
                         $data_end_time = $report->getDataEndTime()?->format('Y-m-d H:i:s') ?? '';
@@ -106,7 +101,7 @@ class ReportGets extends HyperfCommand
                         }
 
                         $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $region, $report_type);
-                        $file_base_name = $instance->getReportFileName($marketplace_ids, $region, $report_document_id);
+                        $file_base_name = $instance->getReportFileName($report_marketplace_ids, $region, $report_document_id);
 
                         $file_path = $dir . $file_base_name . '.txt';
                         if (file_exists($file_path)) {
@@ -121,7 +116,7 @@ class ReportGets extends HyperfCommand
                         $amazonGetReportDocumentData->setMerchantId($merchant_id);
                         $amazonGetReportDocumentData->setMerchantStoreId($merchant_store_id);
                         $amazonGetReportDocumentData->setRegion($region);
-                        $amazonGetReportDocumentData->setMarketplaceIds($marketplace_ids);
+                        $amazonGetReportDocumentData->setMarketplaceIds($report_marketplace_ids);
                         $amazonGetReportDocumentData->setReportDocumentId($report_document_id);
                         $amazonGetReportDocumentData->setReportType($report_type);
 
@@ -162,6 +157,5 @@ class ReportGets extends HyperfCommand
 
             return true;
         });
-
     }
 }

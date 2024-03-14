@@ -39,10 +39,9 @@ namespace App\Model;
  */
 class AmazonReportCouponPerformanceModel extends Model
 {
-    protected ?string $table = 'amazon_report_coupon_performance';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
 
+    protected ?string $table = 'amazon_report_coupon_performance';
 }

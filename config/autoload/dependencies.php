@@ -9,8 +9,9 @@ declare(strict_types=1);
  */
 use App\Util\StdoutLogger;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\HttpServer\CoreMiddleware;
 
 return [
-    Hyperf\HttpServer\CoreMiddleware::class => App\Middleware\CoreMiddleware::class,
+    CoreMiddleware::class => App\Middleware\CoreMiddleware::class,
     StdoutLoggerInterface::class => StdoutLogger::class,
 ];

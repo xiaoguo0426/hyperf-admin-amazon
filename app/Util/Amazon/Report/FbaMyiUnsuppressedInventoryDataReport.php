@@ -18,7 +18,6 @@ class FbaMyiUnsuppressedInventoryDataReport extends ReportBase
 {
     /**
      * @param RequestedReportRunner $reportRunner
-     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {

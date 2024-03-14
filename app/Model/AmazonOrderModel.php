@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Carbon\Carbon;
 use Hyperf\DbConnection\Model\Model;
 
 /**
@@ -67,8 +68,8 @@ use Hyperf\DbConnection\Model\Model;
  * @property string $has_regulated_items 订单是否包含在履行之前可能需要额外批准步骤的监管项目
  * @property string $electronic_invoice_status 电子发票的状态 NotRequired,NotFound,Processing,Errored,Accepted
  * @property int $is_vine_order 是否为VINE类型订单
- * @property \Carbon\Carbon $created_at 订单拉取入库时间(内部使用)
- * @property \Carbon\Carbon $updated_at 订单最后一次更新入库时间(内部使用)
+ * @property Carbon $created_at 订单拉取入库时间(内部使用)
+ * @property Carbon $updated_at 订单最后一次更新入库时间(内部使用)
  */
 class AmazonOrderModel extends Model
 {

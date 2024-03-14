@@ -21,7 +21,7 @@ use App\Util\AmazonSDK;
 use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
+
 use function Hyperf\Support\make;
 
 class AmazonFinanceFinancialListEventsByOrderIdQueue extends Queue
@@ -37,12 +37,10 @@ class AmazonFinanceFinancialListEventsByOrderIdQueue extends Queue
     }
 
     /**
-     * @param QueueDataInterface $queueData
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws NotFoundException
-     * @throws RedisException
-     * @return bool
+     * @throws \RedisException
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {

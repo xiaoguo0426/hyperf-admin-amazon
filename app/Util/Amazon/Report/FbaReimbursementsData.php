@@ -37,7 +37,6 @@ class FbaReimbursementsData extends ReportBase
 
     /**
      * @param RequestedReportRunner $reportRunner
-     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
@@ -105,7 +104,6 @@ class FbaReimbursementsData extends ReportBase
                 $collection->asin = $item['asin'] ?? '';
                 $collection->product_name = $item['product_name'] ?? '';
             }
-
 
             $collection->condition = $item['condition'] ?? '';
             $collection->currency_unit = $item['currency_unit'] ?? '';

@@ -26,7 +26,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -54,22 +53,20 @@ class GetPreInstructions extends HyperfCommand
      * @throws InvalidArgumentException
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
-        //返回标签要求和物品准备说明，以帮助准备物品以运送到亚马逊的履行网络。
+        // 返回标签要求和物品准备说明，以帮助准备物品以运送到亚马逊的履行网络。
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $country_code = $this->input->getArgument('ship_to_country_code');
-        $seller_sku_list = $this->input->getOption('seller_sku_list');//--seller_sku_list=foo --seller_sku_list=bar
-        $asin_list = $this->input->getOption('asin_list');//--asin_list=foo --asin_list=bar
+        $seller_sku_list = $this->input->getOption('seller_sku_list'); // --seller_sku_list=foo --seller_sku_list=bar
+        $asin_list = $this->input->getOption('asin_list'); // --asin_list=foo --asin_list=bar
 
         $region = Marketplace::fromCountry($country_code)->region();
 
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($country_code, $seller_sku_list, $asin_list) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGuidanceLog::class);
 
@@ -113,7 +110,6 @@ class GetPreInstructions extends HyperfCommand
                     var_dump($invalid_sku_list);
                     var_dump($invalid_asin_list);
 
-
                     $skuPrepInstructions = $getInboundGuidanceResult->getSkuPrepInstructionsList();
                     $sku_pre_instructions = [];
                     if (! is_null($skuPrepInstructions)) {
@@ -124,7 +120,6 @@ class GetPreInstructions extends HyperfCommand
                                 foreach ($prepInstructions as $prepInstruction) {
                                     $prep_instructions[] = $prepInstruction->toString();
                                 }
-
                             }
 
                             $amazonPrepFeesDetails = $skuPrepInstruction->getAmazonPrepFeesDetailsList();
@@ -136,7 +131,7 @@ class GetPreInstructions extends HyperfCommand
                                     $amazon_prep_fees_details[] = [
                                         'prep_instruction' => $amazonPrepFeesDetail->getPrepInstruction()?->toString() ?? '',
                                         'amount' => $amount?->getValue() ?? 0.00,
-                                        'currency' => $amount?->getCurrencyCode()->toString()
+                                        'currency' => $amount?->getCurrencyCode()->toString(),
                                     ];
                                 }
                             }
@@ -149,7 +144,6 @@ class GetPreInstructions extends HyperfCommand
                                 'prep_instructions' => $prep_instructions,
                                 'amazon_prep_fees_details' => $amazon_prep_fees_details,
                             ];
-
                         }
                     }
                     var_dump($sku_pre_instructions);
@@ -164,7 +158,6 @@ class GetPreInstructions extends HyperfCommand
                                 foreach ($prepInstructions as $prepInstruction) {
                                     $prep_instructions[] = $prepInstruction->toString();
                                 }
-
                             }
                             $asin_prep_instructions[] = [
                                 'asin' => $asinPrepInstruction->getAsin() ?? '',
@@ -172,14 +165,12 @@ class GetPreInstructions extends HyperfCommand
                                 'prep_guidance' => $asinPrepInstruction->getPrepGuidance()?->toString() ?? '',
                                 'prep_instructions' => $prep_instructions,
                             ];
-
                         }
                     }
                     var_dump($asin_prep_instructions);
 
                     break;
                 } catch (ApiException $e) {
-
                     --$retry;
                     if ($retry > 0) {
                         $console->warning(sprintf('merchant_id:%s merchant_store_id:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $retry));
@@ -194,6 +185,5 @@ class GetPreInstructions extends HyperfCommand
                 }
             }
         });
-
     }
 }

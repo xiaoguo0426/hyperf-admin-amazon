@@ -28,7 +28,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -55,8 +54,7 @@ class GetPreorderInfo extends HyperfCommand
      * @throws InvalidArgumentException
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {

@@ -27,7 +27,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
+
 use function Hyperf\Config\config;
 
 class AmazonGetReportDocumentQueue extends Queue
@@ -43,12 +43,10 @@ class AmazonGetReportDocumentQueue extends Queue
     }
 
     /**
-     * @param QueueDataInterface $queueData
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return bool
+     * @throws \RedisException
      */
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
@@ -58,7 +56,7 @@ class AmazonGetReportDocumentQueue extends Queue
         $merchant_id = $queueData->getMerchantId();
         $merchant_store_id = $queueData->getMerchantStoreId();
         $region = $queueData->getRegion();
-        $real_marketplace_ids = $queueData->getMarketplaceIds();
+        $real_marketplace_ids = $queueData->getMarketplaceIds(); // 报告数据包含的marketplace id集合
         $report_type = $queueData->getReportType();
         $report_document_id = $queueData->getReportDocumentId();
 
@@ -84,12 +82,12 @@ class AmazonGetReportDocumentQueue extends Queue
 
             $is_error_marketplace_id_flag = $instance->checkMarketplaceIds($real_marketplace_ids, $report_document_id);
 
-            //检查报告是否存在，如果存在立即推入队列即可，减少请求报告
+            // 检查报告是否存在，如果存在立即推入队列即可，减少请求报告
             $file_path_gz = $dir . $file_base_name . '.gz';
             $file_path = $dir . $file_base_name . '.txt';
 
             if (file_exists($file_path_gz)) {
-                //匿名函数处理gz压缩包,因为我不想再声明$handle_gz,$handle变量
+                // 匿名函数处理gz压缩包,因为我不想再声明$handle_gz,$handle变量
                 (static function () use ($file_path, $file_path_gz) {
                     $handle = fopen($file_path, 'wb');
 
@@ -97,14 +95,13 @@ class AmazonGetReportDocumentQueue extends Queue
                     $handle_gz = gzopen($file_path_gz, 'rb');
 
                     while (! gzeof($handle_gz)) {
-                        fwrite($handle, gzread($handle_gz, $buffer_size));//提取gz文件内容
+                        fwrite($handle, gzread($handle_gz, $buffer_size)); // 提取gz文件内容
                     }
 
                     gzclose($handle_gz);
                     fclose($handle);
                 })();
-
-            } else if (file_exists($file_path)) {
+            } elseif (file_exists($file_path)) {
                 $log = sprintf('Get Document 报告已存在，直接进入队列. report_type: %s  report_document_id: %s  file_path:%s merchant_id: %s merchant_store_id: %s', $report_type, $report_document_id, $file_path, $merchant_id, $merchant_store_id);
                 $console->highlight($log);
                 goto end;
@@ -137,17 +134,17 @@ class AmazonGetReportDocumentQueue extends Queue
 
                             gzclose($handle_gz);
                             fclose($handle);
-                            // 线上环境gz文件解压提取后需要删除
-                            //                        if (! app()->isDebug()) {
-                            //                        unlink($file_path_gz);
-                            //                        }
+                        // 线上环境gz文件解压提取后需要删除
+                        //                        if (! app()->isDebug()) {
+                        //                        unlink($file_path_gz);
+                        //                        }
                         } else {
                             // 下载并保存文件
                             file_put_contents($file_path, file_get_contents($document_url));
                         }
 
                         if ($is_error_marketplace_id_flag) {
-                            //如果有错误的marketplace_id，跳过处理.
+                            // 如果有错误的marketplace_id，跳过处理.
                             $log = sprintf('merchant_id:%s merchant_store_id:%s region:%s report_type:%s report_id:%s 报告存在多个市场，已跳过处理', $merchant_id, $merchant_store_id, $region, $report_type, $report_document_id);
                             $console->warning($log);
                             $logger->warning($log);

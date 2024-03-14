@@ -28,8 +28,8 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
+
 use function Hyperf\Support\make;
 
 #[Command]
@@ -51,8 +51,7 @@ class ListFinancialEventGroups extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -174,9 +173,8 @@ class ListFinancialEventGroups extends HyperfCommand
                             $collection->merchant_store_id = $merchant_store_id;
                             $collection->region = $region;
                             $collection->financial_event_group_id = $financial_event_group_id;
-
-                        } else if ($processing_status === AmazonConstants::FINANCE_GROUP_PROCESS_STATUS_CLOSED && $processing_status === $collection->processing_status) {
-                            //只有当前财务组的状态在API响应的数据中为Closed状态且数据库中也是Closed的状态，才不再需要拉取，其他的情况都需要进行拉取该财务组的数据
+                        } elseif ($processing_status === AmazonConstants::FINANCE_GROUP_PROCESS_STATUS_CLOSED && $processing_status === $collection->processing_status) {
+                            // 只有当前财务组的状态在API响应的数据中为Closed状态且数据库中也是Closed的状态，才不再需要拉取，其他的情况都需要进行拉取该财务组的数据
                             $can_queue = false;
                         }
 

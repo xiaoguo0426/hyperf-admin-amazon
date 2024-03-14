@@ -16,18 +16,15 @@ use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 use App\Util\Log\AmazonReportLog;
 use App\Util\RedisHash\AmazonReportMarkCanceledHash;
 use Carbon\Carbon;
-use DateTimeInterface;
 use Hyperf\Context\ApplicationContext;
-use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
+
 use function Hyperf\Config\config;
 use function Hyperf\Support\make;
 
 abstract class ReportBase implements ReportInterface
 {
-
     protected int $merchant_id;
 
     protected int $merchant_store_id;
@@ -46,7 +43,6 @@ abstract class ReportBase implements ReportInterface
 
     public function __construct(int $merchant_id, int $merchant_store_id, string $region, string $report_type)
     {
-
         $this->merchant_id = $merchant_id;
         $this->merchant_store_id = $merchant_store_id;
 
@@ -66,17 +62,12 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 处理报告内容
-     * @param ReportRunnerInterface $reportRunner
-     * @return bool
+     * 处理报告内容.
      */
     abstract public function run(ReportRunnerInterface $reportRunner): bool;
 
     /**
      * 构造报告请求报告参数(如果某些报告有特定参数，需要重写该方法).
-     * @param string $report_type
-     * @param array $marketplace_ids
-     * @return CreateReportSpecification
      */
     public function buildReportBody(string $report_type, array $marketplace_ids): CreateReportSpecification
     {
@@ -91,10 +82,7 @@ abstract class ReportBase implements ReportInterface
 
     /**
      * 请求报告(如果特定报告有时间分组请求，需要重写该方法，参考SalesAndTrafficReportCustom.php报告).
-     * @param array $marketplace_ids
-     * @param callable $func
      * @throws InvalidArgumentException
-     * @return void
      */
     public function requestReport(array $marketplace_ids, callable $func): void
     {
@@ -106,11 +94,7 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 报告名称
-     * @param array $marketplace_ids
-     * @param string $region
-     * @param string $report_id
-     * @return string
+     * 报告名称.
      */
     public function getReportFileName(array $marketplace_ids, string $region, string $report_id = ''): string
     {
@@ -118,10 +102,7 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 获得报告文件完整路径
-     * @param array $marketplace_ids
-     * @param string $region
-     * @return string
+     * 获得报告文件完整路径.
      */
     public function getReportFilePath(array $marketplace_ids, string $region): string
     {
@@ -129,10 +110,7 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 处理报告
-     * @param callable $func
-     * @param array $marketplace_ids
-     * @return void
+     * 处理报告.
      * @deprecated
      */
     public function processReport(callable $func, array $marketplace_ids): void
@@ -165,33 +143,22 @@ abstract class ReportBase implements ReportInterface
         return $this->header_map;
     }
 
-    /**
-     * @param string|null $date
-     * @return void
-     */
     public function setReportStartDate(?string $date): void
     {
         $this->report_start_date = $date ? new Carbon($date, 'UTC') : null;
     }
 
-    /**
-     * @return Carbon|null
-     */
-    public function getReportStartDate(): null|Carbon
+    public function getReportStartDate(): ?Carbon
     {
         return $this->report_start_date;
     }
 
-    /**
-     * @param string|null $date
-     * @return void
-     */
     public function setReportEndDate(?string $date): void
     {
         $this->report_end_date = $date ? new Carbon($date, 'UTC') : null;
     }
 
-    public function getReportEndDate(): null|Carbon
+    public function getReportEndDate(): ?Carbon
     {
         return $this->report_end_date;
     }
@@ -211,7 +178,6 @@ abstract class ReportBase implements ReportInterface
 
     /**
      * @throws InvalidArgumentException
-     * @return bool
      */
     public function checkDir(): bool
     {
@@ -239,9 +205,7 @@ abstract class ReportBase implements ReportInterface
 
     /**
      * 检查report_type属于哪个类型  requested|scheduled.
-     * @param string $report_type
      * @throws InvalidArgumentException
-     * @return string
      */
     public function checkReportTypeCategory(string $report_type): string
     {
@@ -257,10 +221,7 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 检查报告文件是否存在
-     * @param array $marketplace_ids
-     * @param string $region
-     * @return bool
+     * 检查报告文件是否存在.
      */
     public function checkReportFile(array $marketplace_ids, string $region): bool
     {
@@ -273,9 +234,7 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 检查Report内容
-     * @param string $file_path
-     * @return bool
+     * 检查Report内容.
      */
     public function checkReportContent(string $file_path): bool
     {
@@ -283,18 +242,13 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 标记报告删除
-     * @param string $report_type
-     * @param array $marketplace_ids
-     * @param DateTimeInterface|null $dataStartTime
-     * @param DateTimeInterface|null $dataEndTime
-     * @throws JsonException
-     * @throws RedisException
-     * @return bool
+     * 标记报告删除.
+     * @throws \JsonException
+     * @throws \RedisException
      */
-    public function markCanceled(string $report_type, array $marketplace_ids, ?DateTimeInterface $dataStartTime, ?DateTimeInterface $dataEndTime): bool
+    public function markCanceled(string $report_type, array $marketplace_ids, ?\DateTimeInterface $dataStartTime, ?\DateTimeInterface $dataEndTime): bool
     {
-        //被取消或被终止的报告需要被标记，今日内不再请求
+        // 被取消或被终止的报告需要被标记，今日内不再请求
         /**
          * @var AmazonReportMarkCanceledHash $amazonReportMarkCanceled
          */
@@ -303,9 +257,7 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 检查报告是否被标记删除
-     * @param array $marketplace_ids
-     * @return bool
+     * 检查报告是否被标记删除.
      */
     public function checkMarkCanceled(array $marketplace_ids): bool
     {
@@ -314,10 +266,7 @@ abstract class ReportBase implements ReportInterface
     }
 
     /**
-     * 是否检查报告是否存在多个市场的数据
-     * @param array $marketplace_ids
-     * @param string $report_id
-     * @return bool
+     * 是否检查报告是否存在多个市场的数据.
      */
     public function checkMarketplaceIds(array $marketplace_ids, string $report_id): bool
     {

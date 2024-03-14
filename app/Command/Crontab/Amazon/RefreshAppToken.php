@@ -23,6 +23,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Client\ClientExceptionInterface;
+
 use function Hyperf\Support\make;
 
 #[Command]
@@ -43,7 +44,6 @@ class RefreshAppToken extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @return void
      */
     public function handle(): void
     {
@@ -61,13 +61,12 @@ class RefreshAppToken extends HyperfCommand
                 return false;
             }
             foreach ($amazonAppRegionCollections as $amazonAppRegionCollection) {
-
                 $amazonAppCollection->setAttribute('region', $amazonAppRegionCollection->region);
                 $amazonAppCollection->setAttribute('country_ids', $amazonAppRegionCollection->country_codes);
                 $amazonAppCollection->setAttribute('refresh_token', $amazonAppRegionCollection->refresh_token);
-//                $amazonAppCollection->region = $amazonAppRegionCollection->region;
-//                $amazonAppCollection->country_ids = $amazonAppRegionCollection->country_codes;
-//                $amazonAppCollection->refresh_token = $amazonAppRegionCollection->refresh_token;
+                //                $amazonAppCollection->region = $amazonAppRegionCollection->region;
+                //                $amazonAppCollection->country_ids = $amazonAppRegionCollection->country_codes;
+                //                $amazonAppCollection->refresh_token = $amazonAppRegionCollection->refresh_token;
 
                 /**
                  * @var AmazonSDK $amazonSDK

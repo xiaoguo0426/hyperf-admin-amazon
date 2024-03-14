@@ -34,10 +34,6 @@ class OrderReportDataTaxReport extends ReportBase
         $this->setReportEndDate($end_time);
     }
 
-    /**
-     * @param ReportRunnerInterface $reportRunner
-     * @return bool
-     */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
         // TODO: Implement run() method.

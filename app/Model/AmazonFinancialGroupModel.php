@@ -36,9 +36,9 @@ namespace App\Model;
  */
 class AmazonFinancialGroupModel extends Model
 {
-    protected ?string $table = 'amazon_finance_group';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
+
+    protected ?string $table = 'amazon_finance_group';
 }

@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+
 namespace App\Util\Amazon\Engine;
 
 use AmazonPHP\SellingPartner\AccessToken;
@@ -13,29 +21,19 @@ use App\Util\AmazonSDK;
 use App\Util\Log\AmazonFulfillmentInboundGetShipmentsLog;
 use App\Util\RuntimeCalculator;
 use Carbon\Carbon;
-use DateTime;
-use DateTimeZone;
-use Exception;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class GetShipmentsEngine implements EngineInterface
 {
-
     /**
-     * @param AmazonSDK $amazonSDK
-     * @param SellingPartnerSDK $sdk
-     * @param AccessToken $accessToken
-     * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
-     * @throws JsonException
+     * @throws \JsonException
      * @throws NotFoundExceptionInterface
-     * @throws Exception
-     * @return bool
+     * @throws \Exception
      */
     public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
     {
@@ -53,11 +51,10 @@ class GetShipmentsEngine implements EngineInterface
         $last_updated_before = $creator->getLastUpdatedBefore();
 
         if (! is_null($last_updated_after)) {
-            $last_updated_after = (new DateTime($last_updated_after, new DateTimeZone('UTC')));
-
+            $last_updated_after = (new \DateTime($last_updated_after, new \DateTimeZone('UTC')));
         }
         if (! is_null($last_updated_before)) {
-            $last_updated_before = (new DateTime($last_updated_before, new DateTimeZone('UTC')));
+            $last_updated_before = (new \DateTime($last_updated_before, new \DateTimeZone('UTC')));
         }
 
         $next_token = null;

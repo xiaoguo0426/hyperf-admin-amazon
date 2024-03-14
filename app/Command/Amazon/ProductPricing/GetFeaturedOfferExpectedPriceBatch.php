@@ -14,7 +14,6 @@ use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
-use App\Util\Log\AmazonFbaInventoryLog;
 use App\Util\Log\AmazonProductPricingGetFeaturedOfferExpectedPriceBatchLog;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
@@ -47,19 +46,17 @@ class GetFeaturedOfferExpectedPriceBatch extends HyperfCommand
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $seller_skus = $this->input->getOption('seller_skus');
 
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($seller_skus) {
+        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
             $logger = ApplicationContext::getContainer()->get(AmazonProductPricingGetFeaturedOfferExpectedPriceBatchLog::class);
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
+            //            while (true) {
 
-//            while (true) {
+            //                try {
+            //                    $sdk->productPricing()->getPricing()
+            //                }
 
-//                try {
-//                    $sdk->productPricing()->getPricing()
-//                }
-
-//            }
+            //            }
         });
-
     }
 }

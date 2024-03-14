@@ -14,10 +14,6 @@ use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 
 class ReferralFeePreviewReport extends ReportBase
 {
-    /**
-     * @param ReportRunnerInterface $reportRunner
-     * @return bool
-     */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
         // TODO: Implement run() method.
@@ -25,11 +21,8 @@ class ReferralFeePreviewReport extends ReportBase
     }
 
     /**
-     * 请求报告
-     * @param array $marketplace_ids
-     * @param callable $func
+     * 请求报告.
      * @throws \Exception
-     * @return void
      */
     public function requestReport(array $marketplace_ids, callable $func): void
     {

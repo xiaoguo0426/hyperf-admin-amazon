@@ -1,26 +1,28 @@
 <?php
 
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+
 namespace App\Util\Amazon\Creator;
 
 class GetShipmentsCreator implements CreatorInterface
 {
-    /**
-     * @var string
-     */
     public string $query_type;
 
-    /**
-     * @var string
-     */
     public string $marketplace_id = '';
 
     /**
-     * @var string[] $shipment_status_list
+     * @var string[]
      */
     public array $shipment_status_list = [];
 
     /**
-     * @var string[]|null
+     * @var null|string[]
      */
     public ?array $shipment_id_list;
 
@@ -28,16 +30,12 @@ class GetShipmentsCreator implements CreatorInterface
 
     public ?string $last_updated_before;
 
-    /**
-     * @return string
-     */
     public function getQueryType(): string
     {
         return $this->query_type;
     }
 
     /**
-     * @param string $query_type
      * @return $this
      */
     public function setQueryType(string $query_type): GetShipmentsCreator
@@ -46,16 +44,12 @@ class GetShipmentsCreator implements CreatorInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getMarketplaceId(): string
     {
         return $this->marketplace_id;
     }
 
     /**
-     * @param string $marketplace_id
      * @return $this
      */
     public function setMarketplaceId(string $marketplace_id): GetShipmentsCreator
@@ -64,16 +58,12 @@ class GetShipmentsCreator implements CreatorInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getShipmentStatusList(): array
     {
         return $this->shipment_status_list;
     }
 
     /**
-     * @param array $shipment_status_list
      * @return $this
      */
     public function setShipmentStatusList(array $shipment_status_list): GetShipmentsCreator
@@ -83,7 +73,7 @@ class GetShipmentsCreator implements CreatorInterface
     }
 
     /**
-     * @return string[]|null
+     * @return null|string[]
      */
     public function getShipmentIdList(): ?array
     {
@@ -91,7 +81,7 @@ class GetShipmentsCreator implements CreatorInterface
     }
 
     /**
-     * @param string[]|null $shipment_id_list
+     * @param null|string[] $shipment_id_list
      * @return $this
      */
     public function setShipmentIdList(?array $shipment_id_list): GetShipmentsCreator
@@ -100,16 +90,12 @@ class GetShipmentsCreator implements CreatorInterface
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastUpdatedAfter(): ?string
     {
         return $this->last_updated_after;
     }
 
     /**
-     * @param string|null $last_updated_after
      * @return $this
      */
     public function setLastUpdatedAfter(?string $last_updated_after): GetShipmentsCreator
@@ -118,16 +104,12 @@ class GetShipmentsCreator implements CreatorInterface
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastUpdatedBefore(): ?string
     {
         return $this->last_updated_before;
     }
 
     /**
-     * @param string|null $last_updated_before
      * @return $this
      */
     public function setLastUpdatedBefore(?string $last_updated_before): GetShipmentsCreator

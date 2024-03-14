@@ -13,11 +13,9 @@ namespace App\Command\Amazon\Report;
 use App\Queue\AmazonGetReportQueue;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
-use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 
 #[Command]
 class ReportGet extends HyperfCommand
@@ -36,9 +34,8 @@ class ReportGet extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws JsonException
-     * @throws RedisException
-     * @return void
+     * @throws \JsonException
+     * @throws \RedisException
      */
     public function handle(): void
     {

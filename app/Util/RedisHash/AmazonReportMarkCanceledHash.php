@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace App\Util\RedisHash;
 
 use App\Util\Prefix;
-use DateTimeInterface;
 
 class AmazonReportMarkCanceledHash extends AbstractRedisHash
 {
@@ -22,15 +21,10 @@ class AmazonReportMarkCanceledHash extends AbstractRedisHash
     }
 
     /**
-     * @param string $report_type
-     * @param array $marketplace_ids
-     * @param \DateTimeInterface|null $dataStartTime
-     * @param \DateTimeInterface|null $dataEndTime
      * @throws \JsonException
      * @throws \RedisException
-     * @return bool
      */
-    public function mark(string $report_type, array $marketplace_ids, ?DateTimeInterface $dataStartTime, ?DateTimeInterface $dataEndTime): bool
+    public function mark(string $report_type, array $marketplace_ids, ?\DateTimeInterface $dataStartTime, ?\DateTimeInterface $dataEndTime): bool
     {
         $data_start_time = is_null($dataStartTime) ? '' : $dataStartTime->format('YmdHis');
         $data_end_time = is_null($dataEndTime) ? '' : $dataEndTime->format('YmdHis');
@@ -38,21 +32,16 @@ class AmazonReportMarkCanceledHash extends AbstractRedisHash
         $hash_key = sprintf('type:%s-marketplace_ids:%s-time:%s+%s', $report_type, implode(',', $marketplace_ids), $data_start_time, $data_end_time);
 
         $set = $this->setAttr($hash_key, 1);
-        $this->ttl(strtotime(date('Y-m-d 23:59:59')) - time() + 7200);//设置key有效期
+        $this->ttl(strtotime(date('Y-m-d 23:59:59')) - time() + 7200); // 设置key有效期
 
         return $set;
     }
 
     /**
-     * @param string $report_type
-     * @param array $marketplace_ids
-     * @param \DateTimeInterface|null $dataStartTime
-     * @param \DateTimeInterface|null $dataEndTime
      * @throws \JsonException
      * @throws \RedisException
-     * @return bool
      */
-    public function check(string $report_type, array $marketplace_ids, ?DateTimeInterface $dataStartTime, ?DateTimeInterface $dataEndTime): bool
+    public function check(string $report_type, array $marketplace_ids, ?\DateTimeInterface $dataStartTime, ?\DateTimeInterface $dataEndTime): bool
     {
         $data_start_time = is_null($dataStartTime) ? '' : $dataStartTime->format('YmdHis');
         $data_end_time = is_null($dataEndTime) ? '' : $dataEndTime->format('YmdHis');

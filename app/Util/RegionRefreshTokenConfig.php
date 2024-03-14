@@ -55,9 +55,7 @@ class RegionRefreshTokenConfig implements \JsonSerializable
     }
 
     /**
-     * @param mixed $json
      * @throws \JsonException
-     * @return RegionRefreshTokenConfig
      */
     public static function fromJson(mixed $json): RegionRefreshTokenConfig
     {

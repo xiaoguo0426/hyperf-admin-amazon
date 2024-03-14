@@ -31,7 +31,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -55,8 +54,7 @@ class GetOrderMetricsAsin extends HyperfCommand
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws NotFoundException
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -133,12 +131,12 @@ class GetOrderMetricsAsin extends HyperfCommand
                                     continue;
                                 }
 
-//                                $model->merchant_id = $merchant_id;
-//                                $model->merchant_store_id = $merchant_store_id;
-//                                $model->marketplace_id = $marketplace_id;
-//                                $model->asin = $asin;
-//                                $model->interval_type = $granularity;
-//                                $model->interval = $interval_new;
+                                //                                $model->merchant_id = $merchant_id;
+                                //                                $model->merchant_store_id = $merchant_store_id;
+                                //                                $model->marketplace_id = $marketplace_id;
+                                //                                $model->asin = $asin;
+                                //                                $model->interval_type = $granularity;
+                                //                                $model->interval = $interval_new;
                                 $model->unit_count = $orderMetricsInterval->getUnitCount();
                                 $model->order_count = $orderMetricsInterval->getOrderCount();
                                 $model->order_item_count = $orderMetricsInterval->getOrderItemCount();

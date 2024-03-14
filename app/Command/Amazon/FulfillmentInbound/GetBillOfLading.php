@@ -26,7 +26,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -52,8 +51,7 @@ class GetBillOfLading extends HyperfCommand
      * @throws ContainerExceptionInterface
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -63,7 +61,6 @@ class GetBillOfLading extends HyperfCommand
         $shipment_id = $this->input->getArgument('shipment_id');
 
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($shipment_id) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGetLabelsLog::class);
 
@@ -104,7 +101,7 @@ class GetBillOfLading extends HyperfCommand
                         $console->warning(sprintf('merchant_id:%s merchant_store_id:%s shipment_id:%s API响应 payload为空', $merchant_id, $merchant_store_id, $shipment_id));
                         continue;
                     }
-                    //download_url只有15秒的有效期
+                    // download_url只有15秒的有效期
                     $download_url = $billOfLadingDownloadURL->getDownloadUrl();
 
                     $console->info(sprintf('merchant_id:%s merchant_store_id:%s shipment_id:%s url:%s', $merchant_id, $merchant_store_id, $shipment_id, $download_url));
@@ -124,6 +121,5 @@ class GetBillOfLading extends HyperfCommand
             }
             return true;
         });
-
     }
 }

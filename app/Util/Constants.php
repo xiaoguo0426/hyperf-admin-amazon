@@ -19,29 +19,51 @@ class Constants
     public const NO = 0;
 
     public const CURRENCY_CNY = 'CNY';
+
     public const CURRENCY_CNY_SYMBOL = '￥';
+
     public const CURRENCY_HKD = 'HKD';
+
     public const CURRENCY_HKD_SYMBOL = 'HK$';
+
     public const CURRENCY_USD = 'USD';
+
     public const CURRENCY_USD_SYMBOL = '$';
+
     public const CURRENCY_CAD = 'CAD';
+
     public const CURRENCY_CAD_SYMBOL = 'C$';
+
     public const CURRENCY_EUR = 'EUR';
+
     public const CURRENCY_EUR_SYMBOL = '€';
+
     public const CURRENCY_SGD = 'SGD';
+
     public const CURRENCY_SGD_SYMBOL = 'S$';
+
     public const CURRENCY_MXN = 'MXN';
+
     public const CURRENCY_MXN_SYMBOL = 'MXN';
+
     public const CURRENCY_GBP = 'GBP';
+
     public const CURRENCY_GBP_SYMBOL = '￡';
 
     public const COUNTRY_US = 'US';
+
     public const COUNTRY_CA = 'CA';
+
     public const COUNTRY_MX = 'MX';
+
     public const COUNTRY_GB = 'GB';
+
     public const COUNTRY_DE = 'DE';
+
     public const COUNTRY_IT = 'IT';
+
     public const COUNTRY_FR = 'FR';
+
     public const COUNTRY_ES = 'ES';
 
     public const CURRENCY_MAP = [

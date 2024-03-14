@@ -21,10 +21,8 @@ class AmazonInventoryFnSkuToSkuMapHash extends AbstractRedisHash
     }
 
     /**
-     * @param string $fn_sku
      * @throws \JsonException
      * @throws \RedisException
-     * @return string|null
      */
     public function getSellerSkuByFnSku(string $fn_sku): ?string
     {
@@ -32,11 +30,8 @@ class AmazonInventoryFnSkuToSkuMapHash extends AbstractRedisHash
     }
 
     /**
-     * @param string $fn_sku
-     * @param string $seller_sku
      * @throws \JsonException
      * @throws \RedisException
-     * @return bool
      */
     public function setSellerSkuByFnSku(string $fn_sku, string $seller_sku): bool
     {
@@ -47,5 +42,4 @@ class AmazonInventoryFnSkuToSkuMapHash extends AbstractRedisHash
     {
         return sprintf('fn_sku:%s', $fn_sku);
     }
-
 }

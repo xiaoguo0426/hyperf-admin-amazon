@@ -131,7 +131,7 @@ class GetPricing extends HyperfCommand
                         if (! is_null($competitivePricingType)) {
                             $competitivePriceList = $competitivePricingType->getCompetitivePrices();
                             foreach ($competitivePriceList as $competitivePriceItem) {
-                                $competitivePriceItem->getCompetitivePriceId();//定价模型    1 - New Buy Box Price.  2 - Used Buy Box Price.
+                                $competitivePriceItem->getCompetitivePriceId(); // 定价模型    1 - New Buy Box Price.  2 - Used Buy Box Price.
                                 $priceType = $competitivePriceItem->getPrice();
 
                                 $landedPrice = $priceType->getLandedPrice();
@@ -139,23 +139,23 @@ class GetPricing extends HyperfCommand
                                 if (! is_null($landedPrice)) {
                                     $landed_price = [
                                         'currency_code' => $landedPrice->getCurrencyCode() ?? '',
-                                        'amount' => $landedPrice->getAmount() ?? 0.00
+                                        'amount' => $landedPrice->getAmount() ?? 0.00,
                                     ];
                                 }
                                 $listingPrice = $priceType->getListingPrice();
-//                                $listing_price = [];
-//                                if (! is_null($listingPrice)) {
+                                //                                $listing_price = [];
+                                //                                if (! is_null($listingPrice)) {
                                 $listing_price = [
                                     'currency_code' => $listingPrice->getCurrencyCode() ?? '',
-                                    'amount' => $listingPrice->getAmount() ?? 0.00
+                                    'amount' => $listingPrice->getAmount() ?? 0.00,
                                 ];
-//                                }
+                                //                                }
                                 $shippingPrice = $priceType->getShipping();
                                 $shipping_price = [];
                                 if (! is_null($shippingPrice)) {
                                     $shipping_price = [
                                         'currency_code' => $shippingPrice->getCurrencyCode() ?? '',
-                                        'amount' => $shippingPrice->getAmount() ?? 0.00
+                                        'amount' => $shippingPrice->getAmount() ?? 0.00,
                                     ];
                                 }
                                 $points = $priceType->getPoints();
@@ -166,7 +166,7 @@ class GetPricing extends HyperfCommand
                                     if (! is_null($pointsMonetaryValue)) {
                                         $points_monetary_value = [
                                             'currency_code' => $pointsMonetaryValue->getCurrencyCode() ?? '',
-                                            'amount' => $pointsMonetaryValue->getAmount() ?? 0.00
+                                            'amount' => $pointsMonetaryValue->getAmount() ?? 0.00,
                                         ];
                                     }
                                 }
@@ -186,7 +186,6 @@ class GetPricing extends HyperfCommand
                                 }
                                 $seller_id = $competitivePriceItem->getSellerId();
                                 $belongs_to_requester = $competitivePriceItem->getBelongsToRequester() ?? false;
-
                             }
                             $competitivePricingType->getNumberOfOfferListings();
                             $competitivePricingType->getTradeInValue();
@@ -198,7 +197,7 @@ class GetPricing extends HyperfCommand
                             foreach ($salesRankList as $salesRankItem) {
                                 $sales_ranking_list[] = [
                                     'product_category_id' => $salesRankItem->getProductCategoryId(),
-                                    'rank' => $salesRankItem->getRank()
+                                    'rank' => $salesRankItem->getRank(),
                                 ];
                             }
                         }
@@ -218,7 +217,6 @@ class GetPricing extends HyperfCommand
                                 $offer->getSellerSku();
                             }
                         }
-
                     }
 
                     break;
@@ -252,10 +250,7 @@ class GetPricing extends HyperfCommand
                     ]);
                     break;
                 }
-
             }
-
         });
-
     }
 }

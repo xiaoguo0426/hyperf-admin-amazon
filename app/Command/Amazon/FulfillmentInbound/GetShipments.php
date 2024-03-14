@@ -22,9 +22,9 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+
 use function Hyperf\Support\make;
 
 #[Command]
@@ -51,8 +51,7 @@ class GetShipments extends HyperfCommand
      * @throws ContainerExceptionInterface
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -64,7 +63,6 @@ class GetShipments extends HyperfCommand
         $last_updated_before = $this->input->getOption('last_updated_before');
 
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($shipment_ids, $last_updated_after, $last_updated_before) {
-
             $shipment_status_list = [
                 'WORKING',
                 'READY_TO_SHIP',
@@ -80,20 +78,20 @@ class GetShipments extends HyperfCommand
             ];
 
             if (count($shipment_ids) > 0) {
-                //如果指定shipment_id，则不能指定marketplace_id,last_updated_after,last_updated_before
+                // 如果指定shipment_id，则不能指定marketplace_id,last_updated_after,last_updated_before
                 $query_type = 'SHIPMENT';
-                //TODO 优化 检查shipment_ids是否存在
+                // TODO 优化 检查shipment_ids是否存在
                 $getShipmentsCreator = new GetShipmentsCreator();
                 $getShipmentsCreator->setQueryType($query_type);
-                $getShipmentsCreator->setMarketplaceId('');//如果指定shipment_id，则不能指定marketplace_id
+                $getShipmentsCreator->setMarketplaceId(''); // 如果指定shipment_id，则不能指定marketplace_id
                 $getShipmentsCreator->setShipmentStatusList($shipment_status_list);
                 $getShipmentsCreator->setShipmentIdList($shipment_ids);
-                $getShipmentsCreator->setLastUpdatedAfter(NULL);
-                $getShipmentsCreator->setLastUpdatedBefore(NULL);
+                $getShipmentsCreator->setLastUpdatedAfter(null);
+                $getShipmentsCreator->setLastUpdatedBefore(null);
 
                 make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
-            } else if (! is_null($last_updated_after) || ! is_null($last_updated_before)) {
-                //如果指定last_updated_after,last_updated_before,则不能指定marketplace_id,shipment_id
+            } elseif (! is_null($last_updated_after) || ! is_null($last_updated_before)) {
+                // 如果指定last_updated_after,last_updated_before,则不能指定marketplace_id,shipment_id
                 $query_type = 'DATE_RANGE';
                 $getShipmentsCreator = new GetShipmentsCreator();
                 $getShipmentsCreator->setQueryType($query_type);
@@ -112,8 +110,8 @@ class GetShipments extends HyperfCommand
                     $getShipmentsCreator->setMarketplaceId($marketplace_id);
                     $getShipmentsCreator->setShipmentStatusList($shipment_status_list);
                     $getShipmentsCreator->setShipmentIdList([]);
-                    $getShipmentsCreator->setLastUpdatedAfter(NULL);
-                    $getShipmentsCreator->setLastUpdatedBefore(NULL);
+                    $getShipmentsCreator->setLastUpdatedAfter(null);
+                    $getShipmentsCreator->setLastUpdatedBefore(null);
 
                     make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
                 }

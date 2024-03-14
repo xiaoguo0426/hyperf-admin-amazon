@@ -122,7 +122,7 @@ function is_running(string $pidFile): bool
     $pid = file_get_contents($pidFile);
     try {
         return SwooleProcess::kill((int) $pid, 0);
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         return false;
     }
 }

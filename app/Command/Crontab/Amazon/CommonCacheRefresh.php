@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+/**
+ *
+ * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+
 namespace App\Command\Crontab\Amazon;
 
 use App\Model\AmazonAppModel;
@@ -8,9 +16,8 @@ use App\Util\AmazonApp;
 use App\Util\RedisHash\AmazonInventoryFnSkuToSkuMapHash;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
-use JsonException;
 use Psr\Container\ContainerInterface;
-use RedisException;
+
 use function Hyperf\Support\make;
 
 #[Command]
@@ -23,9 +30,6 @@ class CommonCacheRefresh extends HyperfCommand
         $this->setDescription('Crontab Amazon Common Cache Refresh Command');
     }
 
-    /**
-     * @return void
-     */
     public function handle(): void
     {
         AmazonApp::single(static function (AmazonAppModel $amazonAppCollection) {
@@ -48,7 +52,7 @@ class CommonCacheRefresh extends HyperfCommand
             foreach ($fnSkuMapCollections as $fn_sku => $seller_sku) {
                 try {
                     $hash->setSellerSkuByFnSku($fn_sku, $seller_sku);
-                } catch (JsonException|RedisException $e) {
+                } catch (\JsonException|\RedisException $e) {
                 }
             }
 

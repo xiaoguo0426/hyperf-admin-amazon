@@ -45,7 +45,7 @@ class DbQueryExecutedListener implements ListenerInterface
                     if ($position === false) {
                         break;
                     }
-                    if (is_int($value)) {
+                    if (is_numeric($value)) {
                         $val = (string) $value;
                     } elseif (is_string($value)) {
                         $val = "'{$value}'";

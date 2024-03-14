@@ -36,7 +36,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
-use function Hyperf\Support\make;
 
 #[Command]
 class GetMyFeesEstimateForSKU extends HyperfCommand
@@ -67,7 +66,6 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws \RedisException
-     * @return void
      */
     public function handle(): void
     {
@@ -89,7 +87,7 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonOrdersLog::class);
 
-            if (Regions::EUROPE === $region) {
+            if ($region === Regions::EUROPE) {
                 $country_codes = [
                     Marketplace::ES()->countryCode(),
                     Marketplace::GB()->countryCode(),
@@ -107,7 +105,7 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
                     Marketplace::IN()->countryCode(),
                 ];
                 $default_country_code = 'GB';
-            } else if (Regions::NORTH_AMERICA === $region) {
+            } elseif ($region === Regions::NORTH_AMERICA) {
                 $country_codes = [
                     Marketplace::CA()->countryCode(),
                     Marketplace::US()->countryCode(),
@@ -145,31 +143,35 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
                 '费用估算所依据的产品价格 -- 价格 >> '
             ));
             $listing_price_amount_currency_code = $helper->ask($input, $output, new Question(
-                '费用估算所依据的产品价格 -- 价格的货币 默认USD >> ', 'USD'
+                '费用估算所依据的产品价格 -- 价格的货币 默认USD >> ',
+                'USD'
             ));
 
             $shipping_code_amount = $helper->ask($input, $output, new Question(
                 '费用估算所依据的产品价格 -- 运费 >> '
             ));
             $shipping_code_amount_currency_code = $helper->ask($input, $output, new Question(
-                '费用估算所依据的产品价格 -- 运费的货币 默认USD >> ', 'USD'
+                '费用估算所依据的产品价格 -- 运费的货币 默认USD >> ',
+                'USD'
             ));
 
             $points_number = $helper->ask($input, $output, new Question(
-                '购买商品时提供的亚马逊积分数 -- 积分 >> ', 0
+                '购买商品时提供的亚马逊积分数 -- 积分 >> ',
+                0
             ));
             $points_monetary_value_amount = $helper->ask($input, $output, new Question(
-                '购买商品时提供的亚马逊积分数 -- 积分价值 >> ', 0
+                '购买商品时提供的亚马逊积分数 -- 积分价值 >> ',
+                0
             ));
             $points_monetary_value_amount_currency_code = $helper->ask($input, $output, new Question(
-                '购买商品时提供的亚马逊积分数 -- 积分价值的货币 默认USD >> ', 'USD'
+                '购买商品时提供的亚马逊积分数 -- 积分价值的货币 默认USD >> ',
+                'USD'
             ));
 
             $retry = 30;
-            //https://developer-docs.amazon.com/sp-api/docs/product-fees-api-v0-reference#getmyfeesestimateforsku
+            // https://developer-docs.amazon.com/sp-api/docs/product-fees-api-v0-reference#getmyfeesestimateforsku
             while (true) {
                 try {
-
                     $body = new GetMyFeesEstimateRequest();
                     $feesEstimateRequest = new FeesEstimateRequest();
 
@@ -204,7 +206,7 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
 
                     $feesEstimateRequest->setPriceToEstimateFees($price_to_estimate_fees);
                     $feesEstimateRequest->setIdentifier($identifier);
-//                    $feesEstimateRequest->setOptionalFulfillmentProgram();
+                    //                    $feesEstimateRequest->setOptionalFulfillmentProgram();
 
                     $body->setFeesEstimateRequest($feesEstimateRequest);
 
@@ -260,7 +262,6 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
                     break;
                 }
             }
-
 
             return true;
         });

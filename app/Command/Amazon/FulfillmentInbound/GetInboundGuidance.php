@@ -26,7 +26,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -54,21 +53,19 @@ class GetInboundGuidance extends HyperfCommand
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $marketplace_id = $this->input->getArgument('marketplace_id');
-        $seller_sku_list = $this->input->getOption('seller_sku_list');//--seller_sku_list=foo --seller_sku_list=bar
-        $asin_list = $this->input->getOption('asin_list');//--asin_list=foo --asin_list=bar
+        $seller_sku_list = $this->input->getOption('seller_sku_list'); // --seller_sku_list=foo --seller_sku_list=bar
+        $asin_list = $this->input->getOption('asin_list'); // --asin_list=foo --asin_list=bar
 
         $region = Marketplace::fromId($marketplace_id)->region();
 
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($marketplace_id, $seller_sku_list, $asin_list) {
-
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGuidanceLog::class);
 
@@ -150,7 +147,6 @@ class GetInboundGuidance extends HyperfCommand
 
                     break;
                 } catch (ApiException $e) {
-
                     --$retry;
                     if ($retry > 0) {
                         $console->warning(sprintf('merchant_id:%s merchant_store_id:%s 第 %s 次重试', $merchant_id, $merchant_store_id, $retry));

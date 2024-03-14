@@ -43,9 +43,9 @@ namespace App\Model;
  */
 class AmazonSettlementReportDataFlatFileV2Model extends Model
 {
-    protected ?string $table = 'amazon_report_settlement_report_data_flat_file_v2';
-
     public const CREATED_AT = 'created_at';
 
     public const UPDATED_AT = 'updated_at';
+
+    protected ?string $table = 'amazon_report_settlement_report_data_flat_file_v2';
 }

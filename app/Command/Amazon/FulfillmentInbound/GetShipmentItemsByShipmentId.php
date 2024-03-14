@@ -30,7 +30,6 @@ use Hyperf\Database\Model\ModelNotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -54,8 +53,7 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -143,15 +141,14 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                             'prep_details_list' => json_encode($pre_details_list, JSON_THROW_ON_ERROR),
                             'created_at' => $now,
                         ]);
-
                     }
 
-                    //API 接口没办法传递next_token,直接break就好. 否则会无线循环下去
-//                    $next_token = $payload->getNextToken();
-//
-//                    if (is_null($next_token)) {
-//                        break;
-//                    }
+                    // API 接口没办法传递next_token,直接break就好. 否则会无线循环下去
+                    //                    $next_token = $payload->getNextToken();
+                    //
+                    //                    if (is_null($next_token)) {
+                    //                        break;
+                    //                    }
                     break;
                 } catch (ApiException $e) {
                     if (! is_null($e->getResponseBody())) {
@@ -188,7 +185,6 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
             $new_count = 0;
             $update_count = 0;
             $collections->each(function ($collection) use ($merchant_id, $merchant_store_id, &$new_count, &$update_count) {
-
                 $shipment_id = $collection['shipment_id'];
                 $seller_sku = $collection['seller_sku'];
                 $fulfillment_network_sku = $collection['fulfillment_network_sku'];
@@ -206,7 +202,7 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                         ->where('seller_sku', $seller_sku)
                         ->firstOrFail();
 
-                    $update_count++;
+                    ++$update_count;
                 } catch (ModelNotFoundException) {
                     $detailCollection = new AmazonShipmentItemsModel();
                     $detailCollection->merchant_id = $merchant_id;
@@ -214,7 +210,7 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                     $detailCollection->shipment_id = $shipment_id;
                     $detailCollection->seller_sku = $seller_sku;
                     $detailCollection->fulfillment_network_sku = $fulfillment_network_sku;
-                    $new_count++;
+                    ++$new_count;
                 }
 
                 $detailCollection->quantity_shipped = $quantity_shipped;
@@ -224,7 +220,6 @@ class GetShipmentItemsByShipmentId extends HyperfCommand
                 $detailCollection->prep_details_list = json_encode($prep_details_list, JSON_THROW_ON_ERROR);
 
                 $detailCollection->save();
-
             });
 
             $console->notice(sprintf('FulfillmentInbound getShipmentItemsByShipmentId shipment_id:%s merchant_id:%s merchant_store_id:%s 完成处理. 更新:%s 新增:%s', $shipment_id, $merchant_id, $merchant_store_id, $update_count, $new_count));

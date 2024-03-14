@@ -27,9 +27,7 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 
 #[Command]
 class GetMessagingActionsForOrder extends HyperfCommand
@@ -53,8 +51,7 @@ class GetMessagingActionsForOrder extends HyperfCommand
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
-     * @return void
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -73,7 +70,7 @@ class GetMessagingActionsForOrder extends HyperfCommand
 
             $retry = 30;
 
-            //查询订单的marketplace_id
+            // 查询订单的marketplace_id
             try {
                 $amazonOrderCollection = AmazonOrderModel::query()->where('merchant_id', $merchant_id)
                     ->where('merchant_store_id', $merchant_store_id)
@@ -116,7 +113,6 @@ class GetMessagingActionsForOrder extends HyperfCommand
                             var_dump($action);
                         }
                     }
-
 
                     break;
                 } catch (ApiException $e) {
