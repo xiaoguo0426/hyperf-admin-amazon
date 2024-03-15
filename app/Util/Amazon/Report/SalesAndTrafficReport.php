@@ -183,14 +183,14 @@ class SalesAndTrafficReport extends ReportBase
 
             if (is_null($model)) {
                 $model = new AmazonReportSalesAndTrafficByAsinModel();
+                $model->merchant_id = $merchant_id;
+                $model->merchant_store_id = $merchant_store_id;
+                $model->marketplace_id = $marketplace_id;
+                $model->data_time = $data_time;
+                $model->parent_asin = $parentAsin;
+                $model->child_asin = $childAsin;
             }
 
-            $model->merchant_id = $merchant_id;
-            $model->merchant_store_id = $merchant_store_id;
-            $model->marketplace_id = $marketplace_id;
-            $model->data_time = $data_time;
-            $model->parent_asin = $parentAsin;
-            $model->child_asin = $childAsin;
             $model->units_ordered = $unitsOrdered;
             $model->units_ordered_b2b = $unitsOrderedB2B;
             $model->ordered_product_sales_amount = $orderedProductSalesAmount;
@@ -330,12 +330,12 @@ class SalesAndTrafficReport extends ReportBase
                 ->first();
             if (is_null($model)) {
                 $model = new AmazonReportSalesAndTrafficByDateModel();
+                $model->merchant_id = $merchant_id;
+                $model->merchant_store_id = $merchant_store_id;
+                $model->marketplace_id = $marketplace_id;
+                $model->data_time = $data_time;
             }
 
-            $model->merchant_id = $merchant_id;
-            $model->merchant_store_id = $merchant_store_id;
-            $model->marketplace_id = $marketplace_id;
-            $model->data_time = $data_time;
             $model->ordered_product_sales_amount = $orderedProductSalesAmount;
             $model->ordered_product_sales_currency_code = $orderedProductSalesCurrencyCode;
             $model->ordered_product_sales_b2b_amount = $orderedProductSalesB2BAmount;
