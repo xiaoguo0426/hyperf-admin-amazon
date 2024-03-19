@@ -114,6 +114,8 @@ class ReportCreate extends HyperfCommand
     }
 
     /**
+     * @param ?string $report_start_date
+     * @param ?string $report_end_date
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws NotFoundException
