@@ -27,6 +27,7 @@ use Carbon\Carbon;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
+use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -113,10 +114,9 @@ class ReportCreate extends HyperfCommand
     }
 
     /**
-     * @param ?string $report_start_date
-     * @param ?string $report_end_date
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws NotFoundException
      * @throws \RedisException
      */
     private function fly(int $merchant_id, int $merchant_store_id, string $report_type, ?string $report_start_date, ?string $report_end_date, string $is_force_create): void
@@ -169,7 +169,7 @@ class ReportCreate extends HyperfCommand
 
                 // 需要创建的报告类型再次检测是否被标记了删除，如果已被标记，则不再创建
                 if ($instance->checkMarkCanceled($marketplace_ids)) {
-                    $log = sprintf('Create Report Notice. %s 类型报告文件被标注删除，不需要重复创建. merchant_id: %s merchant_store_id: %s region:%s marketplace_ids:%s data_start_time:%s data_end_time:%s ', $report_type, $merchant_id, $merchant_store_id, $region, implode(',', $marketplace_ids), is_null($body->getDataStartTime()) ? '' : $body->getDataStartTime()->format('Y-m-d H:i:s'), is_null($body->getDataEndTime()) ? '' : $body->getDataEndTime()->format('Y-m-d H:i:s'));
+                    $log = sprintf('Create Report Notice. %s 类型报告文件被标注删除，不需要重复创建. merchant_id: %s merchant_store_id: %s region:%s marketplace_ids:%s data_start_time:%s data_end_time:%s ', $report_type, $merchant_id, $merchant_store_id, $region, implode(',', $marketplace_ids), is_null($body->getDataStartTime()) ? '' : $body->getDataStartTime()?->format('Y-m-d H:i:s'), is_null($body->getDataEndTime()) ? '' : $body->getDataEndTime()?->format('Y-m-d H:i:s'));
                     $console->comment($log);
                     $logger->notice($log);
                     return true;
@@ -243,8 +243,8 @@ class ReportCreate extends HyperfCommand
                         $logger->error(sprintf('ApiException %s 创建报告出错 merchant_id: %s merchant_store_id: %s region:%s', $report_type, $merchant_id, $merchant_store_id, $region), [
                             'message' => $e->getMessage(),
                             'response body' => $e->getResponseBody(),
-                            'data_start_time' => $body->getDataStartTime(),
-                            'data_end_time' => $body->getDataEndTime(),
+                            'data_start_time' => $body->getDataStartTime()?->format('Y-m-d H:i:s'),
+                            'data_end_time' => $body->getDataEndTime()?->format('Y-m-d H:i:s'),
                         ]);
                         break;
                     } catch (InvalidArgumentException $e) {

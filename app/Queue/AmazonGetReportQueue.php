@@ -44,8 +44,8 @@ class AmazonGetReportQueue extends Queue
     }
 
     /**
-     * @throws NotFoundException
      * @throws ContainerExceptionInterface
+     * @throws NotFoundException
      * @throws NotFoundExceptionInterface
      * @throws \RedisException
      */

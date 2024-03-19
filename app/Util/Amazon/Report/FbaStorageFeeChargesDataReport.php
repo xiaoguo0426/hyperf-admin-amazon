@@ -10,14 +10,12 @@ declare(strict_types=1);
 
 namespace App\Util\Amazon\Report;
 
+use App\Model\AmazonInventoryModel;
 use App\Model\AmazonReportFbaStorageFeeChargesDataModel;
 use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
 use App\Util\Amazon\Report\Runner\RequestedReportRunner;
-use App\Util\RedisHash\AmazonInventoryFnSkuToSkuMapHash;
 use Carbon\Carbon;
 use Hyperf\Database\Model\ModelNotFoundException;
-
-use function Hyperf\Support\make;
 
 class FbaStorageFeeChargesDataReport extends ReportBase
 {
@@ -39,7 +37,9 @@ class FbaStorageFeeChargesDataReport extends ReportBase
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
-        $config = $this->getHeaderMap();
+        $region = $this->region;
+        $config_all = $this->getHeaderMap();
+        $config = $config_all[$region];
 
         $merchant_id = $this->getMerchantId();
         $merchant_store_id = $this->getMerchantStoreId();
@@ -92,10 +92,6 @@ class FbaStorageFeeChargesDataReport extends ReportBase
             }
         }
         fclose($handle);
-        /**
-         * @var AmazonInventoryFnSkuToSkuMapHash $hash
-         */
-        $hash = make(AmazonInventoryFnSkuToSkuMapHash::class, [$merchant_id, $merchant_store_id]);
 
         foreach ($data as $item) {
             $merchant_id = $item['merchant_id'];
@@ -110,10 +106,6 @@ class FbaStorageFeeChargesDataReport extends ReportBase
             $md5_hash = $item['md5_hash'];
 
             $seller_sku = '';
-            try {
-                $seller_sku = $hash->getSellerSkuByFnSku($fn_sku) ?? '';
-            } catch (\JsonException|\RedisException $e) {
-            }
 
             try {
                 $collection = AmazonReportFbaStorageFeeChargesDataModel::query()
@@ -121,14 +113,14 @@ class FbaStorageFeeChargesDataReport extends ReportBase
                     ->where('merchant_store_id', $merchant_store_id)
                     ->where('md5_hash', $md5_hash)
                     ->firstOrFail();
-            } catch (ModelNotFoundException $modelNotFoundException) {
+            } catch (ModelNotFoundException) {
                 $collection = new AmazonReportFbaStorageFeeChargesDataModel();
                 $collection->merchant_id = $merchant_id;
                 $collection->merchant_store_id = $merchant_store_id;
                 $collection->month_of_charge = $month_of_charge;
                 $collection->asin = $asin;
                 $collection->seller_sku = $seller_sku;
-                $collection->fnsku = $item['fnsku'];
+                $collection->fnsku = $fn_sku;
                 $collection->fulfillment_center = $fulfillment_center;
                 $collection->country_code = $country_code;
             }
@@ -161,6 +153,32 @@ class FbaStorageFeeChargesDataReport extends ReportBase
             $collection->md5_hash = $md5_hash;
 
             $collection->save();
+        }
+
+        $amazonReportFbaStorageFeeChargesDataCollections = AmazonReportFbaStorageFeeChargesDataModel::query()
+            ->where('merchant_id', $merchant_id)
+            ->where('merchant_store_id', $merchant_store_id)
+            ->where('region', $region)
+            ->where('seller_sku', '=', '')
+            ->select();
+        foreach ($amazonReportFbaStorageFeeChargesDataCollections as $amazonReportFbaStorageFeeChargesDataCollection) {
+            $asin = $amazonReportFbaStorageFeeChargesDataCollection->asin;
+            $fn_sku = $amazonReportFbaStorageFeeChargesDataCollection->fnsku;
+
+            try {
+                $amazonInventoryCollection = AmazonInventoryModel::query()
+                    ->where('merchant_id', $merchant_id)
+                    ->where('merchant_store_id', $merchant_store_id)
+                    ->where('region', $region)
+                    ->where('asin', $asin)
+                    ->where('fn_sku', $fn_sku)
+                    ->firstOrFail();
+            } catch (ModelNotFoundException) {
+                continue;
+            }
+
+            $amazonReportFbaStorageFeeChargesDataCollection->seller_sku = $amazonInventoryCollection->seller_sku;
+            $amazonReportFbaStorageFeeChargesDataCollection->save();
         }
 
         return true;

@@ -26,7 +26,7 @@ class ShipmentEventList extends FinanceBase
             $seller_order_id = $financialEvent->getSellerOrderId() ?? '';
             $marketplace_name = $financialEvent->getMarketplaceName() ?? '';
 
-            $orderChargeList = $financialEvent->getOrderChargeList();
+            $orderChargeList = $financialEvent->getOrderChargeList(); // 订单级费用列表。这些费用适用于多通道履约COD订单。
             $order_charge_list = [];
             if (! is_null($orderChargeList)) {
                 foreach ($orderChargeList as $orderChargeItem) {
@@ -48,7 +48,7 @@ class ShipmentEventList extends FinanceBase
                 }
             }
 
-            $orderChargeAdjustmentList = $financialEvent->getOrderChargeAdjustmentList();
+            $orderChargeAdjustmentList = $financialEvent->getOrderChargeAdjustmentList(); // 订单级别费用调整列表。这些调整适用于多通道履约COD订单。
             $order_charge_adjustment_list = [];
             if (! is_null($orderChargeAdjustmentList)) {
                 foreach ($orderChargeAdjustmentList as $orderChargeAdjustmentItem) {
@@ -70,7 +70,7 @@ class ShipmentEventList extends FinanceBase
                 }
             }
 
-            $shipmentFeeList = $financialEvent->getShipmentFeeList();
+            $shipmentFeeList = $financialEvent->getShipmentFeeList(); // 装运级别费用的列表。
             $shipment_fee_list = [];
             if (! is_null($shipmentFeeList)) {
                 foreach ($shipmentFeeList as $shipmentFeeItem) {
@@ -91,7 +91,7 @@ class ShipmentEventList extends FinanceBase
                 }
             }
 
-            $shipmentFeeAdjustmentList = $financialEvent->getShipmentFeeAdjustmentList();
+            $shipmentFeeAdjustmentList = $financialEvent->getShipmentFeeAdjustmentList(); // 装运级别费用调整列表。。
             $shipment_fee_adjustment_list = [];
             if (! is_null($shipmentFeeAdjustmentList)) {
                 foreach ($shipmentFeeAdjustmentList as $shipmentFeeAdjustmentItem) {
@@ -111,7 +111,75 @@ class ShipmentEventList extends FinanceBase
                 }
             }
 
-            $shipmentItemAdjustmentList = $financialEvent->getShipmentItemAdjustmentList();
+            $orderFeeList = $financialEvent->getOrderFeeList(); // 订单级别费用列表。这些费用适用于多渠道履行订单。
+            $order_fee_list = [];
+            if (! is_null($orderFeeList)) {
+                foreach ($orderFeeList as $orderFeeItem) {
+                    $fee_type = $orderFeeItem->getFeeType() ?? '';
+                    $feeAmount = $orderFeeItem->getFeeAmount();
+                    $fee_amount = 0.00;
+                    $fee_currency = '';
+                    if (! is_null($feeAmount)) {
+                        $fee_amount = $feeAmount->getCurrencyAmount() ?? 0.00;
+                        $fee_currency = $feeAmount->getCurrencyCode() ?? '';
+                    }
+                    $order_fee_list[] = [
+                        'fee_type' => $fee_type,
+                        'fee_amount' => $fee_amount,
+                        'fee_currency' => $fee_currency,
+                    ];
+                }
+            }
+
+            $orderFeeAdjustmentList = $financialEvent->getOrderFeeAdjustmentList(); // 订单级别费用调整列表。这些调整适用于多渠道履约订单。
+            $order_fee_adjustment_list = [];
+            if (! is_null($orderFeeAdjustmentList)) {
+                foreach ($orderFeeAdjustmentList as $orderFeeAdjustmentItem) {
+                    $fee_type = $orderFeeAdjustmentItem->getFeeType() ?? '';
+                    $feeAmount = $orderFeeAdjustmentItem->getFeeAmount();
+                    $fee_amount = 0.00;
+                    $fee_currency = '';
+                    if (! is_null($feeAmount)) {
+                        $fee_amount = $feeAmount->getCurrencyAmount() ?? 0.00;
+                        $fee_currency = $feeAmount->getCurrencyCode() ?? '';
+                    }
+                    $order_fee_adjustment_list[] = [
+                        'fee_type' => $fee_type,
+                        'fee_amount' => $fee_amount,
+                        'fee_currency' => $fee_currency,
+                    ];
+                }
+            }
+
+            $directPaymentList = $financialEvent->getDirectPaymentList(); // 买家通过亚马逊提供的信用卡之一向亚马逊付款或买家直接通过COD向卖家付款的交易列表。
+            $direct_payment_list = [];
+            if (! is_null($directPaymentList)) {
+                foreach ($directPaymentList as $directPaymentItem) {
+                    $direct_payment_type = $directPaymentItem->getDirectPaymentType() ?? '';
+                    $directPaymentAmount = $directPaymentItem->getDirectPaymentAmount();
+                    $direct_payment_amount = 0.00;
+                    $direct_payment_currency = '';
+                    if (! is_null($directPaymentAmount)) {
+                        $direct_payment_amount = $directPaymentAmount->getCurrencyAmount() ?? 0.00;
+                        $direct_payment_currency = $directPaymentAmount->getCurrencyCode() ?? '';
+                    }
+                    $direct_payment_list[] = [
+                        'direct_payment_type' => $direct_payment_type,
+                        'direct_payment_amount' => $direct_payment_amount,
+                        'direct_payment_currency' => $direct_payment_currency,
+                    ];
+                }
+            }
+
+            $postedDate = $financialEvent->getPostedDate(); // 发布财务事件的日期和时间。
+            $posted_date = '';
+            if (! is_null($postedDate)) {
+                $posted_date = $postedDate->format('Y-m-d H:i:s');
+            }
+
+            $financialEvent->getShipmentItemList(); // TODO
+
+            $shipmentItemAdjustmentList = $financialEvent->getShipmentItemAdjustmentList(); // 装运项目调整清单。。
             $shipment_item_adjustment_list = [];
             if (! is_null($shipmentItemAdjustmentList)) {
                 foreach ($shipmentItemAdjustmentList as $shipmentItemAdjustmentItem) {
@@ -204,7 +272,7 @@ class ShipmentEventList extends FinanceBase
                     $item_tax_withheld_list = [];
                     if (! is_null($itemTaxWithheldList)) {
                         foreach ($itemTaxWithheldList as $itemTaxWithheldItem) {
-                            $tax_collection = $itemTaxWithheldItem->getTaxCollectionModel();
+                            $tax_collection = $itemTaxWithheldItem->getTaxCollectionModel() ?? '';
                             $taxesWithheld = $itemTaxWithheldItem->getTaxesWithheld();
                             $taxes_with_held_list = [];
                             if (! is_null($taxesWithheld)) {
@@ -311,72 +379,6 @@ class ShipmentEventList extends FinanceBase
                 }
             }
 
-            $orderFeeList = $financialEvent->getOrderFeeList();
-            $order_fee_list = [];
-            if (! is_null($orderFeeList)) {
-                foreach ($orderFeeList as $orderFeeItem) {
-                    $fee_type = $orderFeeItem->getFeeType() ?? '';
-                    $feeAmount = $orderFeeItem->getFeeAmount();
-                    $fee_amount = 0.00;
-                    $fee_currency = '';
-                    if (! is_null($feeAmount)) {
-                        $fee_amount = $feeAmount->getCurrencyAmount() ?? 0.00;
-                        $fee_currency = $feeAmount->getCurrencyCode() ?? '';
-                    }
-                    $order_fee_list[] = [
-                        'fee_type' => $fee_type,
-                        'fee_amount' => $fee_amount,
-                        'fee_currency' => $fee_currency,
-                    ];
-                }
-            }
-
-            $orderFeeAdjustmentList = $financialEvent->getOrderFeeAdjustmentList();
-            $order_fee_adjustment_list = [];
-            if (! is_null($orderFeeAdjustmentList)) {
-                foreach ($orderFeeAdjustmentList as $orderFeeAdjustmentItem) {
-                    $fee_type = $orderFeeAdjustmentItem->getFeeType() ?? '';
-                    $feeAmount = $orderFeeAdjustmentItem->getFeeAmount();
-                    $fee_amount = 0.00;
-                    $fee_currency = '';
-                    if (! is_null($feeAmount)) {
-                        $fee_amount = $feeAmount->getCurrencyAmount() ?? 0.00;
-                        $fee_currency = $feeAmount->getCurrencyCode() ?? '';
-                    }
-                    $order_fee_adjustment_list[] = [
-                        'fee_type' => $fee_type,
-                        'fee_amount' => $fee_amount,
-                        'fee_currency' => $fee_currency,
-                    ];
-                }
-            }
-
-            $directPaymentList = $financialEvent->getDirectPaymentList();
-            $direct_payment_list = [];
-            if (! is_null($directPaymentList)) {
-                foreach ($directPaymentList as $directPaymentItem) {
-                    $direct_payment_type = $directPaymentItem->getDirectPaymentType() ?? '';
-                    $directPaymentAmount = $directPaymentItem->getDirectPaymentAmount();
-                    $direct_payment_amount = 0.00;
-                    $direct_payment_currency = '';
-                    if (! is_null($directPaymentAmount)) {
-                        $direct_payment_amount = $directPaymentAmount->getCurrencyAmount() ?? 0.00;
-                        $direct_payment_currency = $directPaymentAmount->getCurrencyCode() ?? '';
-                    }
-                    $direct_payment_list[] = [
-                        'direct_payment_type' => $direct_payment_type,
-                        'direct_payment_amount' => $direct_payment_amount,
-                        'direct_payment_currency' => $direct_payment_currency,
-                    ];
-                }
-            }
-
-            $postedDate = $financialEvent->getPostedDate();
-            $posted_date = '';
-            if (! is_null($postedDate)) {
-                $posted_date = $postedDate->format('Y-m-d H:i:s');
-            }
-
             $collection->push([
                 'merchant_id' => $this->merchant_id,
                 'merchant_store_id' => $this->merchant_store_id,
@@ -387,11 +389,11 @@ class ShipmentEventList extends FinanceBase
                 'order_charge_adjustment_list' => $order_charge_adjustment_list,
                 'shipment_fee_list' => $shipment_fee_list,
                 'shipment_fee_adjustment_list' => $shipment_fee_adjustment_list,
-                'shipment_item_adjustment_list' => $shipment_item_adjustment_list,
                 'order_fee_list' => $order_fee_list,
                 'order_fee_adjustment_list' => $order_fee_adjustment_list,
                 'direct_payment_list' => $direct_payment_list,
                 'posted_date' => $posted_date,
+                'shipment_item_adjustment_list' => $shipment_item_adjustment_list,
             ]);
         }
 

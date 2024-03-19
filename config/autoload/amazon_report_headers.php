@@ -7,6 +7,9 @@ declare(strict_types=1);
  * @contact  740644717@qq.com
  * @license  MIT
  */
+use AmazonPHP\SellingPartner\Marketplace;
+use AmazonPHP\SellingPartner\Regions;
+
 return [
     'GET_COUPON_PERFORMANCE_REPORT' => [],
     'GET_PROMOTION_PERFORMANCE_REPORT' => [],
@@ -142,36 +145,70 @@ return [
     'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_PROMOTION_DATA' => [],
     'GET_FBA_FULFILLMENT_CUSTOMER_TAXES_DATA' => [],
     'GET_FBA_STORAGE_FEE_CHARGES_DATA' => [
-        'asin' => 'asin',
-        'fnsku' => 'fnsku',
-        'product_name' => 'product_name',
-        'fulfillment_center' => 'fulfillment_center',
-        'country_code' => 'country_code',
-        'longest_side' => 'longest_side',
-        'median_side' => 'median_side',
-        'shortest_side' => 'shortest_side',
-        'measurement_units' => 'measurement_units',
-        'weight' => 'weight',
-        'weight_units' => 'weight_units',
-        'item_volume' => 'item_volume',
-        'volume_units' => 'volume_units',
-        'average_quantity_on_hand' => 'average_quantity_on_hand',
-        'average_quantity_pending_removal' => 'average_quantity_pending_removal',
-        'estimated_total_item_volume' => 'estimated_total_item_volume',
-        'month_of_charge' => 'month_of_charge',
-        'storage_utilization_ratio' => 'storage_utilization_ratio',
-        'storage_utilization_ratio_units' => 'storage_utilization_ratio_units',
-        'base_rate' => 'base_rate',
-        'utilization_surcharge_rate' => 'utilization_surcharge_rate',
-        'currency' => 'currency',
-        'estimated_monthly_storage_fee' => 'estimated_monthly_storage_fee',
-        'total_incentive_fee_amount' => 'total_incentive_fee_amount',
-        'breakdown_incentive_fee_amount' => 'breakdown_incentive_fee_amount',
-        'average_quantity_customer_orders' => 'average_quantity_customer_orders',
-        'dangerous_goods_storage_type' => 'dangerous_goods_storage_type',
-        'product_size_tier' => 'product_size_tier',
-        'eligible_for_inventory_discount' => 'eligible_for_inventory_discount',
-        'qualifies_for_inventory_discount' => 'qualifies_for_inventory_discount',
+        Regions::NORTH_AMERICA => [
+            'asin' => 'asin',
+            'fnsku' => 'fnsku',
+            'product_name' => 'product_name',
+            'fulfillment_center' => 'fulfillment_center',
+            'country_code' => 'country_code',
+            'longest_side' => 'longest_side',
+            'median_side' => 'median_side',
+            'shortest_side' => 'shortest_side',
+            'measurement_units' => 'measurement_units',
+            'weight' => 'weight',
+            'weight_units' => 'weight_units',
+            'item_volume' => 'item_volume',
+            'volume_units' => 'volume_units',
+            'average_quantity_on_hand' => 'average_quantity_on_hand',
+            'average_quantity_pending_removal' => 'average_quantity_pending_removal',
+            'estimated_total_item_volume' => 'estimated_total_item_volume',
+            'month_of_charge' => 'month_of_charge',
+            'storage_utilization_ratio' => 'storage_utilization_ratio',
+            'storage_utilization_ratio_units' => 'storage_utilization_ratio_units',
+            'base_rate' => 'base_rate',
+            'utilization_surcharge_rate' => 'utilization_surcharge_rate',
+            'currency' => 'currency',
+            'estimated_monthly_storage_fee' => 'estimated_monthly_storage_fee',
+            'total_incentive_fee_amount' => 'total_incentive_fee_amount',
+            'breakdown_incentive_fee_amount' => 'breakdown_incentive_fee_amount',
+            'average_quantity_customer_orders' => 'average_quantity_customer_orders',
+            'dangerous_goods_storage_type' => 'dangerous_goods_storage_type',
+            'product_size_tier' => 'product_size_tier',
+            'eligible_for_inventory_discount' => 'eligible_for_inventory_discount',
+            'qualifies_for_inventory_discount' => 'qualifies_for_inventory_discount',
+        ],
+        Regions::EUROPE => [
+            'asin' => 'asin',
+            'fnsku' => 'fnsku',
+            'product_name' => 'product_name',
+            'fulfillment_center' => 'fulfillment_center',
+            'country_code' => 'country_code',
+            'longest_side' => 'longest_side',
+            'median_side' => 'median_side',
+            'shortest_side' => 'shortest_side',
+            'measurement_units' => 'measurement_units',
+            'weight' => 'weight',
+            'weight_units' => 'weight_units',
+            'item_volume' => 'item_volume',
+            'volume_units' => 'volume_units',
+            'average_quantity_on_hand' => 'average_quantity_on_hand',
+            'average_quantity_pending_removal' => 'average_quantity_pending_removal',
+            'estimated_total_item_volume' => 'estimated_total_item_volume',
+            'month_of_charge' => 'month_of_charge',
+            'storage_utilization_ratio' => 'storage_utilization_ratio',
+            'storage_utilization_ratio_units' => 'storage_utilization_ratio_units',
+            'base_rate' => 'base_rate',
+            'utilization_surcharge_rate' => 'utilization_surcharge_rate',
+            'currency' => 'currency',
+            'estimated_monthly_storage_fee' => 'estimated_monthly_storage_fee',
+            'total_incentive_fee_amount' => 'total_incentive_fee_amount',
+            'breakdown_incentive_fee_amount' => 'breakdown_incentive_fee_amount',
+            'average_quantity_customer_orders' => 'average_quantity_customer_orders',
+            'category' => 'dangerous_goods_storage_type',
+            'product_size_tier' => 'product_size_tier',
+            'eligible_for_inventory_discount' => 'eligible_for_inventory_discount',
+            'qualifies_for_inventory_discount' => 'qualifies_for_inventory_discount',
+        ],
     ],
     'GET_FBA_FULFILLMENT_LONGTERM_STORAGE_FEE_CHARGES_DATA' => [
         'snapshot-date' => 'snapshot_date',
@@ -453,7 +490,7 @@ return [
         'promotion-id' => 'promotion_id',
     ],
     'GET_DATE_RANGE_FINANCIAL_TRANSACTION_DATA' => [
-        'US' => [
+        Marketplace::US()->countryCode() => [
             'date/time' => 'date',
             'settlement id' => 'settlement_id',
             'type' => 'type',
@@ -485,7 +522,7 @@ return [
             'other' => 'other',
             'total' => 'total',
         ],
-        'CA' => [
+        Marketplace::CA()->countryCode() => [
             'date/time' => 'date',
             'settlement id' => 'settlement_id',
             'type' => 'type',
@@ -519,7 +556,7 @@ return [
             'other' => 'other',
             'total' => 'total',
         ],
-        'MX' => [
+        Marketplace::MX()->countryCode() => [
             'fecha/hora' => 'date',
             'Id. de liquidación' => 'settlement_id',
             'tipo' => 'type',
@@ -553,7 +590,7 @@ return [
             'otro' => 'other',
             'total' => 'total',
         ],
-        'DE' => [
+        Marketplace::DE()->countryCode() => [
             'Datum/Uhrzeit' => 'date',
             'Abrechnungsnummer' => 'settlement_id',
             'Typ' => 'type',
@@ -587,7 +624,7 @@ return [
             'Andere' => 'other',
             'Gesamt' => 'total',
         ],
-        'FR' => [
+        Marketplace::FR()->countryCode() => [
             'date/heure' => 'date',
             'numéro de versement' => 'settlement_id',
             'type' => 'type',
@@ -621,7 +658,7 @@ return [
             'autre' => 'other',
             'total' => 'total',
         ],
-        'GB' => [
+        Marketplace::GB()->countryCode() => [
             'date/time' => 'date',
             'settlement id' => 'settlement_id',
             'type' => 'type',
@@ -655,7 +692,7 @@ return [
             'other' => 'other',
             'total' => 'total',
         ],
-        'SE' => [
+        Marketplace::SE()->countryCode() => [
             'datum/tid' => 'date',
             'reglerings-id' => 'settlement_id',
             'typ' => 'type',
@@ -689,7 +726,7 @@ return [
             'Övrigt' => 'other',
             'totalt' => 'total',
         ],
-        'IT' => [
+        Marketplace::IT()->countryCode() => [
             'Data/Ora:' => 'date',
             'Numero pagamento' => 'settlement_id',
             'Tipo' => 'type',
@@ -723,7 +760,7 @@ return [
             'Altro' => 'other',
             'totale' => 'total',
         ],
-        'ES' => [
+        Marketplace::ES()->countryCode() => [
             'fecha y hora' => 'date',
             'identificador de pago' => 'settlement_id',
             'tipo' => 'type',
