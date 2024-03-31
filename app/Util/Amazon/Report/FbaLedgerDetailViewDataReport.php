@@ -164,20 +164,23 @@ class FbaLedgerDetailViewDataReport extends ReportBase
             'data_start_time' => $this->getReportStartDate(), // 报告数据开始时间
             'data_end_time' => $this->getReportEndDate(), // 报告数据结束时间
             'marketplace_ids' => $marketplace_ids, // 市场标识符列表
+            'reportOptions' => [
+                'eventType' => '',
+            ],
         ]);
     }
-
-    /**
-     * 处理报告.
-     */
-    public function processReport(callable $func, array $marketplace_ids): void
-    {
-        if ($this->checkReportDate()) {
-            throw new \InvalidArgumentException('Report Start/End Date Required,please check');
-        }
-
-        foreach ($marketplace_ids as $marketplace_id) {
-            is_callable($func) && $func($this, [$marketplace_id]);
-        }
-    }
+    //
+    //    /**
+    //     * 处理报告.
+    //     */
+    //    public function processReport(callable $func, array $marketplace_ids): void
+    //    {
+    //        if ($this->checkReportDate()) {
+    //            throw new \InvalidArgumentException('Report Start/End Date Required,please check');
+    //        }
+    //
+    //        foreach ($marketplace_ids as $marketplace_id) {
+    //            is_callable($func) && $func($this, [$marketplace_id]);
+    //        }
+    //    }
 }

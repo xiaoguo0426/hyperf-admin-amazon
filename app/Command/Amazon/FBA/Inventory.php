@@ -206,6 +206,7 @@ class Inventory extends HyperfCommand
                                     ->where('marketplace_id', $marketplace_id)
                                     ->where('asin', $asin)
                                     ->where('seller_sku', $seller_sku)
+                                    ->where('fn_sku', $fn_sku)
                                     ->firstOrFail();
                             } catch (ModelNotFoundException) {
                                 if ($total_quantity === 0) {
@@ -219,10 +220,9 @@ class Inventory extends HyperfCommand
                                 $inventoryCollection->marketplace_id = $marketplace_id;
                                 $inventoryCollection->country_code = $country_code;
                                 $inventoryCollection->asin = $asin;
-                                $inventoryCollection->fn_sku = $fn_sku;
                                 $inventoryCollection->seller_sku = $seller_sku;
                             }
-
+                            $inventoryCollection->fn_sku = $fn_sku;
                             $inventoryCollection->product_name = $product_name;
                             $inventoryCollection->condition = $condition;
                             $inventoryCollection->fulfillable_quantity = $fulfillable_quantity;

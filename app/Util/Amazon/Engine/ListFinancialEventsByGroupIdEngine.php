@@ -60,6 +60,8 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
 
         $region = $amazonSDK->getRegion();
 
+        //        $financialEventsActionList = [];
+
         while (true) {
             try {
                 // 指定日期范围内的财务事件组
@@ -89,6 +91,7 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
                 }
                 // TODO 拉取一页就处理一页数据，这里可能会有点问题。如果处理时间过长，可能会导致next_token过期
                 make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
+                //                $financialEventsActionList[] = make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents]);
 
                 // 如果下一页没有数据，nextToken 会变成null
                 $next_token = $payload->getNextToken();
@@ -128,12 +131,19 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
                 }
                 break;
             } catch (InvalidArgumentException $e) {
-                $log = sprintf('Finance InvalidArgumentException listFinancialEventsByGroupId Failed. merchant_id: %s merchant_store_id: %s ', $merchant_id, $merchant_store_id);
+                $log = sprintf('Finance InvalidArgumentException listFinancialEventsByGroupId Failed. Error:%s. merchant_id: %s merchant_store_id: %s ', $e->getMessage(), $merchant_id, $merchant_store_id);
                 $console->error($log);
                 $logger->error($log);
                 break;
             }
         }
+
+        //        foreach ($financialEventsActionList as $financialEventsAction) {
+        //            /**
+        //             * @var FinancialEventsAction $financialEventsAction
+        //             */
+        //            $financialEventsAction->run();
+        //        }
 
         $console->notice(sprintf('当前财务组id:%s 处理完成,耗时:%s  merchant_id:%s merchant_store_id:%s ', $group_id, $runtimeCalculator->stop(), $merchant_id, $merchant_store_id));
         return true;

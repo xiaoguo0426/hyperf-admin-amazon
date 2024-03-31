@@ -138,7 +138,6 @@ class AmazonReportCreate extends HyperfCommand
 
                             break;
                         } catch (ApiException $e) {
-                            var_dump($e->getResponseBody());
                             --$retry;
                             if ($retry > 0) {
                                 $console->warning(sprintf('Create %s report fail, retry: %s  merchant_id: %s merchant_store_id: %s region:%s', $report_type, $retry, $merchant_id, $merchant_store_id, $region));

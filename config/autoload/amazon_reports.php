@@ -31,7 +31,7 @@ return [
         'GET_BRAND_ANALYTICS_MARKET_BASKET_REPORT',
         'GET_BRAND_ANALYTICS_SEARCH_TERMS_REPORT',
         'GET_BRAND_ANALYTICS_REPEAT_PURCHASE_REPORT',
-        'GET_SALES_AND_TRAFFIC_REPORT', // 销售与流量业务报告
+        'GET_SALES_AND_TRAFFIC_REPORT', // 销售与流量业务报告 https://github.com/amzn/selling-partner-api-models/blob/7c59ac517edefb3a0b9e7d1b2e3b3ab94ac877bf/schemas/reports/sellerSalesAndTrafficReport.json#L1105
         'GET_SALES_AND_TRAFFIC_REPORT_CUSTOM', // 销售与流量业务报告(指定日期范围，用于统计最近3天，7天，14天，30天销量)
 
         // Order reports

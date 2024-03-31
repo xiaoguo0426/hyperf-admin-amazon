@@ -117,8 +117,8 @@ class ReportCreate extends HyperfCommand
      * @param ?string $report_start_date
      * @param ?string $report_end_date
      * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws NotFoundException
+     * @throws NotFoundExceptionInterface
      * @throws \RedisException
      */
     private function fly(int $merchant_id, int $merchant_store_id, string $report_type, ?string $report_start_date, ?string $report_end_date, string $is_force_create): void
@@ -216,9 +216,9 @@ class ReportCreate extends HyperfCommand
                         $can_retry_flag = true;
                         $response_body = $e->getResponseBody();
                         if (! is_null($response_body)) {
-                            $body = json_decode($response_body, true, 512, JSON_THROW_ON_ERROR);
-                            if (isset($body['errors'])) {
-                                $errors = $body['errors'];
+                            $response_body_arr = json_decode($response_body, true, 512, JSON_THROW_ON_ERROR);
+                            if (isset($response_body_arr['errors'])) {
+                                $errors = $response_body_arr['errors'];
                                 foreach ($errors as $error) {
                                     $code = $error['code'];
                                     $message = $error['message'];
