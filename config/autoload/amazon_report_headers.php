@@ -1,12 +1,14 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  *
  * @author   xiaoguo0426
  * @contact  740644717@qq.com
  * @license  MIT
  */
+
 use AmazonPHP\SellingPartner\Marketplace;
 use AmazonPHP\SellingPartner\Regions;
 
@@ -228,6 +230,7 @@ return [
     ],
     'GET_FBA_OVERAGE_FEE_CHARGES_DATA' => [],
     'GET_REMOTE_FULFILLMENT_ELIGIBILITY' => [],
+    'GET_FBA_FULFILLMENT_INBOUND_NONCOMPLIANCE_DATA' => [],
 
     'GET_RESTOCK_INVENTORY_RECOMMENDATIONS_REPORT' => [
         'Country' => 'country',

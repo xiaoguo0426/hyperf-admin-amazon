@@ -216,6 +216,24 @@ return [
             ],
         ],
     ],
+    'amazon-fba-inbound' => [
+        'handler' => [
+            'class' => RotatingFileHandler::class,
+            'constructor' => [
+                'dateFormat' => 'Y-m-d',
+                'filenameFormat' => '{date}',
+                'filename' => BASE_PATH . '/runtime/logs/amazon-fulfillment-inbound/.log',
+            ],
+        ],
+        'formatter' => [
+            'class' => LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => 'Y-m-d H:i:s',
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
     'amazon-fulfillment-outbound' => [
         'handler' => [
             'class' => RotatingFileHandler::class,

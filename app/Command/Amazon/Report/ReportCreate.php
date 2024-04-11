@@ -53,7 +53,7 @@ class ReportCreate extends HyperfCommand
             ->addArgument('report_type', InputArgument::REQUIRED, '报告类型')
             ->addOption('report_start_date', null, InputOption::VALUE_REQUIRED, '报告开始日期', null)
             ->addOption('report_end_date', null, InputOption::VALUE_REQUIRED, '报告结束日期', null)
-            ->addOption('is_range_date', null, InputOption::VALUE_REQUIRED, '报告日期是否为范围', '1')
+            ->addOption('is_range_date', null, InputOption::VALUE_REQUIRED, '报告日期是否为范围', '0')
             ->addOption('is_force_create', null, InputOption::VALUE_REQUIRED, '是否强制创建', '1')
             ->setDescription('Amazon Create Report');
     }
