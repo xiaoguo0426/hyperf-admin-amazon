@@ -82,7 +82,10 @@ class AmazonActionReportQueue extends Queue
             $requestedReportedRunner->setDataEndTime($data_end_time);
 
             $instance->run($requestedReportedRunner);
-        } catch (\Exception $e) {
+
+            //TODO 记录每个类型的报告的运行时间
+            //TODO 记录每个类型报告的保存路径以及队列的数据结构，方便下载报告和队列重试
+         } catch (\Exception $e) {
             $logger->error(sprintf('Action 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $e->getMessage()));
             $console->error(sprintf('Action 报告队列数据：%s 出错。Error Message: %s', $queueData->toJson(), $e->getMessage()));
         }

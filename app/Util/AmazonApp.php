@@ -21,10 +21,12 @@ use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\ModelNotFoundException;
 use Hyperf\Di\Exception\NotFoundException;
+use JsonException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 
+use RedisException;
 use function Hyperf\Support\make;
 
 class AmazonApp
@@ -76,11 +78,11 @@ class AmazonApp
     }
 
     /**
-     * 单个Amazon应用配置回调并触发Amazon SDK.
+     * 单个Amazon应用配置回调并触发Amazon SDK(指定Amazon应用+应用的所有地区).
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws RedisException
      */
     public static function tok(int $merchant_id, int $merchant_store_id, callable $func): bool
     {
@@ -113,7 +115,7 @@ class AmazonApp
 
                 try {
                     $sdk = $amazonSDK->getSdk($region);
-                } catch (ApiException|ClientExceptionInterface|\JsonException $exception) {
+                } catch (ApiException|ClientExceptionInterface|JsonException $exception) {
                     $log = sprintf('Amazon App SDK构建失败，请检查. %s merchant_id:%s merchant_store_id:%s ', $exception->getMessage(), $merchant_id, $merchant_store_id);
                     $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
                     $console->error($log);
@@ -139,11 +141,11 @@ class AmazonApp
     }
 
     /**
-     * 单个Amazon应用配置回调并触发Amazon SDK(指定region).
+     * 单个Amazon应用配置回调并触发Amazon SDK(指定Amazon应用+应用指定地区).
      * @throws NotFoundException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws RedisException
      */
     public static function tok2(int $merchant_id, int $merchant_store_id, string $region, callable $func): bool
     {
@@ -178,7 +180,7 @@ class AmazonApp
 
             try {
                 $sdk = $amazonSDK->getSdk($region);
-            } catch (ApiException|ClientExceptionInterface|\JsonException $exception) {
+            } catch (ApiException|ClientExceptionInterface|JsonException $exception) {
                 $log = sprintf('Amazon App SDK构建失败，请检查. %s merchant_id:%s merchant_store_id:%s ', $exception->getMessage(), $merchant_id, $merchant_store_id);
                 $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
                 $console->error($log);
@@ -204,6 +206,8 @@ class AmazonApp
 
     /**
      * 所有Amazon应用配置回调.
+     * @param callable $func
+     * @return bool
      */
     public static function single(callable $func): bool
     {
@@ -220,11 +224,11 @@ class AmazonApp
     }
 
     /**
-     * 所有Amazon应用配置回调并触发Amazon SDK.
+     * 所有Amazon应用配置回调并触发Amazon SDK(所有Amazon应用+应用的所有地区).
      * @throws ContainerExceptionInterface
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws RedisException
      */
     public static function each(callable $func): void
     {
@@ -241,7 +245,7 @@ class AmazonApp
     }
 
     /**
-     * @param array<string> $regions
+     * @param string[] $regions
      */
     public static function regions(array $regions): void
     {

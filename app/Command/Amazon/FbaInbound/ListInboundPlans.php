@@ -20,9 +20,8 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
-
-use function Hyperf\Support\make;
 
 #[Command]
 class ListInboundPlans extends HyperfCommand
@@ -45,7 +44,7 @@ class ListInboundPlans extends HyperfCommand
      * @throws ContainerExceptionInterface
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
-     * @throws \RedisException
+     * @throws RedisException
      */
     public function handle(): void
     {
