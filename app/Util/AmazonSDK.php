@@ -31,7 +31,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LogLevel;
 
-use RedisException;
 use function Hyperf\Support\make;
 
 class AmazonSDK
@@ -267,7 +266,7 @@ class AmazonSDK
      * @throws ApiException
      * @throws \JsonException
      * @throws ClientExceptionInterface
-     * @throws RedisException
+     * @throws \RedisException
      */
     public function getSdk(string $region, bool $force_refresh = false): SellingPartnerSDK
     {

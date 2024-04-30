@@ -58,7 +58,6 @@ class ListPlacementOptions extends HyperfCommand
         $inbound_plan_ids = $this->input->getArgument('inbound_plan_ids');
 
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($inbound_plan_ids) {
-
             $inbound_plan_ids_list = explode(',', $inbound_plan_ids);
             foreach ($inbound_plan_ids_list as $inbound_plan_id) {
                 $creator = new ListPlacementOptionsCreator();

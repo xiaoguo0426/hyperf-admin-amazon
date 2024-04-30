@@ -25,7 +25,6 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 
 use function Hyperf\Support\make;
@@ -51,7 +50,7 @@ class ListFinancialEvents extends HyperfCommand
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
+     * @throws \RedisException
      */
     public function handle(): void
     {

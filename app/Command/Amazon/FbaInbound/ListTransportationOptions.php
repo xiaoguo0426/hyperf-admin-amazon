@@ -59,11 +59,10 @@ class ListTransportationOptions extends HyperfCommand
         $inbound_plan_id = $this->input->getArgument('inbound_plan_id');
 
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($inbound_plan_id) {
-
             $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFbaInboundListPlacementOptionsLog::class);
 
-            $page_size = 20;//1-20
+            $page_size = 20; // 1-20
             $next_token = null;
             $placement_option_id = null;
             $shipment_id = null;
@@ -71,9 +70,7 @@ class ListTransportationOptions extends HyperfCommand
 
             $retry = 10;
             while (true) {
-
                 try {
-
                     $listTransportationOptions = $sdk->fulfillmentInbound()->listTransportationOptions($accessToken, $region, $inbound_plan_id, $page_size, $next_token, $placement_option_id, $shipment_id);
                     $getTransportationOptions = $listTransportationOptions->getTransportationOptions();
 
@@ -114,7 +111,6 @@ class ListTransportationOptions extends HyperfCommand
                         break;
                     }
                 } catch (ApiException $exception) {
-
                     var_dump($exception->getResponseBody());
                     --$retry;
                     if ($retry > 0) {
@@ -133,8 +129,6 @@ class ListTransportationOptions extends HyperfCommand
                     $logger->error($log);
                     break;
                 }
-
-
             }
             return true;
         });

@@ -20,7 +20,6 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RedisException;
 use Symfony\Component\Console\Input\InputArgument;
 
 #[Command]
@@ -44,7 +43,7 @@ class ListInboundPlans extends HyperfCommand
      * @throws ContainerExceptionInterface
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
-     * @throws RedisException
+     * @throws \RedisException
      */
     public function handle(): void
     {
@@ -55,9 +54,9 @@ class ListInboundPlans extends HyperfCommand
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
             $page_size = 30;
             $pagination_token = null;
-            $status = null;//https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v2024-03-20-reference#status
-            $sort_by = null;//https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v2024-03-20-reference#sortby
-            $sort_order = null;//https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v2024-03-20-reference#sortorder
+            $status = null; // https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v2024-03-20-reference#status
+            $sort_by = null; // https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v2024-03-20-reference#sortby
+            $sort_order = null; // https://developer-docs.amazon.com/sp-api/docs/fulfillment-inbound-api-v2024-03-20-reference#sortorder
             var_dump($region);
             while (true) {
                 $listInboundPlansResponse = $sdk->fulfillmentInbound()->listInboundPlans($accessToken, $region, $page_size, $pagination_token, $status, $sort_by, $sort_order);

@@ -293,8 +293,7 @@ class Inventory extends HyperfCommand
                     }
                 }
 
-                //不在当前请求内的数据全部标记为0
-
+                // 不在当前请求内的数据全部标记为0
             }
 
             return true;

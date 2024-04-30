@@ -14,20 +14,13 @@ use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
-use App\Model\AmazonShipmentModel;
 use App\Util\Amazon\Creator\CreatorInterface;
-use App\Util\Amazon\Creator\GetShipmentsCreator;
-use App\Util\Amazon\Creator\ListPlacementOptionsCreator;
 use App\Util\Amazon\Creator\ListTransportationOptionsCreator;
 use App\Util\AmazonSDK;
 use App\Util\ConsoleLog;
 use App\Util\Log\AmazonFbaInboundListPlacementOptionsLog;
-use App\Util\Log\AmazonFulfillmentInboundGetShipmentsLog;
 use App\Util\RuntimeCalculator;
-use Carbon\Carbon;
-use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -57,14 +50,12 @@ class ListTransportationOptionsEngine implements EngineInterface
          */
         $inbound_plan_id = $creator->getInboundPlanId();
 
-        $page_size = 20;//1-20
+        $page_size = 20; // 1-20
         $next_token = null;
 
         $retry = 10;
         while (true) {
-
             try {
-
                 $listTransportationOptions = $sdk->fbaInbound()->listTransportationOptions($accessToken, $region, $inbound_plan_id, $page_size, $next_token, $placement_option_id, $shipment_id);
                 $getTransportationOptions = $listTransportationOptions->getTransportationOptions();
 
@@ -105,7 +96,6 @@ class ListTransportationOptionsEngine implements EngineInterface
                     break;
                 }
             } catch (ApiException $exception) {
-
                 var_dump($exception->getResponseBody());
                 --$retry;
                 if ($retry > 0) {
@@ -124,8 +114,6 @@ class ListTransportationOptionsEngine implements EngineInterface
                 $logger->error($log);
                 break;
             }
-
-
         }
 
         $console->notice(sprintf('FulfillmentInbound GetShipments merchant_id:%s merchant_store_id:%s region:%s 完成处理，耗时:%s.', $merchant_id, $merchant_store_id, $region, $runtimeCalculator->stop()));

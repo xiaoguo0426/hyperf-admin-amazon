@@ -12,23 +12,15 @@ namespace App\Util\Amazon\Creator;
 
 class ListPlacementOptionsCreator implements CreatorInterface
 {
-
     private string $inbound_plan_id;
 
-    /**
-     * @return string
-     */
     public function getInboundPlanId(): string
     {
         return $this->inbound_plan_id;
     }
 
-    /**
-     * @param string $inbound_plan_id
-     */
     public function setInboundPlanId(string $inbound_plan_id): void
     {
         $this->inbound_plan_id = $inbound_plan_id;
     }
-
 }

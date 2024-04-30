@@ -123,23 +123,21 @@ class OrderEngine implements EngineInterface
             foreach ($orders as $order) {
                 $orderTotal = $order->getOrderTotal();
 
-                $purchase_date = $order->getPurchaseDate() ?? '';
-                if ($purchase_date) {
-                    $purchase_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $purchase_date)->format('Y-m-d H:i:s');
-                }
+                $amazon_order_id = $order->getAmazonOrderId();
 
-                $last_update_date = $order->getLastUpdateDate() ?? '';
-                if ($last_update_date) {
-                    $last_update_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $last_update_date)->format('Y-m-d H:i:s');
-                }
+                $purchase_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $order->getPurchaseDate())->format('Y-m-d H:i:s');
+
+                $last_update_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $order->getLastUpdateDate())->format('Y-m-d H:i:s');
 
                 $paymentExecutionDetail = $order->getPaymentExecutionDetail();
                 $paymentExecutionDetailJson = [];
                 if ($paymentExecutionDetail) {
                     foreach ($paymentExecutionDetail as $paymentExecutionDetailItem) {
+                        $paymentMoney = $paymentExecutionDetailItem->getPayment(); // 订单的货币价值
                         $paymentExecutionDetailJson[] = [
-                            $paymentExecutionDetailItem->getPayment(), // 订单的货币价值
-                            $paymentExecutionDetailItem->getPaymentMethod(), // COD订单的子付款方式。 COD - Cash On Delivery货到付款,GC - Gift Card礼品卡.,PointsAccount - Amazon Points亚马逊积分.
+                            'payment_method' => $paymentExecutionDetailItem->getPaymentMethod(), // COD订单的子付款方式。 COD - Cash On Delivery货到付款,GC - Gift Card礼品卡.,PointsAccount - Amazon Points亚马逊积分.
+                            'amount' => $paymentMoney->getAmount(),
+                            'currency_code' => $paymentMoney->getCurrencyCode(),
                         ];
                     }
                 }
@@ -156,7 +154,7 @@ class OrderEngine implements EngineInterface
                 $defaultShipFromLocationAddressJson = [];
                 if ($defaultShipFromLocationAddress) {
                     $defaultShipFromLocationAddressJson = [
-                        'name' => $defaultShipFromLocationAddress->getName() ?? '',
+                        'name' => $defaultShipFromLocationAddress->getName(),
                         'address_line1' => $defaultShipFromLocationAddress->getAddressLine1() ?? '',
                         'address_line2' => $defaultShipFromLocationAddress->getAddressLine2() ?? '',
                         'address_line3' => $defaultShipFromLocationAddress->getAddressLine3() ?? '',
@@ -176,10 +174,10 @@ class OrderEngine implements EngineInterface
                 $buyerTaxInformationJson = [];
                 if ($buyerTaxInformation) {
                     $buyerTaxInformationJson = [
-                        $buyerTaxInformation->getBuyerLegalCompanyName() ?? '',
-                        $buyerTaxInformation->getBuyerBusinessAddress() ?? '',
-                        $buyerTaxInformation->getBuyerTaxRegistrationId() ?? '',
-                        $buyerTaxInformation->getBuyerTaxOffice() ?? '',
+                        'buyer_legal_company_name' => $buyerTaxInformation->getBuyerLegalCompanyName() ?? '',
+                        'buyer_business_address' => $buyerTaxInformation->getBuyerBusinessAddress() ?? '',
+                        'buyer_tax_registration_id' => $buyerTaxInformation->getBuyerTaxRegistrationId() ?? '',
+                        'buyer_tax_office' => $buyerTaxInformation->getBuyerTaxOffice() ?? '',
                     ];
                 }
 
@@ -187,7 +185,7 @@ class OrderEngine implements EngineInterface
                 $fulfillmentInstructionJson = [];
                 if ($fulfillmentInstruction) {
                     $fulfillmentInstructionJson = [
-                        $fulfillmentInstruction->getFulfillmentSupplySourceId(), // Denotes the recommended sourceId where the order should be fulfilled from
+                        'fulfillment_supply_source_id' => $fulfillmentInstruction->getFulfillmentSupplySourceId() ?? '', // Denotes the recommended sourceId where the order should be fulfilled from
                     ];
                 }
 
@@ -195,7 +193,7 @@ class OrderEngine implements EngineInterface
                 $shippingAddressJson = [];
                 if ($shippingAddress) {
                     $shippingAddressJson = [
-                        'name' => $shippingAddress->getName() ?? '',
+                        'name' => $shippingAddress->getName(),
                         'address_line1' => $shippingAddress->getAddressLine1() ?? '',
                         'address_line2' => $shippingAddress->getAddressLine2() ?? '',
                         'address_line3' => $shippingAddress->getAddressLine3() ?? '',
@@ -222,23 +220,23 @@ class OrderEngine implements EngineInterface
                         if ($taxClassifications) {
                             foreach ($taxClassifications as $taxClassification) {
                                 $taxClassificationsJson[] = [
-                                    'name' => $taxClassification->getName(),
-                                    'value' => $taxClassification->getValue(),
+                                    'name' => $taxClassification->getName() ?? '',
+                                    'value' => $taxClassification->getValue() ?? '',
                                 ];
                             }
                         }
                         $buyerInfoTaxInfoJson = [
-                            'companyLegalName' => $buyerInfoTaxInfo->getCompanyLegalName(),
-                            'taxingRegion' => $buyerInfoTaxInfo->getTaxingRegion(),
-                            'taxClassifications' => $taxClassificationsJson,
+                            'company_legal_name' => $buyerInfoTaxInfo->getCompanyLegalName() ?? '',
+                            'taxing_region' => $buyerInfoTaxInfo->getTaxingRegion() ?? '',
+                            'tax_classifications' => $taxClassificationsJson,
                         ];
                     }
 
                     $buyerInfoJson = [
-                        'buyer_info_email' => $buyerInfo->getBuyerEmail() ?? '',
-                        'buyer_info_county' => $buyerInfo->getBuyerCounty() ?? '',
-                        'buyer_info_tax_info' => $buyerInfoTaxInfoJson,
-                        'buyer_info_purchase_order_number' => $buyerInfo->getPurchaseOrderNumber() ?? '',
+                        'buyer_email' => $buyerInfo->getBuyerEmail() ?? '',
+                        'buyer_county' => $buyerInfo->getBuyerCounty() ?? '',
+                        'purchase_order_number' => $buyerInfo->getPurchaseOrderNumber() ?? '',
+                        'buyer_tax_info' => $buyerInfoTaxInfoJson,
                     ];
                 }
 
@@ -246,9 +244,9 @@ class OrderEngine implements EngineInterface
                 $automatedShippingSettingsJson = [];
                 if ($automatedShippingSettings) {
                     $automatedShippingSettingsJson = [
-                        'hasAutomatedShippingSettings' => $automatedShippingSettings->getHasAutomatedShippingSettings() ?? false,
-                        'automatedCarrier' => $automatedShippingSettings->getAutomatedCarrier() ?? '',
-                        'automatedShipMethod' => $automatedShippingSettings->getAutomatedShipMethod() ?? '',
+                        'has_automated_shipping_settings' => $automatedShippingSettings->getHasAutomatedShippingSettings() ?? false,
+                        'automated_carrier' => $automatedShippingSettings->getAutomatedCarrier() ?? '',
+                        'automated_ship_method' => $automatedShippingSettings->getAutomatedShipMethod() ?? '',
                     ];
                 }
 
@@ -260,8 +258,8 @@ class OrderEngine implements EngineInterface
                     if ($taxClassifications) {
                         foreach ($taxClassifications as $taxClassification) {
                             $taxClassificationsJson[] = [
-                                'name' => $taxClassification->getName(),
-                                'value' => $taxClassification->getValue(),
+                                'name' => $taxClassification->getName() ?? '',
+                                'value' => $taxClassification->getValue() ?? '',
                             ];
                         }
                     }
@@ -269,8 +267,6 @@ class OrderEngine implements EngineInterface
                         'tax_classifications' => $taxClassificationsJson,
                     ];
                 }
-
-                $amazon_order_id = $order->getAmazonOrderId();
 
                 // 订单数据字段解释 https://developer-docs.amazon.com/sp-api/docs/orders-api-v0-reference#orderlist
                 $data[$amazon_order_id] = [

@@ -13,8 +13,6 @@ namespace App\Command\Amazon\FulfillmentInbound;
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
-use AmazonPHP\SellingPartner\Model\FulfillmentInbound\TransportResult;
-use AmazonPHP\SellingPartner\Model\FulfillmentInbound\TransportStatus;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Model\AmazonShipmentModel;
 use App\Util\AmazonApp;
@@ -112,7 +110,6 @@ class EstimateTransport extends HyperfCommand
 
                     break;
                 } catch (ApiException $exception) {
-
                     var_dump($exception->getResponseBody());
                     --$retry;
                     if ($retry > 0) {
