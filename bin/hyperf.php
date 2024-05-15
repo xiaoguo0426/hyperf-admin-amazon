@@ -1,10 +1,17 @@
 #!/usr/bin/env php
 <?php
-
-declare(strict_types=1);
 /**
  *
  * @author   xiaoguo0426
+ * @contact  740644717@qq.com
+ * @license  MIT
+ */
+use Hyperf\Contract\ApplicationInterface;
+use Hyperf\Di\ClassLoader;
+use Psr\Container\ContainerInterface;
+
+declare(strict_types=1);
+/*
  * @contact  740644717@qq.com
  * @license  MIT
  */
@@ -22,10 +29,10 @@ require BASE_PATH . '/vendor/autoload.php';
 
 // Self-called anonymous function that creates its own scope and keep the global namespace clean.
 (static function (): void {
-    Hyperf\Di\ClassLoader::init();
-    /** @var Psr\Container\ContainerInterface $container */
+    ClassLoader::init();
+    /** @var ContainerInterface $container */
     $container = require BASE_PATH . '/config/container.php';
 
-    $application = $container->get(Hyperf\Contract\ApplicationInterface::class);
+    $application = $container->get(ApplicationInterface::class);
     $application->run();
 })();

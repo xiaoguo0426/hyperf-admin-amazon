@@ -19,6 +19,7 @@ return [
             'Reembolso' => 'Refund',
             'Suscripción' => 'Subscription',
             'Ajuste' => 'Adjustment',
+            'Deuda' => 'Debt',
         ],
         'DE' => [
             'Bestellung' => 'Order',
@@ -33,6 +34,8 @@ return [
             'Versand durch Amazon Lagergebühr' => 'Shipping through Amazon warehousing fee',
             'An Konto mit der Endung:  001' => 'to the account ending in: 001',
             'FBA Customer Return Fee' => 'FBA Customer Return Fee',
+            'Anpassung' => 'Adjustment',
+            'Blitzangebotsgebühr' => 'Lightning offer fee',
         ],
         'FR' => [
             'Commande' => 'Order',
@@ -43,14 +46,23 @@ return [
             'Solde négatif' => 'Negative balance',
             'Prix de la publicité' => 'Advertising prices',
             'vers le compte finissant en : 001' => 'to the account ending in: 001',
+            'Frais de retour client FBA' => 'FBA Customer Return Fee',
+            'Frais de stock Expédié par Amazon' => 'FBA Inventory Fees',
         ],
         'ES' => [
             'Pedido' => 'Order',
+            'Tarifas de inventario de Logística de Amazon' => 'Amazon Logistics Fees',
+            'Reembolso' => 'Refund',
+            'FBA Customer Return Fee' => 'FBA Customer Return Fee',
+            'Transferir' => 'Transfer',
         ],
         'IT' => [
             'Ordine' => 'Order',
             'Costo di stoccaggio Logistica di Amazon' => 'Amazon Logistics Security Cost',
             'Tariffa di stoccaggio Logistica di Amazon' => 'Amazon Logistics Return Rate',
+            'Rimborso' => 'Refund',
+            'FBA Customer Return Fee' => 'FBA Customer Return Fee',
+            'Trasferimento' => 'Transfer',
         ],
     ],
 ];
