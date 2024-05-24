@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+declare(strict_types=1);
 /**
  *
  * @author   xiaoguo0426
@@ -10,7 +11,6 @@ use Hyperf\Contract\ApplicationInterface;
 use Hyperf\Di\ClassLoader;
 use Psr\Container\ContainerInterface;
 
-declare(strict_types=1);
 /*
  * @contact  740644717@qq.com
  * @license  MIT

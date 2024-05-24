@@ -126,7 +126,7 @@ class ListFinancialEventGroups extends HyperfCommand
 
                         $convertedTotal = $financialEventGroup->getConvertedTotal();
                         $converted_total_currency_code = '';
-                        $converted_total_currency_amount = '';
+                        $converted_total_currency_amount = 0.00;
                         if (! is_null($convertedTotal)) {
                             $converted_total_currency_code = $convertedTotal->getCurrencyCode() ?? '';
                             $converted_total_currency_amount = $convertedTotal->getCurrencyAmount() ?? 0.00;
