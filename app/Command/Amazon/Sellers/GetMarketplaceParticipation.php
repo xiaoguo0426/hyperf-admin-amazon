@@ -112,10 +112,10 @@ class GetMarketplaceParticipation extends HyperfCommand
                             $amazonSellerMarketplaceParticipationCollection->merchant_store_id = $merchant_store_id;
                             $amazonSellerMarketplaceParticipationCollection->region = $region;
                             $amazonSellerMarketplaceParticipationCollection->marketplace_id = $marketplace_id;
+                            $amazonSellerMarketplaceParticipationCollection->country_code = $country_code;
 
                         }
                         $amazonSellerMarketplaceParticipationCollection->name = $name;
-                        $amazonSellerMarketplaceParticipationCollection->country_code = $country_code;
                         $amazonSellerMarketplaceParticipationCollection->default_currency_code = $default_currency_code;
                         $amazonSellerMarketplaceParticipationCollection->domain_name = $domain_name;
                         $amazonSellerMarketplaceParticipationCollection->is_participating = $is_participating === true ? 1 : 0;
