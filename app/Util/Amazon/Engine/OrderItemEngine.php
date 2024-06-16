@@ -183,10 +183,11 @@ class OrderItemEngine implements EngineInterface
                 }
 
                 $is_pending = false;
+
                 if (count($itemPriceJson) === 0) {
                     // 查找原始订单的状态
                     if ($order_status === 'Pending') {
-                        // 未支付的Pending订单是获取不到的订单项金额的，需要根据listing价格 fake一个价格
+                        // 未支付的Pending订单是获取不到的订单项金额的，需要根据amazon_report_fba_estimated_fee数据 fake 订单项的金额 TODO
                         $itemPriceJson = [
                             'fake_item_price' => 1,
                             'currency_code' => '',
@@ -257,9 +258,9 @@ class OrderItemEngine implements EngineInterface
                     ];
                 }
 
-                if ($is_pending === true && $promotion_ids !== '' && count($promotionDiscountJson) === 0) {
-                    // TODO Pending情况下即时有promotion_id也没法获取到对应的优惠信息，需要查询默认的优惠信息
-                }
+//                if ($is_pending === true && $promotion_ids !== '' && count($promotionDiscountJson) === 0) {
+//                    // TODO Pending情况下即时有promotion_id也没法获取到对应的优惠信息，需要查询默认的优惠信息
+//                }
 
                 $promotionDiscountTax = $orderItem->getPromotionDiscountTax();
                 $promotionDiscountTaxJson = [];
@@ -349,6 +350,7 @@ class OrderItemEngine implements EngineInterface
                     'merchant_store_id' => $merchant_store_id,
                     'region' => $region,
                     'marketplace_id' => $marketplace_id,
+//                    'country_code' => '',
                     'order_id' => $amazon_order_id,
                     'asin' => $asin, // 物品的亚马逊标准标识号（ASIN）
                     'seller_sku' => $seller_sku, // 商品的卖方库存单位（SKU）

@@ -83,9 +83,18 @@ class GetOrder extends HyperfCommand
                         $order_total_amount = $orderTotal->getAmount() ?? '0.00'; // 订单的总费用
                     }
 
-                    $purchase_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $order->getPurchaseDate())->format('Y-m-d H:i:s');
-
-                    $last_update_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $order->getLastUpdateDate())->format('Y-m-d H:i:s');
+                    $purchase_date = $order->getPurchaseDate();
+                    if (is_null($purchase_date)) {
+                        $purchase_date = '';
+                    } else {
+                        $purchase_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $purchase_date)->format('Y-m-d H:i:s');
+                    }
+                    $last_update_date = $order->getLastUpdateDate();
+                    if (is_null($last_update_date)) {
+                        $last_update_date = '';
+                    } else {
+                        $last_update_date = Carbon::createFromFormat('Y-m-d\TH:i:sZ', $last_update_date)->format('Y-m-d H:i:s');
+                    }
 
                     $paymentExecutionDetail = $order->getPaymentExecutionDetail();
                     $paymentExecutionDetailJson = [];
