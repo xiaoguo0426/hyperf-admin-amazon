@@ -149,8 +149,8 @@ class FinancialEventsAction implements ActionInterface
         }
         // 这两个事件返回的结果不是数组，所以单独处理
         $eventObjectList = [
-            FailedAdhocDisbursementEventList::class => $this->financialEvents->getFailedAdhocDisbursementEventList(),
-            ValueAddedServiceChargeEventList::class => $this->financialEvents->getValueAddedServiceChargeEventList(),
+            //            FailedAdhocDisbursementEventList::class => $this->financialEvents->getFailedAdhocDisbursementEventList(),
+            //            ValueAddedServiceChargeEventList::class => $this->financialEvents->getValueAddedServiceChargeEventList(),
         ];
         foreach ($eventObjectList as $eventName => $eventObject) {
             $dag->addVertex(Vertex::make(static function () use ($merchant_id, $merchant_store_id, $eventName, $eventObject, $console): void {

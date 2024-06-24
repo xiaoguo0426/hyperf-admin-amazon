@@ -47,8 +47,8 @@ class BrandAnalyticsMarketBasketReport extends ReportBase
     {
         return new CreateReportSpecification([
             'report_options' => [
-                //                'reportPeriod' => 'DAY',
-                'reportPeriod' => 'WEEK',
+                'reportPeriod' => 'DAY',
+//                'reportPeriod' => 'WEEK',
                 //                'reportPeriod' => 'MONTH',
             ],
             'report_type' => $report_type, // 报告类型

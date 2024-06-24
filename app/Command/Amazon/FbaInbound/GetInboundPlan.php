@@ -24,8 +24,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
-use function Hyperf\Support\make;
-
 #[Command]
 class GetInboundPlan extends HyperfCommand
 {
@@ -61,9 +59,6 @@ class GetInboundPlan extends HyperfCommand
             try {
                 $inboundPlan = $sdk->fulfillmentInbound()->getInboundPlan($accessToken, $region, $inbound_plan_id);
                 $contactInformation = $inboundPlan->getContactInformation();
-                var_dump($contactInformation->getName());
-                var_dump($contactInformation->getEmail());
-                var_dump($contactInformation->getPhoneNumber());
                 $inboundPlan->getCreatedAt();
                 $inboundPlan->getInboundPlanId();
                 $inboundPlan->getLastUpdatedAt();
@@ -85,14 +80,9 @@ class GetInboundPlan extends HyperfCommand
                 }
                 $shipmentSummaries = $inboundPlan->getShipments();
                 if (! is_null($shipmentSummaries)) {
-                    var_dump(123123);
-                    var_dump($shipmentSummaries);
                     foreach ($shipmentSummaries as $shipmentSummary) {
                         $shipment_id = $shipmentSummary->getShipmentId();
                         $shipment_status = $shipmentSummary->getStatus();
-                        var_dump(22222);
-                        var_dump($shipment_id);
-                        var_dump($shipment_status);
                     }
                 }
                 $address = $inboundPlan->getSourceAddress();
@@ -115,13 +105,11 @@ class GetInboundPlan extends HyperfCommand
                 var_dump($address_postal_code);
                 var_dump($address_state_or_province_code);
                 var_dump($status);
-
-            }catch (ApiException $exception){
-                var_dump($exception->getResponseBody());
-                var_dump($exception->getMessage());
-                var_dump($exception->getTraceAsString());
-            }catch (InvalidArgumentException $exception){
-
+            } catch (ApiException $exception) {
+                //                var_dump($exception->getResponseBody());
+                //                var_dump($exception->getMessage());
+                //                var_dump($exception->getTraceAsString());
+            } catch (InvalidArgumentException $exception) {
             }
 
             return true;

@@ -72,6 +72,8 @@ class ReportFactory
             'GET_FBA_FULFILLMENT_LONGTERM_STORAGE_FEE_CHARGES_DATA' => FbaFulfillmentLongTermStorageFeeChargesDataReport::class,
             'GET_FBA_OVERAGE_FEE_CHARGES_DATA' => FbaOverageFeeChargesDataReport::class,
             'GET_FBA_FULFILLMENT_INBOUND_NONCOMPLIANCE_DATA' => FbaFulfillmentInboundNoncomplianceDataReport::class,
+            'GET_AFN_INVENTORY_DATA_BY_COUNTRY' => AfnInventoryDataByCountryReport::class,
+            'GET_STRANDED_INVENTORY_UI_DATA' => StrandedInventoryUIDataReport::class,
             'GET_REMOTE_FULFILLMENT_ELIGIBILITY',
             'GET_RESTOCK_INVENTORY_RECOMMENDATIONS_REPORT' => RestockInventoryRecommendationsReport::class,
             'GET_AFN_INVENTORY_DATA' => AfnInventoryDataReport::class,

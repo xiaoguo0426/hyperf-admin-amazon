@@ -1,12 +1,14 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  *
  * @author   xiaoguo0426
  * @contact  740644717@qq.com
  * @license  MIT
  */
+
 use AmazonPHP\SellingPartner\Marketplace;
 use AmazonPHP\SellingPartner\Regions;
 
@@ -229,6 +231,18 @@ return [
     'GET_FBA_OVERAGE_FEE_CHARGES_DATA' => [],
     'GET_REMOTE_FULFILLMENT_ELIGIBILITY' => [],
     'GET_FBA_FULFILLMENT_INBOUND_NONCOMPLIANCE_DATA' => [],
+    'GET_FBA_FULFILLMENT_CUSTOMER_SHIPMENT_REPLACEMENT_DATA' => [],
+    'GET_FBA_RECOMMENDED_REMOVAL_DATA' => [],
+    'GET_FBA_FULFILLMENT_REMOVAL_SHIPMENT_DETAIL_DATA' => [],
+    'GET_AFN_INVENTORY_DATA_BY_COUNTRY' => [
+        'seller-sku' => 'seller_sku',
+        'fulfillment-channel-sku' => 'fulfillment_channel_sku',
+        'asin' => 'asin',
+        'condition-type' => 'condition_type',
+        'country' => 'country',
+        'quantity-for-local-fulfillment' => 'quantity_for_local_fulfillment',
+    ],
+    'GET_STRANDED_INVENTORY_UI_DATA' => [],
 
     'GET_RESTOCK_INVENTORY_RECOMMENDATIONS_REPORT' => [
         'Country' => 'country',

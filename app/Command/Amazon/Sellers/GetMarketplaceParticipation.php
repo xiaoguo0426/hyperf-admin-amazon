@@ -92,6 +92,7 @@ class GetMarketplaceParticipation extends HyperfCommand
                         $marketplace_id = $marketplace->getId();
                         $name = $marketplace->getName();
                         $country_code = $marketplace->getCountryCode();
+                        $default_language_code = $marketplace->getDefaultLanguageCode();
                         $default_currency_code = $marketplace->getDefaultCurrencyCode();
                         $domain_name = $marketplace->getDomainName();
                         $participation = $marketplaceParticipation->getParticipation();
@@ -116,6 +117,7 @@ class GetMarketplaceParticipation extends HyperfCommand
 
                         }
                         $amazonSellerMarketplaceParticipationCollection->name = $name;
+                        $amazonSellerMarketplaceParticipationCollection->default_language_code = $default_language_code;
                         $amazonSellerMarketplaceParticipationCollection->default_currency_code = $default_currency_code;
                         $amazonSellerMarketplaceParticipationCollection->domain_name = $domain_name;
                         $amazonSellerMarketplaceParticipationCollection->is_participating = $is_participating === true ? 1 : 0;
