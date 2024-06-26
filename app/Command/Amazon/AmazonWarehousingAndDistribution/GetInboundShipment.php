@@ -1,47 +1,27 @@
 <?php
 
-declare(strict_types=1);
-/**
- *
- * @author   xiaoguo0426
- * @contact  740644717@qq.com
- * @license  MIT
- */
-
-namespace App\Command\Amazon\Replenishment;
+namespace App\Command\Amazon\AmazonWarehousingAndDistribution;
 
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
-use AmazonPHP\SellingPartner\Model\Replenishment\AggregationFrequency;
-use AmazonPHP\SellingPartner\Model\Replenishment\GetSellingPartnerMetricsRequest;
-use AmazonPHP\SellingPartner\Model\Replenishment\ListOffersRequest;
-use AmazonPHP\SellingPartner\Model\Replenishment\ListOffersRequestFilters;
-use AmazonPHP\SellingPartner\Model\Replenishment\ListOffersRequestPagination;
-use AmazonPHP\SellingPartner\Model\Replenishment\ListOffersRequestSort;
-use AmazonPHP\SellingPartner\Model\Replenishment\ListOffersSortKey;
-use AmazonPHP\SellingPartner\Model\Replenishment\Metric;
-use AmazonPHP\SellingPartner\Model\Replenishment\ProgramType;
-use AmazonPHP\SellingPartner\Model\Replenishment\SortOrder;
-use AmazonPHP\SellingPartner\Model\Replenishment\TimeInterval;
-use AmazonPHP\SellingPartner\Model\Replenishment\TimePeriodType;
+use AmazonPHP\SellingPartner\Model\DataKiosk\CreateQuerySpecification;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
 use App\Util\Log\AmazonFbaInventoryLog;
-use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
-#[Command]
-class GetSellingPartnerMetrics extends HyperfCommand
+class GetInboundShipment extends HyperfCommand
 {
+
     public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct('amazon:replenishment:get-selling-partner-metrics');
+        parent::__construct('amazon:amazon-warehousing-and-distribution:get-inbound-shipment');
     }
 
     public function configure(): void
@@ -50,7 +30,7 @@ class GetSellingPartnerMetrics extends HyperfCommand
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
             ->addArgument('region', InputArgument::REQUIRED, '地区')
-            ->setDescription('Amazon Replenishment GetSellingPartnerMetrics Command');
+            ->setDescription('Amazon Amazon-Warehousing-And-Distribution GetInboundShipment Command');
     }
 
     public function handle(): void
@@ -65,32 +45,12 @@ class GetSellingPartnerMetrics extends HyperfCommand
 
             $retry = 10;
 
+
             while (true) {
                 try {
-                    $body = new GetSellingPartnerMetricsRequest();
+                    $shipment_id = '';
 
-                    $aggregationFrequency = new AggregationFrequency('WEEK');
-                    $body->setAggregationFrequency($aggregationFrequency);
-
-                    $timeInterval = new TimeInterval();
-                    $timeInterval->setStartDate();
-                    $timeInterval->setEndDate();
-                    $body->setTimeInterval($timeInterval);
-
-                    $body->setMetrics([
-                        new Metric(Metric::SHIPPED_SUBSCRIPTION_UNITS)
-                    ]);
-
-                    $timePeriodType = new TimePeriodType(TimePeriodType::PERFORMANCE);
-                    $body->setTimePeriodType($timePeriodType);
-
-                    $body->setMarketplaceId();//TODO
-
-                    $body->setProgramTypes([
-                        new ProgramType(ProgramType::SUBSCRIBE_AND_SAVE)
-                    ]);
-
-                    $response = $sdk->sellingPartnersReplenishment()->getSellingPartnerMetrics($accessToken, $region, $body);
+                    $response = $sdk->amazonWarehousingAndDistribution()->getInboundShipment($accessToken, $region, $shipment_id);
 
                     break;
                 } catch (ApiException $exception) {
@@ -127,4 +87,5 @@ class GetSellingPartnerMetrics extends HyperfCommand
         });
 
     }
+
 }
