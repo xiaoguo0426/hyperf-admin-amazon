@@ -317,6 +317,7 @@ class AmazonSDK
         $logger->pushHandler(new StreamHandler(BASE_PATH . '/runtime/sp-api-php.log', Level::Info));
 
         $configuration->setDefaultLogLevel(LogLevel::INFO);
+//        $configuration->setSandbox();
 
         $configuration->registerExtension(new class() implements Extension {
             public function preRequest(string $api, string $operation, RequestInterface $request): void
