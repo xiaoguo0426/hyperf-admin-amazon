@@ -50,6 +50,7 @@ class ReportCreate extends HyperfCommand
         // 指令配置
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
+            ->addArgument('region', InputArgument::REQUIRED, '地区')
             ->addArgument('report_type', InputArgument::REQUIRED, '报告类型')
             ->addOption('report_start_date', null, InputOption::VALUE_REQUIRED, '报告开始日期', null)
             ->addOption('report_end_date', null, InputOption::VALUE_REQUIRED, '报告结束日期', null)
@@ -67,6 +68,7 @@ class ReportCreate extends HyperfCommand
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
+        $region = (string) $this->input->getArgument('region');
         $report_type = (string) $this->input->getArgument('report_type');
         $report_start_date = $this->input->getOption('report_start_date');
         $report_end_date = $this->input->getOption('report_end_date');
@@ -87,7 +89,7 @@ class ReportCreate extends HyperfCommand
         }
 
         if ($is_range_date !== '1') {
-            $this->fly($merchant_id, $merchant_store_id, $report_type, $report_start_date, $report_end_date, $is_force_create);
+            $this->fly($merchant_id, $merchant_store_id, $region, $report_type, $report_start_date, $report_end_date, $is_force_create);
         } else {
             $date_ranges = [];
 
@@ -108,22 +110,28 @@ class ReportCreate extends HyperfCommand
             }
 
             foreach ($date_ranges as $date_range) {
-                $this->fly($merchant_id, $merchant_store_id, $report_type, $date_range['start_date'], $date_range['end_date'], $is_force_create);
+                $this->fly($merchant_id, $merchant_store_id, $region, $report_type, $date_range['start_date'], $date_range['end_date'], $is_force_create);
             }
         }
     }
 
     /**
-     * @param ?string $report_start_date
-     * @param ?string $report_end_date
+     * @param int $merchant_id
+     * @param int $merchant_store_id
+     * @param string $region
+     * @param string $report_type
+     * @param string|null $report_start_date
+     * @param string|null $report_end_date
+     * @param string $is_force_create
      * @throws ContainerExceptionInterface
      * @throws NotFoundException
      * @throws NotFoundExceptionInterface
      * @throws \RedisException
+     * @return void
      */
-    private function fly(int $merchant_id, int $merchant_store_id, string $report_type, ?string $report_start_date, ?string $report_end_date, string $is_force_create): void
+    private function fly(int $merchant_id, int $merchant_store_id, string $region, string $report_type, ?string $report_start_date, ?string $report_end_date, string $is_force_create): void
     {
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($report_type, $report_start_date, $report_end_date, $is_force_create) {
+        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($report_type, $report_start_date, $report_end_date, $is_force_create) {
             $logger = di(AmazonReportCreateLog::class);
 
             $instance = ReportFactory::getInstance($merchant_id, $merchant_store_id, $region, $report_type);
