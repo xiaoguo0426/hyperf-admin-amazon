@@ -45,6 +45,7 @@ class ReportGets extends HyperfCommand
         parent::configure();
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
+            ->addArgument('region', InputArgument::REQUIRED, '地区')
             ->addArgument('report_type', InputArgument::REQUIRED, '报告类型')
             ->setDescription('Amazon Gets Report Command');
     }
@@ -59,9 +60,10 @@ class ReportGets extends HyperfCommand
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
+        $region = (string) $this->input->getArgument('region');
         $report_type = (string) $this->input->getArgument('report_type');
 
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($report_type) {
+        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($report_type) {
             $logger = ApplicationContext::getContainer()->get(AmazonReportLog::class);
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
