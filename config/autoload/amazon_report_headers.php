@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 use AmazonPHP\SellingPartner\Marketplace;
 use AmazonPHP\SellingPartner\Regions;
-
+//https://blog.csdn.net/helunqu2017/article/details/117048327 报表表头解释
 return [
     'GET_COUPON_PERFORMANCE_REPORT' => [],
     'GET_PROMOTION_PERFORMANCE_REPORT' => [],
