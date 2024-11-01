@@ -36,4 +36,15 @@ class MerchantListingsAllDataReport extends ReportBase
             'marketplace_ids' => $marketplace_ids, // 市场标识符列表
         ]);
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function requestReport(array $marketplace_ids, callable $func): void
+    {
+        foreach ($marketplace_ids as $marketplace_id) {
+            is_callable($func) && $func($this, $this->getReportType(), $this->buildReportBody($this->getReportType(), [$marketplace_id]), [$marketplace_id]);
+        }
+    }
+
 }

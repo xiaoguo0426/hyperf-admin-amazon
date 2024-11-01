@@ -70,17 +70,26 @@ class GetListingsItem extends HyperfCommand
             $retry = 10;
 
             $marketplace_id_list = explode(',', $real_marketplace_ids);
+            $included_data = [
+                'summaries',
+                'attributes',
+                'issues',
+                'offers',
+                'fulfillmentAvailability',
+                'procurement',
+            ];
 
             foreach ($marketplace_id_list as $marketplace_id) {
                 while (true) {
                     $console->info(sprintf('GetListingsItem merchant_id:%s merchant_store_id:%s marketplace_id:%s seller_sku:%s', $merchant_id, $merchant_store_id, $real_marketplace_ids, $seller_sku));
 
                     try {
-                        $response = $sdk->listingsItems()->getListingsItem($accessToken, $region, $seller_id, $seller_sku, [$marketplace_id], null, null);
+                        $response = $sdk->listingsItems()->getListingsItem($accessToken, $region, $seller_id, $seller_sku, [$marketplace_id], null, $included_data);
                         $seller_sku = $response->getSku();
-                        $summaries = $response->getSummaries();
-                        if (! is_null($summaries)) {
-                            foreach ($summaries as $summary) {
+                        $itemSummaryByMarketplace = $response->getSummaries();
+                        $summaries = [];
+                        if (! is_null($itemSummaryByMarketplace)) {
+                            foreach ($itemSummaryByMarketplace as $summary) {
                                 $marketplace_id = $summary->getMarketplaceId();
                                 $asin = $summary->getAsin();
                                 $product_type = $summary->getProductType();
@@ -92,29 +101,120 @@ class GetListingsItem extends HyperfCommand
                                 $last_updated_date = $summary->getLastUpdatedDate()->format('Y-m-d H:i:s');
                                 $itemImage = $summary->getMainImage();
                                 $link = '';
+                                $height = '';
+                                $width = '';
                                 if (! is_null($itemImage)) {
                                     $link = $itemImage->getLink();
                                     $height = $itemImage->getHeight();
                                     $width = $itemImage->getWidth();
-                                    var_dump($link);
                                 }
-                                var_dump($marketplace_id);
-                                var_dump($asin);
-                                var_dump($product_type);
-                                var_dump($condition_type);
-                                var_dump($status);
-                                var_dump($fn_sku);
-                                var_dump($item_name);
-                                var_dump($created_date);
-                                var_dump($last_updated_date);
+////                                var_dump($marketplace_id);
+////                                var_dump($asin);
+//                                var_dump($product_type);
+////                                var_dump($condition_type);
+//                                var_dump($status);
+////                                var_dump($fn_sku);
+////                                var_dump($item_name);
+//                                var_dump($created_date);
+//                                var_dump($last_updated_date);
+                                $summaries[] = [
+                                    'marketplace_id' => $marketplace_id,
+                                    'asin' => $asin,
+                                    'product_type' => $product_type,
+                                    'condition_type' => $condition_type,
+                                    'status' => $status,
+                                    'fn_sku' => $fn_sku,
+                                    'item_name' => $item_name,
+                                    'created_date' => $created_date,
+                                    'last_updated_date' => $last_updated_date,
+                                    'image' => [
+                                        'link' => $link,
+                                        'height' => $height,
+                                        'width' => $width,
+                                    ],
+                                ];
                             }
                         }
-                        var_dump($response->getAttributes());
-                        var_dump($response->getIssues());
-                        var_dump($response->getOffers());
-                        var_dump($response->getFulfillmentAvailability());
-                        var_dump($response->getProcurement());
+//                        var_dump($response->getAttributes());
+//                        var_dump($response->getIssues());
+//                        var_dump($response->getOffers());
+//                        var_dump($response->getFulfillmentAvailability());
+//                        var_dump($response->getProcurement());
 
+                        $issues = $response->getIssues();
+                        $issues_data = [];
+                        if (! is_null($issues)) {
+                            foreach ($issues as $issue) {
+                                $issue_code = $issue->getCode();
+                                $issue_message = $issue->getMessage();
+                                $severity = $issue->getSeverity();
+                                $categories = $issue->getCategories();
+                                $attribute_names = $issue->getAttributeNames();
+
+                                $issues_data[] = [
+                                    'code' => $issue_code,
+                                    'message' => $issue_message,
+                                    'severity' => $severity,
+                                    'categories' => $categories,
+                                    'attribute_names' => $attribute_names,
+                                ];
+                            }
+                        }
+
+                        $itemOfferByMarketplace = $response->getOffers();
+                        $offers = [];
+                        if (! is_null($itemOfferByMarketplace)) {
+                            foreach ($itemOfferByMarketplace as $offer) {
+
+                                $marketplace_id = $offer->getMarketplaceId();
+                                $offer_type = $offer->getOfferType();
+                                $price = $offer->getPrice();
+                                $points = $offer->getPoints();
+
+                                $offers[] = [
+                                    'marketplace_id' => $marketplace_id,
+                                    'offer_type' => $offer_type,
+                                    'price' => $price,
+                                    'points' => $points,
+                                ];
+                            }
+                        }
+
+                        $fulfillmentAvailability = $response->getFulfillmentAvailability();
+                        $fulfillment_availability = [];
+                        if (! is_null($fulfillmentAvailability)) {
+                            foreach ($fulfillmentAvailability as $fulfillmentAvailabilityItem) {
+                                $fulfillment_channel_code = $fulfillmentAvailabilityItem->getFulfillmentChannelCode();
+                                $quantity = $fulfillmentAvailabilityItem->getQuantity() ?? 0;
+
+                                $fulfillment_availability[] = [
+                                    'fulfillment_channel_code' => $fulfillment_channel_code,
+                                    'quantity' => $quantity,
+                                ];
+                            }
+
+                        }
+
+                        $procurements = $response->getProcurement();
+                        $procurements_data = [];
+                        if (! is_null($procurements)) {
+                            foreach ($procurements as $procurement) {
+                                $costPrice = $procurement->getCostPrice();
+                                $procurements_data[] = [
+                                    'currency_code' => $costPrice->getCurrencyCode(),
+                                    'amount' => $costPrice->getAmount()
+                                ];
+                            }
+                        }
+
+                        echo json_encode([
+                            'summaries' => $summaries,
+                            'attributes' => $response->getAttributes(),
+                            'issues' => $issues_data,
+                            'offers' => $offers,
+                            'fulfillment_availability' => $fulfillment_availability,
+                            'procurement' => $procurements_data,
+                        ]);
                         break;
                     } catch (ApiException $e) {
                         if (! is_null($e->getResponseBody())) {

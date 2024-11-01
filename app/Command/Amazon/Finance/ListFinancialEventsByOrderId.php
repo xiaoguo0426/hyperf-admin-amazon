@@ -64,22 +64,31 @@ class ListFinancialEventsByOrderId extends HyperfCommand
                 $amazon_order_ids = explode(',', $amazon_order_ids);
             }
 
-            $amazonOrderCollections = AmazonOrderModel::query()
-                ->where('merchant_id', $merchant_id)
-                ->where('merchant_store_id', $merchant_store_id)
-                ->where('region', $region)
-                ->when($amazon_order_ids, static function ($query, $value) {
-                    return $query->whereIn('amazon_order_id', $value);
-                })->get();
-            if ($amazonOrderCollections->isEmpty()) {
-                return true;
-            }
+//            $amazonOrderCollections = AmazonOrderModel::query()
+//                ->where('merchant_id', $merchant_id)
+//                ->where('merchant_store_id', $merchant_store_id)
+//                ->where('region', $region)
+//                ->when($amazon_order_ids, static function ($query, $value) {
+//                    return $query->whereIn('amazon_order_id', $value);
+//                })->get();
+//            if ($amazonOrderCollections->isEmpty()) {
+//                return true;
+//            }
+//
+//            /**
+//             * @var AmazonOrderModel $amazonOrderCollection
+//             */
+//            foreach ($amazonOrderCollections as $amazonOrderCollection) {
+//                $amazon_order_id = $amazonOrderCollection->amazon_order_id;
+//
+//                $creator = new ListFinancialEventsByOrderIdCreator();
+//                $creator->setOrderId($amazon_order_id);
+//                $creator->setMaxResultsPerPage(100);
+//                // https://spapi.vip/zh/references/finances-api-reference.html
+//                make(ListFinancialEventsByOrderIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
+//            }
 
-            /**
-             * @var AmazonOrderModel $amazonOrderCollection
-             */
-            foreach ($amazonOrderCollections as $amazonOrderCollection) {
-                $amazon_order_id = $amazonOrderCollection->amazon_order_id;
+            foreach ($amazon_order_ids as $amazon_order_id){
 
                 $creator = new ListFinancialEventsByOrderIdCreator();
                 $creator->setOrderId($amazon_order_id);
@@ -87,6 +96,7 @@ class ListFinancialEventsByOrderId extends HyperfCommand
                 // https://spapi.vip/zh/references/finances-api-reference.html
                 make(ListFinancialEventsByOrderIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
             }
+
 
             return true;
         });

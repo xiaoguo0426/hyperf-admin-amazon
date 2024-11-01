@@ -54,16 +54,16 @@ class OrderItemEngine implements EngineInterface
         foreach ($amazon_order_ids as $amazon_order_id) {
             $console->info(sprintf('merchant_id:%s merchant_store_id:%s region:%s amazon_order_id:%s 开始处理', $merchant_id, $merchant_store_id, $region, $amazon_order_id));
 
-            try {
-                $amazonOrderCollection = AmazonOrderModel::query()->where('merchant_id', $merchant_id)
-                    ->where('merchant_store_id', $merchant_store_id)
-                    ->where('region', $region)
-                    ->where('amazon_order_id', $amazon_order_id)
-                    ->firstOrFail();
-            } catch (ModelNotFoundException) {
-                $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s amazon_order_id:%s 订单不存在', $merchant_id, $merchant_store_id, $region, $amazon_order_id));
-                continue;
-            }
+//            try {
+//                $amazonOrderCollection = AmazonOrderModel::query()->where('merchant_id', $merchant_id)
+//                    ->where('merchant_store_id', $merchant_store_id)
+//                    ->where('region', $region)
+//                    ->where('amazon_order_id', $amazon_order_id)
+//                    ->firstOrFail();
+//            } catch (ModelNotFoundException) {
+//                $console->error(sprintf('merchant_id:%s merchant_store_id:%s region:%s amazon_order_id:%s 订单不存在', $merchant_id, $merchant_store_id, $region, $amazon_order_id));
+//                continue;
+//            }
 
             $retry = 30;
             $orderItems = [];

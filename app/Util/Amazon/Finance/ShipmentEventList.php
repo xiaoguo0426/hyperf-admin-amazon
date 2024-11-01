@@ -177,7 +177,58 @@ class ShipmentEventList extends FinanceBase
                 $posted_date = $postedDate->format('Y-m-d H:i:s');
             }
 
-            $financialEvent->getShipmentItemList(); // TODO
+            $shipmentItemList = $financialEvent->getShipmentItemList();
+            var_dump($shipmentItemList);
+            $shipment_item_list = [];
+            if (! is_null($shipmentItemList)) {
+                foreach ($shipmentItemList as $shipmentItemItem) {
+                    $seller_sku = $shipmentItemItem->getSellerSku() ?? '';
+                    $order_item_id = $shipmentItemItem->getOrderItemId() ?? '';
+                    $order_adjustment_item_id = $shipmentItemItem->getOrderAdjustmentItemId() ?? '';
+                    $quantity_shipped = $shipmentItemItem->getQuantityShipped() ?? 0;
+
+                    $itemChargeList = $shipmentItemItem->getItemChargeList();
+                    $item_charge_list = [];
+                    if (! is_null($itemChargeList)) {
+                        foreach ($itemChargeList as $itemCharge) {
+                            $charge_type = $itemCharge->getChargeType() ?? '';
+
+                            $charge_amount = 0.00;
+                            $charge_amount_currency = '';
+                            $itemChargeAmount = $itemCharge->getChargeAmount();
+                            if (! is_null($itemChargeAmount)) {
+                                $charge_amount = $itemChargeAmount->getCurrencyAmount() ?? 0.00;
+                                $charge_amount_currency = $itemChargeAmount->getCurrencyCode() ?? '';
+                            }
+
+                            $item_charge_list[] = [
+                                'charge_type' => $charge_type,
+                                'amount' => $charge_amount,
+                                'currency_code' => $charge_amount_currency
+                            ];
+                        }
+                    }
+
+                    $itemChargeAdjustmentList = $shipmentItemItem->getItemChargeAdjustmentList();
+                    $item_charge_adjustment_list = [];
+
+                    if (! is_null($itemChargeAdjustmentList)) {
+                        foreach ($itemChargeAdjustmentList as $itemChargeAdjustmentItem) {
+                            $charge_type = $itemChargeAdjustmentItem->getChargeType() ?? '';
+                            $itemChargeAdjustmentAmount = $itemChargeAdjustmentItem->getChargeAmount();
+                            $charge_amount = 0.00;
+                            $charge_amount_currency = '';
+                        }
+                    }
+                    $shipmentItemItem->getItemFeeList();
+                    $shipmentItemItem->getItemFeeAdjustmentList();
+                    $shipmentItemItem->getItemTaxWithheldList();
+                    $shipmentItemItem->getPromotionList();
+                    $shipmentItemItem->getPromotionAdjustmentList();
+                    $shipmentItemItem->getCostOfPointsGranted();
+                    $shipmentItemItem->getCostOfPointsReturned();
+                }
+            }
 
             $shipmentItemAdjustmentList = $financialEvent->getShipmentItemAdjustmentList(); // 装运项目调整清单。。
             $shipment_item_adjustment_list = [];
@@ -397,7 +448,7 @@ class ShipmentEventList extends FinanceBase
             ]);
         }
 
-        //        var_dump($collection->toJson());
+                var_dump($collection->toJson());
 
         return true;
     }

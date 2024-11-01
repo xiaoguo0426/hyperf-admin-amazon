@@ -64,8 +64,8 @@ class ListFinancialEventGroups extends HyperfCommand
 
             $retry = 10;
             $max_results_per_page = 100;
-            $financial_event_group_started_before = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -365 day')));
-            $financial_event_group_started_after = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -3 minute')));
+            $financial_event_group_started_after = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -30 day')));
+            $financial_event_group_started_before = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -3 minute')));
             $next_token = null;
 
             /**
@@ -81,7 +81,7 @@ class ListFinancialEventGroups extends HyperfCommand
             while (true) {
                 try {
                     // 指定日期范围内的财务事件组
-                    $response = $sdk->finances()->listFinancialEventGroups($accessToken, $region, $max_results_per_page, $financial_event_group_started_after, $financial_event_group_started_before, $next_token);
+                    $response = $sdk->finances()->listFinancialEventGroups($accessToken, $region, $max_results_per_page, $financial_event_group_started_before, $financial_event_group_started_after, $next_token);
 
                     $errorList = $response->getErrors();
                     if (! is_null($errorList)) {

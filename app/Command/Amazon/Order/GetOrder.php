@@ -41,6 +41,7 @@ class GetOrder extends HyperfCommand
         // 指令配置
         $this->addArgument('merchant_id', InputArgument::REQUIRED, '商户id')
             ->addArgument('merchant_store_id', InputArgument::REQUIRED, '店铺id')
+            ->addArgument('region', InputArgument::REQUIRED, '地区')
             ->addArgument('order_id', InputArgument::REQUIRED, 'order_id')
             ->setDescription('Amazon Order API Get Order Command');
     }
@@ -55,11 +56,12 @@ class GetOrder extends HyperfCommand
     {
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
+        $region = $this->input->getArgument('region');
         $amazon_order_id = $this->input->getArgument('order_id');
 
         $that = $this;
 
-        AmazonApp::tok($merchant_id, $merchant_store_id, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($that, $amazon_order_id) {
+        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($that, $amazon_order_id) {
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
 
             $retry = 30;
@@ -233,42 +235,47 @@ class GetOrder extends HyperfCommand
                         ];
                     }
 
-                    $that->table(
-                        [
-                            'amazon_order_id',
-                            'order_total_currency_code',
-                            'order_total_amount',
-                            'purchase_date',
-                            'last_update_date',
-                            'paymentExecutionDetailJson',
-                            'paymentMethodDetailsJson',
-                            'defaultShipFromLocationAddressJson',
-                            'buyerTaxInformationJson',
-                            'fulfillmentInstructionJson',
-                            'shippingAddressJson',
-                            'buyerInfoJson',
-                            'automatedShippingSettingsJson',
-                            'marketplaceTaxInfoJson',
-                        ],
-                        [
-                            [
-                                'amazon_order_id' => $amazon_order_id,
-                                'order_total_currency_code' => $order_total_currency_code,
-                                'order_total_amount' => $order_total_amount,
-                                'purchase_date' => $purchase_date,
-                                'last_update_date' => $last_update_date,
-                                'paymentExecutionDetailJson' => json_encode($paymentExecutionDetailJson, JSON_THROW_ON_ERROR),
-                                'paymentMethodDetailsJson' => json_encode($paymentMethodDetailsJson, JSON_THROW_ON_ERROR),
-                                'defaultShipFromLocationAddressJson' => json_encode($defaultShipFromLocationAddressJson, JSON_THROW_ON_ERROR),
-                                'buyerTaxInformationJson' => json_encode($buyerTaxInformationJson, JSON_THROW_ON_ERROR),
-                                'fulfillmentInstructionJson' => json_encode($fulfillmentInstructionJson, JSON_THROW_ON_ERROR),
-                                'shippingAddressJson' => json_encode($shippingAddressJson, JSON_THROW_ON_ERROR),
-                                'buyerInfoJson' => json_encode($buyerInfoJson, JSON_THROW_ON_ERROR),
-                                'automatedShippingSettingsJson' => json_encode($automatedShippingSettingsJson, JSON_THROW_ON_ERROR),
-                                'marketplaceTaxInfoJson' => json_encode($marketplaceTaxInfoJson, JSON_THROW_ON_ERROR),
-                            ],
-                        ]
-                    );
+                    $order_status = $order->getOrderStatus();
+                    var_dump($amazon_order_id);
+                    var_dump($order_status);
+
+
+//                    $that->table(
+//                        [
+//                            'amazon_order_id',
+//                            'order_total_currency_code',
+//                            'order_total_amount',
+//                            'purchase_date',
+//                            'last_update_date',
+//                            'paymentExecutionDetailJson',
+//                            'paymentMethodDetailsJson',
+//                            'defaultShipFromLocationAddressJson',
+//                            'buyerTaxInformationJson',
+//                            'fulfillmentInstructionJson',
+//                            'shippingAddressJson',
+//                            'buyerInfoJson',
+//                            'automatedShippingSettingsJson',
+//                            'marketplaceTaxInfoJson',
+//                        ],
+//                        [
+//                            [
+//                                'amazon_order_id' => $amazon_order_id,
+//                                'order_total_currency_code' => $order_total_currency_code,
+//                                'order_total_amount' => $order_total_amount,
+//                                'purchase_date' => $purchase_date,
+//                                'last_update_date' => $last_update_date,
+//                                'paymentExecutionDetailJson' => json_encode($paymentExecutionDetailJson, JSON_THROW_ON_ERROR),
+//                                'paymentMethodDetailsJson' => json_encode($paymentMethodDetailsJson, JSON_THROW_ON_ERROR),
+//                                'defaultShipFromLocationAddressJson' => json_encode($defaultShipFromLocationAddressJson, JSON_THROW_ON_ERROR),
+//                                'buyerTaxInformationJson' => json_encode($buyerTaxInformationJson, JSON_THROW_ON_ERROR),
+//                                'fulfillmentInstructionJson' => json_encode($fulfillmentInstructionJson, JSON_THROW_ON_ERROR),
+//                                'shippingAddressJson' => json_encode($shippingAddressJson, JSON_THROW_ON_ERROR),
+//                                'buyerInfoJson' => json_encode($buyerInfoJson, JSON_THROW_ON_ERROR),
+//                                'automatedShippingSettingsJson' => json_encode($automatedShippingSettingsJson, JSON_THROW_ON_ERROR),
+//                                'marketplaceTaxInfoJson' => json_encode($marketplaceTaxInfoJson, JSON_THROW_ON_ERROR),
+//                            ],
+//                        ]
+//                    );
 
                     break;
                 } catch (ApiException $e) {
