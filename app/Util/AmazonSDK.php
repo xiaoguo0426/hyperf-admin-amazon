@@ -319,18 +319,18 @@ class AmazonSDK
         $configuration->setDefaultLogLevel(LogLevel::INFO);
 //        $configuration->setSandbox();
 
-        $configuration->registerExtension(new class() implements Extension {
-            public function preRequest(string $api, string $operation, RequestInterface $request): void
-            {
-                echo 'pre: ' . $api . '::' . $operation . ' ' . $request->getUri() . "\n";
-            }
-
-            public function postRequest(string $api, string $operation, RequestInterface $request, ResponseInterface $response): void
-            {
-                echo 'post: ' . $api . '::' . $operation . ' ' . $request->getUri() . ' '
-                    . $response->getStatusCode() . ' rate limit: ' . implode(' ', $response->getHeader('x-amzn-RateLimit-Limit')) . "\n";
-            }
-        });
+//        $configuration->registerExtension(new class() implements Extension {
+//            public function preRequest(string $api, string $operation, RequestInterface $request): void
+//            {
+//                echo 'pre: ' . $api . '::' . $operation . ' ' . $request->getUri() . "\n";
+//            }
+//
+//            public function postRequest(string $api, string $operation, RequestInterface $request, ResponseInterface $response): void
+//            {
+//                echo 'post: ' . $api . '::' . $operation . ' ' . $request->getUri() . ' '
+//                    . $response->getStatusCode() . ' rate limit: ' . implode(' ', $response->getHeader('x-amzn-RateLimit-Limit')) . "\n";
+//            }
+//        });
 
         $this->sdk = SellingPartnerSDK::create($client, $factory, $factory, $configuration, $logger);
 

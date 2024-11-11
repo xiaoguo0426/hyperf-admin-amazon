@@ -330,6 +330,7 @@ class OrderEngine implements EngineInterface
                     'has_regulated_items' => (int) ($order->getHasRegulatedItems() ?? false), // 订单是否包含在履行之前可能需要额外批准步骤的监管项目
                     'electronic_invoice_status' => $order->getElectronicInvoiceStatus() ? $order->getElectronicInvoiceStatus()->toString() : '', // 电子发票的状态 NotRequired,NotFound,Processing,Errored,Accepted
                     'created_at' => $cur_date,
+                    'updated_at' => $cur_date,
                 ];
 
                 $order_ids[] = $amazon_order_id;
