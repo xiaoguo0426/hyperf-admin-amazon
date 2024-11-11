@@ -12,7 +12,6 @@ namespace App\Command\Amazon\Finance;
 
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
-use App\Model\AmazonOrderModel;
 use App\Util\Amazon\Creator\ListFinancialEventsByOrderIdCreator;
 use App\Util\Amazon\Engine\ListFinancialEventsByOrderIdEngine;
 use App\Util\AmazonApp;
@@ -88,13 +87,13 @@ class ListFinancialEventsByOrderId extends HyperfCommand
 //                make(ListFinancialEventsByOrderIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
 //            }
 
-            foreach ($amazon_order_ids as $amazon_order_id){
+            foreach ($amazon_order_ids as $amazon_order_id) {
 
                 $creator = new ListFinancialEventsByOrderIdCreator();
                 $creator->setOrderId($amazon_order_id);
                 $creator->setMaxResultsPerPage(100);
                 // https://spapi.vip/zh/references/finances-api-reference.html
-                make(ListFinancialEventsByOrderIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
+                make(ListFinancialEventsByOrderIdEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($creator);
             }
 
 

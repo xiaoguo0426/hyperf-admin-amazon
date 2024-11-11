@@ -29,15 +29,22 @@ use function Hyperf\Support\make;
 
 class ListFinancialEventsByGroupIdEngine implements EngineInterface
 {
+
+    public function __construct(private readonly AmazonSDK $amazonSDK, private readonly SellingPartnerSDK $sdk, private readonly AccessToken $accessToken)
+    {
+    }
+
     /**
+     * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws \JsonException
+     * @return bool
      */
-    public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
+    public function launch(CreatorInterface $creator): bool
     {
-        $merchant_id = $amazonSDK->getMerchantId();
-        $merchant_store_id = $amazonSDK->getMerchantStoreId();
+        $merchant_id = $this->amazonSDK->getMerchantId();
+        $merchant_store_id = $this->amazonSDK->getMerchantStoreId();
 
         /**
          * @var ListFinancialEventsByGroupIdCreator $creator
@@ -58,14 +65,14 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
         $retry = 10;
         $next_token = null;
 
-        $region = $amazonSDK->getRegion();
+        $region = $this->amazonSDK->getRegion();
 
         //        $financialEventsActionList = [];
 
         while (true) {
             try {
                 // 指定日期范围内的财务事件组
-                $response = $sdk->finances()->listFinancialEventsByGroupId($accessToken, $region, $group_id, $max_results_per_page, $posted_after, $posted_before, $next_token);
+                $response = $this->sdk->finances()->listFinancialEventsByGroupId($this->accessToken, $region, $group_id, $max_results_per_page, $posted_after, $posted_before, $next_token);
 
                 $errorList = $response->getErrors();
                 if (! is_null($errorList)) {

@@ -56,7 +56,7 @@ class AmazonFinanceFinancialListEventsByGroupIdQueue extends Queue
             $creator->setGroupId($financial_event_group_id);
             $creator->setMaxResultsPerPage(100);
 
-            make(ListFinancialEventsByGroupIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
+            make(ListFinancialEventsByGroupIdEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($creator);
 
             return true;
         });

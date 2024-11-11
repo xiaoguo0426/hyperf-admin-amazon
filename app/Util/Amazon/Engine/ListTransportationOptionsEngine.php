@@ -26,21 +26,26 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class ListTransportationOptionsEngine implements EngineInterface
 {
+
+    public function __construct(private readonly AmazonSDK $amazonSDK, private readonly SellingPartnerSDK $sdk, private readonly AccessToken $accessToken)
+    {
+    }
+
     /**
+     * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
-     * @throws \JsonException
      * @throws NotFoundExceptionInterface
-     * @throws \Exception
+     * @return bool
      */
-    public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
+    public function launch(CreatorInterface $creator): bool
     {
         $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
         $logger = ApplicationContext::getContainer()->get(AmazonFbaInboundListPlacementOptionsLog::class);
 
-        $region = $amazonSDK->getRegion();
+        $region = $this->amazonSDK->getRegion();
 
-        $merchant_id = $amazonSDK->getMerchantId();
-        $merchant_store_id = $amazonSDK->getMerchantStoreId();
+        $merchant_id = $this->amazonSDK->getMerchantId();
+        $merchant_store_id = $this->amazonSDK->getMerchantStoreId();
 
         $runtimeCalculator = new RuntimeCalculator();
         $runtimeCalculator->start();
@@ -54,67 +59,67 @@ class ListTransportationOptionsEngine implements EngineInterface
         $next_token = null;
 
         $retry = 10;
-        while (true) {
-            try {
-                $listTransportationOptions = $sdk->fbaInbound()->listTransportationOptions($accessToken, $region, $inbound_plan_id, $page_size, $next_token, $placement_option_id, $shipment_id);
-                $getTransportationOptions = $listTransportationOptions->getTransportationOptions();
-
-                foreach ($getTransportationOptions as $getTransportationOption) {
-                    $appointmentSlot = $getTransportationOption->getAppointmentSlot();
-                    var_dump($appointmentSlot->getSlotId());
-                    var_dump($appointmentSlot->getSlotTime());
-
-                    $carrier = $getTransportationOption->getCarrier();
-                    var_dump($carrier->getAlphaCode());
-                    var_dump($carrier->getName());
-
-                    $cur_inbound_plan_id = $getTransportationOption->getInboundPlanId();
-                    $cur_placement_option_id = $getTransportationOption->getPlacementOptionId();
-                    $quote = $getTransportationOption->getQuote();
-                    $shipment_id = $getTransportationOption->getShipmentId();
-                    $shipping_mode = $getTransportationOption->getShippingMode();
-                    $shipping_solution = $getTransportationOption->getShippingSolution();
-                    $transportation_option_id = $getTransportationOption->getTransportationOptionId();
-
-                    var_dump($cur_inbound_plan_id);
-                    var_dump($cur_placement_option_id);
-                    var_dump($quote);
-                    var_dump($shipment_id);
-                    var_dump($shipping_mode);
-                    var_dump($shipping_solution);
-                    var_dump($transportation_option_id);
-
-                    var_dump('***********************');
-                }
-
-                $pagination = $listTransportationOptions->getPagination();
-                if (is_null($pagination)) {
-                    break;
-                }
-                $next_token = $pagination->getNextToken();
-                if (is_null($next_token)) {
-                    break;
-                }
-            } catch (ApiException $exception) {
-                var_dump($exception->getResponseBody());
-                --$retry;
-                if ($retry > 0) {
-                    $console->warning(sprintf('FbaInbound ListTransportationOptions ApiException Failed. retry:%s merchant_id: %s merchant_store_id: %s region:%s ', $retry, $merchant_id, $merchant_store_id, $region));
-                    sleep(10);
-                    continue;
-                }
-
-                $log = sprintf('FbaInbound ListTransportationOptions ApiException Failed. merchant_id: %s merchant_store_id: %s region:%s', $merchant_id, $merchant_store_id, $region);
-                $console->error($log);
-                $logger->error($log);
-                break;
-            } catch (InvalidArgumentException $exception) {
-                $log = sprintf('FbaInbound ListTransportationOptions InvalidArgumentException Failed. merchant_id: %s merchant_store_id: %s region:%s', $merchant_id, $merchant_store_id, $region);
-                $console->error($log);
-                $logger->error($log);
-                break;
-            }
-        }
+//        while (true) {
+//            try {
+//                $listTransportationOptions = $this->sdk->fbaInbound()->listTransportationOptions($this->accessToken, $region, $inbound_plan_id, $page_size, $next_token, $placement_option_id, $shipment_id);
+//                $getTransportationOptions = $listTransportationOptions->getTransportationOptions();
+//
+//                foreach ($getTransportationOptions as $getTransportationOption) {
+//                    $appointmentSlot = $getTransportationOption->getAppointmentSlot();
+//                    var_dump($appointmentSlot->getSlotId());
+//                    var_dump($appointmentSlot->getSlotTime());
+//
+//                    $carrier = $getTransportationOption->getCarrier();
+//                    var_dump($carrier->getAlphaCode());
+//                    var_dump($carrier->getName());
+//
+//                    $cur_inbound_plan_id = $getTransportationOption->getInboundPlanId();
+//                    $cur_placement_option_id = $getTransportationOption->getPlacementOptionId();
+//                    $quote = $getTransportationOption->getQuote();
+//                    $shipment_id = $getTransportationOption->getShipmentId();
+//                    $shipping_mode = $getTransportationOption->getShippingMode();
+//                    $shipping_solution = $getTransportationOption->getShippingSolution();
+//                    $transportation_option_id = $getTransportationOption->getTransportationOptionId();
+//
+//                    var_dump($cur_inbound_plan_id);
+//                    var_dump($cur_placement_option_id);
+//                    var_dump($quote);
+//                    var_dump($shipment_id);
+//                    var_dump($shipping_mode);
+//                    var_dump($shipping_solution);
+//                    var_dump($transportation_option_id);
+//
+//                    var_dump('***********************');
+//                }
+//
+//                $pagination = $listTransportationOptions->getPagination();
+//                if (is_null($pagination)) {
+//                    break;
+//                }
+//                $next_token = $pagination->getNextToken();
+//                if (is_null($next_token)) {
+//                    break;
+//                }
+//            } catch (ApiException $exception) {
+//                var_dump($exception->getResponseBody());
+//                --$retry;
+//                if ($retry > 0) {
+//                    $console->warning(sprintf('FbaInbound ListTransportationOptions ApiException Failed. retry:%s merchant_id: %s merchant_store_id: %s region:%s ', $retry, $merchant_id, $merchant_store_id, $region));
+//                    sleep(10);
+//                    continue;
+//                }
+//
+//                $log = sprintf('FbaInbound ListTransportationOptions ApiException Failed. merchant_id: %s merchant_store_id: %s region:%s', $merchant_id, $merchant_store_id, $region);
+//                $console->error($log);
+//                $logger->error($log);
+//                break;
+//            } catch (InvalidArgumentException $exception) {
+//                $log = sprintf('FbaInbound ListTransportationOptions InvalidArgumentException Failed. merchant_id: %s merchant_store_id: %s region:%s', $merchant_id, $merchant_store_id, $region);
+//                $console->error($log);
+//                $logger->error($log);
+//                break;
+//            }
+//        }
 
         $console->notice(sprintf('FulfillmentInbound GetShipments merchant_id:%s merchant_store_id:%s region:%s 完成处理，耗时:%s.', $merchant_id, $merchant_store_id, $region, $runtimeCalculator->stop()));
 

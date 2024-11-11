@@ -14,7 +14,6 @@ use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
-use App\Util\Amazon\Action\FinancialEventsAction;
 use App\Util\Amazon\Creator\CreatorInterface;
 use App\Util\Amazon\Creator\ListFinancialEventsByOrderIdCreator;
 use App\Util\AmazonSDK;
@@ -25,19 +24,24 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-use function Hyperf\Support\make;
-
 class ListFinancialEventsByOrderIdEngine implements EngineInterface
 {
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws \JsonException
-     * @throws NotFoundExceptionInterface
-     */
-    public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
+
+    public function __construct(private readonly AmazonSDK $amazonSDK, private readonly SellingPartnerSDK $sdk, private readonly AccessToken $accessToken)
     {
-        $merchant_id = $amazonSDK->getMerchantId();
-        $merchant_store_id = $amazonSDK->getMerchantStoreId();
+    }
+
+    /**
+     * @param CreatorInterface $creator
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws \JsonException
+     * @return bool
+     */
+    public function launch(CreatorInterface $creator): bool
+    {
+        $merchant_id = $this->amazonSDK->getMerchantId();
+        $merchant_store_id = $this->amazonSDK->getMerchantStoreId();
 
         /**
          * @var ListFinancialEventsByOrderIdCreator $creator
@@ -56,13 +60,13 @@ class ListFinancialEventsByOrderIdEngine implements EngineInterface
         $retry = 10;
         $next_token = null;
 
-        $region = $amazonSDK->getRegion();
+        $region = $this->amazonSDK->getRegion();
 
         $page = 1;
 
         while (true) {
             try {
-                $response = $sdk->finances()->listFinancialEventsByOrderId($accessToken, $region, $amazon_order_id, $max_results_per_page, $next_token);
+                $response = $this->sdk->finances()->listFinancialEventsByOrderId($this->accessToken, $region, $amazon_order_id, $max_results_per_page, $next_token);
                 $payload = $response->getPayload();
                 if ($payload === null) {
                     $console->warning(sprintf('merchant_id:%s merchant_store_id:%s payload为null', $merchant_id, $merchant_store_id));
@@ -86,8 +90,8 @@ class ListFinancialEventsByOrderIdEngine implements EngineInterface
                 if (is_null($financialEvents)) {
                     break;
                 }
-
-                make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
+                var_dump($financialEvents);
+//                make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
 
                 $next_token = $payload->getNextToken();
                 if (is_null($next_token)) {

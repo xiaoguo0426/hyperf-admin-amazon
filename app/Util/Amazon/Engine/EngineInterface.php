@@ -10,12 +10,9 @@ declare(strict_types=1);
 
 namespace App\Util\Amazon\Engine;
 
-use AmazonPHP\SellingPartner\AccessToken;
-use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\Amazon\Creator\CreatorInterface;
-use App\Util\AmazonSDK;
 
 interface EngineInterface
 {
-    public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool;
+    public function launch(CreatorInterface $creator): bool;
 }

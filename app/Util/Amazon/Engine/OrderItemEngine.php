@@ -15,7 +15,6 @@ use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Model\AmazonOrderItemModel;
-use App\Model\AmazonOrderModel;
 use App\Util\Amazon\Creator\CreatorInterface;
 use App\Util\Amazon\Creator\OrderItemCreator;
 use App\Util\AmazonSDK;
@@ -24,25 +23,31 @@ use App\Util\Log\AmazonOrderItemsLog;
 use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Database\Model\ModelNotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class OrderItemEngine implements EngineInterface
 {
+
+    public function __construct(private readonly AmazonSDK $amazonSDK, private readonly SellingPartnerSDK $sdk, private readonly AccessToken $accessToken)
+    {
+    }
+
     /**
+     * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
-     * @throws \JsonException
      * @throws NotFoundExceptionInterface
+     * @throws \JsonException
+     * @return bool
      */
-    public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
+    public function launch(CreatorInterface $creator): bool
     {
         $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
         $logger = ApplicationContext::getContainer()->get(AmazonOrderItemsLog::class);
 
-        $merchant_id = $amazonSDK->getMerchantId();
-        $merchant_store_id = $amazonSDK->getMerchantStoreId();
-        $region = $amazonSDK->getRegion();
+        $merchant_id = $this->amazonSDK->getMerchantId();
+        $merchant_store_id = $this->amazonSDK->getMerchantStoreId();
+        $region = $this->amazonSDK->getRegion();
 
         /**
          * @var OrderItemCreator $creator
@@ -73,8 +78,8 @@ class OrderItemEngine implements EngineInterface
             // https://developer-docs.amazon.com/sp-api/docs/orders-api-v0-reference#getorderitems
             while (true) {
                 try {
-                    $response = $sdk->orders()->getOrderItems(
-                        $accessToken,
+                    $response = $this->sdk->orders()->getOrderItems(
+                        $this->accessToken,
                         $region,
                         $amazon_order_id,
                         $next_token
@@ -142,9 +147,10 @@ class OrderItemEngine implements EngineInterface
             $list = [];
 
             $is_vine_order_flag_list = []; // 是否为vine订单标识集合
-
-            $order_status = $amazonOrderCollection->order_status; // 当前订单状态
-            $marketplace_id = $amazonOrderCollection->marketplace_id; // 当前订单市场id
+            var_dump($orderItems);
+            die();
+//            $order_status = $amazonOrderCollection->order_status; // 当前订单状态
+//            $marketplace_id = $amazonOrderCollection->marketplace_id; // 当前订单市场id
 
             foreach ($orderItems as $orderItem) {
                 $productInfo = $orderItem->getProductInfo();

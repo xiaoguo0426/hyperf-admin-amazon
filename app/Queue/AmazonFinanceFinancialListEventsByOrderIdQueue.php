@@ -56,7 +56,7 @@ class AmazonFinanceFinancialListEventsByOrderIdQueue extends Queue
             $creator->setOrderId($order_id);
             $creator->setMaxResultsPerPage(100);
 
-            make(ListFinancialEventsByOrderIdEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
+            make(ListFinancialEventsByOrderIdEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($creator);
 
             return true;
         });

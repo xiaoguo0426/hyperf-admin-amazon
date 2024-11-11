@@ -89,7 +89,7 @@ class GetShipments extends HyperfCommand
                 $getShipmentsCreator->setLastUpdatedAfter(null);
                 $getShipmentsCreator->setLastUpdatedBefore(null);
 
-                make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
+                make(GetShipmentsEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($getShipmentsCreator);
             } elseif (! is_null($last_updated_after) || ! is_null($last_updated_before)) {
                 // 如果指定last_updated_after,last_updated_before,则不能指定marketplace_id,shipment_id
                 $query_type = 'DATE_RANGE';
@@ -101,7 +101,7 @@ class GetShipments extends HyperfCommand
                 $getShipmentsCreator->setLastUpdatedAfter($last_updated_after);
                 $getShipmentsCreator->setLastUpdatedBefore($last_updated_before);
 
-                make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
+                make(GetShipmentsEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($getShipmentsCreator);
             } else {
                 $query_type = 'SHIPMENT';
                 foreach ($marketplace_ids as $marketplace_id) {
@@ -113,7 +113,7 @@ class GetShipments extends HyperfCommand
                     $getShipmentsCreator->setLastUpdatedAfter(null);
                     $getShipmentsCreator->setLastUpdatedBefore(null);
 
-                    make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
+                    make(GetShipmentsEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($getShipmentsCreator);
                 }
             }
             return true;

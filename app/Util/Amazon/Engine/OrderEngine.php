@@ -29,18 +29,25 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class OrderEngine implements EngineInterface
 {
+
+    public function __construct(private readonly AmazonSDK $amazonSDK, private readonly SellingPartnerSDK $sdk, private readonly AccessToken $accessToken)
+    {
+    }
+
     /**
+     * @param CreatorInterface $creator
      * @throws ContainerExceptionInterface
-     * @throws \JsonException
      * @throws NotFoundExceptionInterface
+     * @throws \JsonException
      * @throws \RedisException
+     * @return bool
      */
-    public function launch(AmazonSDK $amazonSDK, SellingPartnerSDK $sdk, AccessToken $accessToken, CreatorInterface $creator): bool
+    public function launch(CreatorInterface $creator): bool
     {
         $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
         $logger = ApplicationContext::getContainer()->get(AmazonOrdersLog::class);
 
-        $region = $amazonSDK->getRegion();
+        $region = $this->amazonSDK->getRegion();
 
         /**
          * @var OrderCreator $creator
@@ -68,8 +75,8 @@ class OrderEngine implements EngineInterface
             }
         }
 
-        $merchant_id = $amazonSDK->getMerchantId();
-        $merchant_store_id = $amazonSDK->getMerchantStoreId();
+        $merchant_id = $this->amazonSDK->getMerchantId();
+        $merchant_store_id = $this->amazonSDK->getMerchantStoreId();
 
         $retry = 30;
 
@@ -81,7 +88,7 @@ class OrderEngine implements EngineInterface
 
         while (true) {
             try {
-                $response = $sdk->orders()->getOrders($accessToken, $region, $marketplace_ids, $created_after, $created_before, $last_update_after, $last_update_before, $order_statuses, $fulfillment_channels, $payment_methods, $buyer_email, $seller_order_id, $max_results_per_page, $easy_ship_shipment_statuses, $electronic_invoice_statuses, $nextToken, $amazon_order_ids);
+                $response = $this->sdk->orders()->getOrders($this->accessToken, $region, $marketplace_ids, $created_after, $created_before, $last_update_after, $last_update_before, $order_statuses, $fulfillment_channels, $payment_methods, $buyer_email, $seller_order_id, $max_results_per_page, $easy_ship_shipment_statuses, $electronic_invoice_statuses, $nextToken, $amazon_order_ids);
 
                 $payload = $response->getPayload();
                 if ($payload === null) {

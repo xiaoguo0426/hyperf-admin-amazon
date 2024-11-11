@@ -63,7 +63,7 @@ class ListPlacementOptions extends HyperfCommand
                 $creator = new ListPlacementOptionsCreator();
                 $creator->setInboundPlanId($inbound_plan_id);
 
-                make(ListPlacementOptionsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $creator);
+                make(ListPlacementOptionsEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($creator);
             }
 
             return true;
