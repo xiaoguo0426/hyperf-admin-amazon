@@ -76,7 +76,7 @@ class GetShipments extends HyperfCommand
             $getShipmentsCreator->setLastUpdatedAfter($last_updated_after);
             $getShipmentsCreator->setLastUpdatedBefore($last_updated_before);
 
-            make(GetShipmentsEngine::class)->launch($amazonSDK, $sdk, $accessToken, $getShipmentsCreator);
+            make(GetShipmentsEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($getShipmentsCreator);
         });
     }
 }

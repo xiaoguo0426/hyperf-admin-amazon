@@ -79,7 +79,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
         }
 
         $config = $all_header_map[$country_code];
-        if (empty($config)) {
+        if (count($config) === 0) {
             // 请定义该国家对应的表头映射关系
             $log = sprintf('merchant_id:%s merchant_store_id:%s report_id:%s currency:%s GET_DATE_RANGE_FINANCIAL_TRANSACTION_DATA 请完善当前国家对应的表头映射关系', $merchant_id, $merchant_store_id, $report_id, $country_code);
             $console->error($log);
@@ -174,7 +174,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
                     //                    var_dump($val);
                     $localeDate = Carbon::createFromLocaleFormat($locale_format, $locale, $val);
                     $val = $localeDate->utc()->format('Y-m-d H:i:s');
-                //                    var_dump($val);
+                    //                    var_dump($val);
                 } elseif (($value === 'quantity') && $val === '') {
                     $val = 0;
                 } elseif ($value === 'type') {

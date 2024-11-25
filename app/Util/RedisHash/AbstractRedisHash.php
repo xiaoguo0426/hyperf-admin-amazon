@@ -126,13 +126,14 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
     }
 
     /**
-     * 设置属性.
-     *
+     * 设置属性
+     * @param string $offset
      * @param mixed $value
      * @throws \JsonException
      * @throws \RedisException
+     * @return bool
      */
-    public function setAttr(string $offset, $value): bool
+    public function setAttr(string $offset, mixed $value): bool
     {
         if ($offset === '') {
             throw new \RuntimeException('offset can not empty');

@@ -50,7 +50,8 @@ class ListInboundPlans extends HyperfCommand
         $merchant_id = (int) $this->input->getArgument('merchant_id');
         $merchant_store_id = (int) $this->input->getArgument('merchant_store_id');
         $region = $this->input->getArgument('region');
-
+        return;
+        //该API已废弃
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
             $page_size = 30;
             $pagination_token = null;

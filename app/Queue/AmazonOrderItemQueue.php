@@ -56,7 +56,7 @@ class AmazonOrderItemQueue extends Queue
             $orderItemCreator = new OrderItemCreator();
             $orderItemCreator->setAmazonOrderIds($amazon_order_ids);
 
-            make(OrderItemEngine::class)->launch($amazonSDK, $sdk, $accessToken, $orderItemCreator);
+            make(OrderItemEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($orderItemCreator);
 
             return true;
         });

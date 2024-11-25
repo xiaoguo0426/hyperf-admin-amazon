@@ -14,15 +14,15 @@ use Carbon\Carbon;
 
 class ScheduleReportCreator implements CreatorInterface
 {
-    public string $report_type;
+    private string $report_type;
 
-    public ?Carbon $start_date;
+    private ?Carbon $start_date;
 
-    public ?Carbon $end_date;
+    private ?Carbon $end_date;
 
-    public bool $is_range_date = false;
+    private bool $is_range_date = false;
 
-    public bool $is_force_create = false;
+    private bool $is_force_create = false;
 
     public function __construct(string $report_type, ?Carbon $start_date, ?Carbon $end_date, bool $is_range_date, bool $is_force_create)
     {

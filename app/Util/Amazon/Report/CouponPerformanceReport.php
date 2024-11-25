@@ -66,7 +66,7 @@ class CouponPerformanceReport extends ReportBase
         }
 
         $coupons = $json['coupons'];
-        if (empty($coupons)) {
+        if (count($coupons) === 0) {
             return true;
         }
         foreach ($coupons as $coupon) {

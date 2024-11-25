@@ -7,6 +7,8 @@ declare(strict_types=1);
  * @contact  740644717@qq.com
  * @license  MIT
  */
+
+use Hyperf\Database\Commands\ModelOption;
 use Hyperf\ModelCache\Handler\RedisHandler;
 
 /*
@@ -48,7 +50,10 @@ return [
                 'force_casts' => true,
                 'inheritance' => 'Model',
                 'uses' => '',
+                'refresh_fillable' => true,
                 'table_mapping' => [],
+                'with_comments' => true,
+                'property_case' => ModelOption::PROPERTY_SNAKE_CASE,
             ],
         ],
     ],

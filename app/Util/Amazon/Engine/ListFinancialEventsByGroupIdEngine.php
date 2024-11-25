@@ -96,8 +96,9 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
                 if (is_null($financialEvents)) {
                     break;
                 }
-                // TODO 拉取一页就处理一页数据，这里可能会有点问题。如果处理时间过长，可能会导致next_token过期
+                // TODO 拉取一页就处理一页数据，这里可能会有点问题。如果处理时间过长，可能会导致next_token过期。Only for debug
                 make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
+                // 直接把每一页的数据都存起来，最后再处理。
                 //                $financialEventsActionList[] = make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents]);
 
                 // 如果下一页没有数据，nextToken 会变成null
@@ -145,6 +146,7 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
             }
         }
 
+        // 处理所有分页的数据
         //        foreach ($financialEventsActionList as $financialEventsAction) {
         //            /**
         //             * @var FinancialEventsAction $financialEventsAction

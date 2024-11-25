@@ -69,6 +69,7 @@ class GetCatalogItem extends HyperfCommand
             $locale = null;
 
             $marketplace = Marketplace::fromCountry($country_code);
+            $items_list = [];
 
             try {
                 $item = $sdk->catalogItem()->getCatalogItem($accessToken, $region, $asin, [$marketplace->id()], $included_data, $locale);

@@ -65,7 +65,8 @@ class GetPreInstructions extends HyperfCommand
         $asin_list = $this->input->getOption('asin_list'); // --asin_list=foo --asin_list=bar
 
         $region = Marketplace::fromCountry($country_code)->region();
-
+        return;
+        //该API已废弃
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($country_code, $seller_sku_list, $asin_list) {
             $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
             $logger = ApplicationContext::getContainer()->get(AmazonFulfillmentInboundGuidanceLog::class);

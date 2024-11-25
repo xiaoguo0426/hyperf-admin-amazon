@@ -40,7 +40,7 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         $file = $reportRunner->getReportFilePath();
         $report_id = $reportRunner->getReportDocumentId();
 
-        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
+//        $logger = ApplicationContext::getContainer()->get(AmazonReportDocumentLog::class);
         $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         $splFileObject = new \SplFileObject($file, 'r');
@@ -78,7 +78,6 @@ class V2SettlementReportDataFlatFileV2 extends ReportBase
         //        }
         $splFileObject->seek(2); // 从第2行开始读取数据
 
-        $md5_hash_idx_map = [];
         while (! $splFileObject->eof()) {
             $fgets = str_replace("\r\n", '', $splFileObject->fgets());
             if ($fgets === '') {

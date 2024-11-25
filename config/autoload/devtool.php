@@ -7,8 +7,11 @@ declare(strict_types=1);
  * @contact  740644717@qq.com
  * @license  MIT
  */
+
+use function Hyperf\Support\env;
+
 return [
-    'ide' => \Hyperf\Support\env('DEVTOOL_IDE', ''),
+    'ide' => env('DEVTOOL_IDE', ''),// 开发工具的IDE，支持：phpstorm, idea, vscode。如果项目在docker下运行，无需配置该选项
     'generator' => [
         'amqp' => [
             'consumer' => [
@@ -29,7 +32,7 @@ return [
         ],
         'model' => [
             'namespace' => 'App\\Model',
-            'stub' => BASE_PATH . '/config/stubs/model.stub',
+//            'stub' => BASE_PATH . '/config/stubs/model.stub',//Model不支持自定义模型模板
         ],
         'job' => [
             'namespace' => 'App\\Job',

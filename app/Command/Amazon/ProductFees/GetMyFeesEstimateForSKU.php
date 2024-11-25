@@ -32,6 +32,7 @@ use Hyperf\Di\Exception\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -120,7 +121,9 @@ class GetMyFeesEstimateForSKU extends HyperfCommand
                 ];
                 $default_country_code = 'SG';
             }
-
+            /**
+             * @var QuestionHelper $helper
+             */
             $helper = $that->getHelper('question');
             $input = $that->input;
             $output = $that->output;

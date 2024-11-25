@@ -91,7 +91,7 @@ class RefreshPendingOrder extends HyperfCommand
                 $orderCreator->setNextToken($nextToken);
                 $orderCreator->setAmazonOrderIds($amazon_order_ids);
 
-                make(OrderEngine::class)->launch($amazonSDK, $sdk, $accessToken, $orderCreator);
+                make(OrderEngine::class, [$amazonSDK, $sdk, $accessToken])->launch($orderCreator);
             });
 
             return true;

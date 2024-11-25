@@ -68,7 +68,7 @@ class Queue extends AbstractQueue
         while (true) {
             try {
                 $pop = $this->redis->brpop($this->queue_name, $timeout);
-                if (empty($pop)) {
+                if (is_array($pop)) {
                     pcntl_signal_dispatch();
                     $console->info(sprintf('进程[%s] pid:%s 队列为空，自动退出', cli_get_process_title(), $pid));
                     break;

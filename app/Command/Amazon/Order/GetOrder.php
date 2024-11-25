@@ -58,9 +58,7 @@ class GetOrder extends HyperfCommand
         $region = $this->input->getArgument('region');
         $amazon_order_id = $this->input->getArgument('order_id');
 
-        $that = $this;
-
-        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($that, $amazon_order_id) {
+        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_id) {
 
             $nextToken = null;
             $max_results_per_page = 100;

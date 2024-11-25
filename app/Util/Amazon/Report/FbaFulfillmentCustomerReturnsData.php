@@ -12,6 +12,7 @@ namespace App\Util\Amazon\Report;
 
 use App\Model\AmazonReportFbaFulfillmentCustomerReturnDataModel;
 use App\Util\Amazon\Report\Runner\ReportRunnerInterface;
+use App\Util\Amazon\Report\Runner\RequestedReportRunner;
 use Carbon\Carbon;
 use Hyperf\Database\Model\ModelNotFoundException;
 
@@ -30,6 +31,9 @@ class FbaFulfillmentCustomerReturnsData extends ReportBase
         $this->setReportEndDate($end_time);
     }
 
+    /**
+     * @param RequestedReportRunner $reportRunner
+     */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
         $config = $this->getHeaderMap();

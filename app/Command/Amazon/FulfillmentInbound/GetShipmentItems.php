@@ -68,7 +68,8 @@ class GetShipmentItems extends HyperfCommand
             $console->error('last_updated_after与last_updated_before 必须指定其中一个参数');
             return;
         }
-
+        return;
+        //该API已废弃
         AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($marketplace_id, $last_updated_after, $last_updated_before) {
             $query_type = 'DATE_RANGE';
 

@@ -34,12 +34,15 @@ class ChargeRefundEventList extends FinanceBase
             $charge_refund_transactions_currency = '';
             $charge_refund_transactions_amount = 0.00;
             if (! is_null($chargeRefundTransactions)) {
-                $charge_refund_transactions_type = $chargeRefundTransactions->getChargeType() ?? '';
-                $chargeAmount = $chargeRefundTransactions->getChargeAmount();
-                if (! is_null($chargeAmount)) {
-                    $charge_refund_transactions_currency = $chargeAmount->getCurrencyCode() ?? '';
-                    $charge_refund_transactions_amount = $chargeAmount->getCurrencyAmount() ?? 0.00;
-                }
+                //TODO 待处理
+//                foreach ($chargeRefundTransactions as $chargeRefundTransaction) {
+//                    $charge_refund_transactions_type = $chargeRefundTransaction->getChargeType() ?? '';
+//                    $chargeAmount = $chargeRefundTransactions->getChargeAmount();
+//                    if (! is_null($chargeAmount)) {
+//                        $charge_refund_transactions_currency = $chargeAmount->getCurrencyCode() ?? '';
+//                        $charge_refund_transactions_amount = $chargeAmount->getCurrencyAmount() ?? 0.00;
+//                    }
+//                }
             }
 
             $collection->push([

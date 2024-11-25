@@ -240,7 +240,7 @@ class GetShipmentsEngine implements EngineInterface
 //            AmazonShipmentModel::insert($collections->toArray());
 //        }
 
-        $console->notice(sprintf('FulfillmentInbound GetShipments merchant_id:%s merchant_store_id:%s region:%s 完成处理，耗时:%s. 更新:%s 新增:%s', $merchant_id, $merchant_store_id, $region, $runtimeCalculator->stop(), $existShipments->count(), $collections->count()));
+//        $console->notice(sprintf('FulfillmentInbound GetShipments merchant_id:%s merchant_store_id:%s region:%s 完成处理，耗时:%s. 更新:%s 新增:%s', $merchant_id, $merchant_store_id, $region, $runtimeCalculator->stop(), $existShipments->count(), $collections->count()));
 
         return true;
     }

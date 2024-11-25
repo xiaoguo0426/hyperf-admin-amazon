@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Hyperf\Context\ApplicationContext;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use function Hyperf\Support\make;
 
 class SalesAndTrafficReportCustom extends ReportBase
 {
@@ -59,7 +60,9 @@ class SalesAndTrafficReportCustom extends ReportBase
 
     /**
      * @param RequestedReportRunner $reportRunner
+     * @throws \JsonException
      * @throws \RedisException
+     * @return bool
      */
     public function run(ReportRunnerInterface $reportRunner): bool
     {
@@ -67,23 +70,14 @@ class SalesAndTrafficReportCustom extends ReportBase
         $merchant_store_id = $this->getMerchantStoreId();
 
         $file = $reportRunner->getReportFilePath();
-        $report_id = $reportRunner->getReportId();
+//        $report_id = $reportRunner->getReportId();
         $report_type = $reportRunner->getReportType();
 
         $logger = di(AmazonReportActionLog::class);
 
         $content = file_get_contents($file);
 
-        try {
-            $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $jsonException) {
-            try {
-                $logger = ApplicationContext::getContainer()->get(AmazonReportActionLog::class);
-                $logger->error(sprintf('Action %s 解析错误 merchant_id: %s merchant_store_id: %s', $report_type, $merchant_id, $merchant_store_id));
-            } catch (ContainerExceptionInterface|NotFoundExceptionInterface $e) {
-            }
-            return true;
-        }
+        $json = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
 
         $reportStartDate = $this->getReportStartDate();
         $reportEndDate = $this->getReportEndDate();
@@ -119,7 +113,7 @@ class SalesAndTrafficReportCustom extends ReportBase
         /**
          * @var AmazonAsinSaleVolumeHash $hash
          */
-        $hash = \Hyperf\Support\make(AmazonAsinSaleVolumeHash::class, [$merchant_id, $type]);
+        $hash = make(AmazonAsinSaleVolumeHash::class, [$merchant_id, $type]);
         $hash->destroy();
 
         $asin_maps = [];

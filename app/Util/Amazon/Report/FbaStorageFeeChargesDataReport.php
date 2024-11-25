@@ -155,31 +155,32 @@ class FbaStorageFeeChargesDataReport extends ReportBase
             $collection->save();
         }
 
-        $amazonReportFbaStorageFeeChargesDataCollections = AmazonReportFbaStorageFeeChargesDataModel::query()
-            ->where('merchant_id', $merchant_id)
-            ->where('merchant_store_id', $merchant_store_id)
-            ->where('region', $region)
-            ->where('seller_sku', '=', '')
-            ->select();
-        foreach ($amazonReportFbaStorageFeeChargesDataCollections as $amazonReportFbaStorageFeeChargesDataCollection) {
-            $asin = $amazonReportFbaStorageFeeChargesDataCollection->asin;
-            $fn_sku = $amazonReportFbaStorageFeeChargesDataCollection->fnsku;
-
-            try {
-                $amazonInventoryCollection = AmazonInventoryModel::query()
-                    ->where('merchant_id', $merchant_id)
-                    ->where('merchant_store_id', $merchant_store_id)
-                    ->where('region', $region)
-                    ->where('asin', $asin)
-                    ->where('fn_sku', $fn_sku)
-                    ->firstOrFail();
-            } catch (ModelNotFoundException) {
-                continue;
-            }
-
-            $amazonReportFbaStorageFeeChargesDataCollection->seller_sku = $amazonInventoryCollection->seller_sku;
-            $amazonReportFbaStorageFeeChargesDataCollection->save();
-        }
+        //TODO 待处理
+//        $amazonReportFbaStorageFeeChargesDataCollections = AmazonReportFbaStorageFeeChargesDataModel::query()
+//            ->where('merchant_id', $merchant_id)
+//            ->where('merchant_store_id', $merchant_store_id)
+//            ->where('region', $region)
+//            ->where('seller_sku', '=', '')
+//            ->select();
+//        foreach ($amazonReportFbaStorageFeeChargesDataCollections as $amazonReportFbaStorageFeeChargesDataCollection) {
+//            $asin = $amazonReportFbaStorageFeeChargesDataCollection->asin;
+//            $fn_sku = $amazonReportFbaStorageFeeChargesDataCollection->fnsku;
+//
+//            try {
+//                $amazonInventoryCollection = AmazonInventoryModel::query()
+//                    ->where('merchant_id', $merchant_id)
+//                    ->where('merchant_store_id', $merchant_store_id)
+//                    ->where('region', $region)
+//                    ->where('asin', $asin)
+//                    ->where('fn_sku', $fn_sku)
+//                    ->firstOrFail();
+//            } catch (ModelNotFoundException) {
+//                continue;
+//            }
+//
+//            $amazonReportFbaStorageFeeChargesDataCollection->seller_sku = $amazonInventoryCollection->seller_sku;
+//            $amazonReportFbaStorageFeeChargesDataCollection->save();
+//        }
 
         return true;
     }
