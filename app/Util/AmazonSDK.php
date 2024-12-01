@@ -95,6 +95,7 @@ class AmazonSDK
                 $marketplace_ids[] = $country->id();
                 $this->marketplace_id_country_map[$country->id()] = $countryId;
             } catch (InvalidArgumentException $exception) {
+//                $exception->getMessage();
             }
         }
         $this->marketplace_ids = $marketplace_ids;
@@ -302,8 +303,7 @@ class AmazonSDK
             $hash->accessKeyId = $assumeRole->accessKeyId();
             $hash->secretAccessKey = $assumeRole->secretAccessKey();
             $hash->sessionToken = $assumeRole->sessionToken();
-            $expiration = $assumeRole->expiration();
-            $hash->expiration = $expiration;
+            $hash->expiration = $assumeRole->expiration();
             $hash->ttl(50 * 60);
         }
 

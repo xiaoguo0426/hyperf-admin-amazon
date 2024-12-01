@@ -66,7 +66,7 @@ class AmazonApp
             try {
                 $amazonAppCollection = AmazonAppModel::query()->where('merchant_id', $merchant_id)->where('merchant_store_id', $merchant_store_id)->firstOrFail();
             } catch (ModelNotFoundException $exception) {
-                throw new AmazonAppException(sprintf('AmazonAppException ModelNotFound. %s', $exception->getMessage()), 201);
+                throw new AmazonAppException(sprintf('AmazonAppException ModelNotFound. 错误信息:%s', $exception->getMessage()), 201);
             }
             $appHash->load($amazonAppCollection->toArray());
             $appHash->ttl(3600);
@@ -158,13 +158,14 @@ class AmazonApp
             // 验证region知否为合法
             try {
                 self::region($region);
-            } catch (BusinessException $businessException) {
-                $log = sprintf('Amazon App SDK构建失败，region值非法. region:%s ', $region);
+            } catch (AmazonAppException $amazonAppException) {
+                $log = sprintf('Amazon App SDK构建失败，region值非法. region:%s, 请检查. ', $region);
                 $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
                 $console->error($log);
                 return true;
             }
 
+            //TODO 缓存AmazonAppRegionModel数据
             try {
                 $amazonAppRegionCollection = AmazonAppRegionModel::query()
                     ->where('merchant_id', $merchant_id)
@@ -172,7 +173,7 @@ class AmazonApp
                     ->where('region', $region)
                     ->firstOrFail();
             } catch (ModelNotFoundException $modelNotFoundException) {
-                $log = sprintf('Amazon App SDK构建失败，AmazonAppRegion查询失败. %s merchant_id:%s merchant_store_id:%s region:%s ', $modelNotFoundException->getMessage(), $merchant_id, $merchant_store_id, $region);
+                $log = sprintf('Amazon App SDK构建失败，AmazonAppRegion查询失败. 错误信息:%s merchant_id:%s merchant_store_id:%s region:%s ', $modelNotFoundException->getMessage(), $merchant_id, $merchant_store_id, $region);
                 $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
                 $console->error($log);
                 return true;
@@ -220,6 +221,7 @@ class AmazonApp
      */
     public static function single(callable $func): bool
     {
+        //TODO 缓存AmazonAppModel数据
         $amazonAppCollections = AmazonAppModel::query()->where('status', Constants::STATUS_ACTIVE)->get();
         if ($amazonAppCollections->isEmpty()) {
             return false;
@@ -266,7 +268,7 @@ class AmazonApp
     public static function region(string $region): void
     {
         if (! Regions::isValid($region)) {
-            throw new BusinessException('Invalid Region', 1);
+            throw new AmazonAppException('Invalid Region', 1);
         }
     }
 }
