@@ -4,8 +4,74 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "430712df576820472d504f77894d50f4",
+    "content-hash": "9cb53c244d46330f194410407cc91ae7",
     "packages": [
+        {
+            "name": "amazon-php/sp-api-sdk",
+            "version": "6.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amazon-php/sp-api-sdk.git",
+                "reference": "7d7b13bed86533d07192a8ac4c094ba18d2488bd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amazon-php/sp-api-sdk/zipball/7d7b13bed86533d07192a8ac4c094ba18d2488bd",
+                "reference": "7d7b13bed86533d07192a8ac4c094ba18d2488bd",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": "~8.1 || ~8.2",
+                "psr/http-client": "^1.0.1",
+                "psr/http-factory": "^1.0",
+                "psr/log": "^1.1||^2.0||^3.0"
+            },
+            "require-dev": {
+                "kriswallsmith/buzz": "^1.2",
+                "monolog/monolog": "^3.3",
+                "nyholm/psr7": "^1.4",
+                "symfony/dotenv": "^6.1",
+                "symfony/var-dumper": "^6.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AmazonPHP\\": "src/AmazonPHP/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Norbert Orzechowicz",
+                    "homepage": "https://norbert.tech"
+                },
+                {
+                    "name": "OpenAPI-Generator contributors",
+                    "homepage": "https://openapi-generator.tech"
+                }
+            ],
+            "description": "Amazon Selling Partner API - PHP SDK",
+            "homepage": "https://openapi-generator.tech",
+            "keywords": [
+                "amazon",
+                "api",
+                "php",
+                "rest",
+                "sdk",
+                "selling-partner-api"
+            ],
+            "support": {
+                "issues": "https://github.com/amazon-php/sp-api-sdk/issues",
+                "source": "https://github.com/amazon-php/sp-api-sdk/tree/6.2.0"
+            },
+            "time": "2024-11-27T17:10:40+00:00"
+        },
         {
             "name": "carbonphp/carbon-doctrine-types",
             "version": "3.2.0",
@@ -505,11 +571,11 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "3.1-dev"
-                },
                 "hyperf": {
                     "config": "FriendsOfHyperf\\Sentry\\ConfigProvider"
+                },
+                "branch-alias": {
+                    "dev-main": "3.1-dev"
                 }
             },
             "autoload": {
@@ -940,11 +1006,17 @@
         },
         {
             "name": "hyperf/cache",
-            "version": "dev-master",
+            "version": "v3.1.43",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/cache.git",
+                "reference": "1e3cc54cee776c8d32cf40912dee5d366383bc33"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/cache",
-                "reference": "e541a94c842f587721e0949a5ec98231318c062d"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/cache/zipball/1e3cc54cee776c8d32cf40912dee5d366383bc33",
+                "reference": "1e3cc54cee776c8d32cf40912dee5d366383bc33",
+                "shasum": ""
             },
             "require": {
                 "hyperf/codec": "~3.1.0",
@@ -974,11 +1046,7 @@
                     "Hyperf\\Cache\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Cache\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -990,22 +1058,36 @@
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-10-09T10:22:39+00:00"
         },
         {
             "name": "hyperf/code-parser",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/code-parser.git",
+                "reference": "81953c4ea9035ac5f0a4740ae157310ca4e18ff2"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/code-parser",
-                "reference": "c4063be6023f31b38684e4c365cbb6169a3c478b"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/code-parser/zipball/81953c4ea9035ac5f0a4740ae157310ca4e18ff2",
+                "reference": "81953c4ea9035ac5f0a4740ae157310ca4e18ff2",
+                "shasum": ""
             },
             "require": {
                 "hyperf/collection": "~3.1.0",
@@ -1028,11 +1110,7 @@
                     "Hyperf\\CodeParser\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\CodeParser\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1045,22 +1123,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/codec",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/codec.git",
+                "reference": "effc71c25e2d53c00fcf41da8bca083ac8a0db0e"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/codec",
-                "reference": "d7e33ea2ec498c882a12113a8c1b306152008653"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/codec/zipball/effc71c25e2d53c00fcf41da8bca083ac8a0db0e",
+                "reference": "effc71c25e2d53c00fcf41da8bca083ac8a0db0e",
+                "shasum": ""
             },
             "require": {
                 "ext-json": "*",
@@ -1082,11 +1174,7 @@
                     "Hyperf\\Codec\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Codec\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1099,22 +1187,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/collection",
-            "version": "dev-master",
+            "version": "v3.1.47",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/collection.git",
+                "reference": "9e4845ece7b38676b4818152f472717ec0daaf73"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/collection",
-                "reference": "30fed1ce59ad0957fab211586526a679cea1b569"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/collection/zipball/9e4845ece7b38676b4818152f472717ec0daaf73",
+                "reference": "9e4845ece7b38676b4818152f472717ec0daaf73",
+                "shasum": ""
             },
             "require": {
                 "hyperf/conditionable": "~3.1.0",
@@ -1130,18 +1232,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Hyperf\\Collection\\": "src/"
-                },
                 "files": [
                     "src/Functions.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "HyperfTest\\Collection\\": "tests/"
+                    "Hyperf\\Collection\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1154,22 +1252,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-11-28T01:51:55+00:00"
         },
         {
             "name": "hyperf/command",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/command.git",
+                "reference": "43047270c15bce06e19d217dc5ba02b284830e25"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/command",
-                "reference": "e970fcb03f5bde8becaa168b033b8085b1cc2dbd"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/command/zipball/43047270c15bce06e19d217dc5ba02b284830e25",
+                "reference": "43047270c15bce06e19d217dc5ba02b284830e25",
+                "shasum": ""
             },
             "require": {
                 "hyperf/collection": "~3.1.0",
@@ -1202,11 +1314,7 @@
                     "Hyperf\\Command\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Command\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1216,17 +1324,35 @@
                 "php",
                 "swoole"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/hyperf/command/issues",
+                "source": "https://github.com/hyperf/command/tree/v3.1.42"
+            },
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/conditionable",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/conditionable.git",
+                "reference": "dec9dec9dbde14e20f3d7ba000c3302381019de1"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/conditionable",
-                "reference": "638b64ea719143711df4758b5db0f9e2a5afed3b"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/conditionable/zipball/dec9dec9dbde14e20f3d7ba000c3302381019de1",
+                "reference": "dec9dec9dbde14e20f3d7ba000c3302381019de1",
+                "shasum": ""
             },
             "require": {
                 "php": ">=8.1"
@@ -1242,11 +1368,7 @@
                     "Hyperf\\Conditionable\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Conditionable\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1259,22 +1381,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/config",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/config.git",
+                "reference": "1df5e310aab752d6195f89f5cc98daf3cdc4bb6e"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/config",
-                "reference": "9d69c1ba3e4f681dc70ee59d0615d408ed64fb6a"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/config/zipball/1df5e310aab752d6195f89f5cc98daf3cdc4bb6e",
+                "reference": "1df5e310aab752d6195f89f5cc98daf3cdc4bb6e",
+                "shasum": ""
             },
             "require": {
                 "hyperf/collection": "~3.1.0",
@@ -1301,18 +1437,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Hyperf\\Config\\": "src/"
-                },
                 "files": [
                     "./src/Functions.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "HyperfTest\\Config\\": "tests/"
+                    "Hyperf\\Config\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1326,22 +1458,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/constants",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/constants.git",
+                "reference": "e1e1184779cd163f9603ce234e1ecccb6fe382ae"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/constants",
-                "reference": "8e75c20aac74142a62dc2ed30a613a0cb9b2303d"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/constants/zipball/e1e1184779cd163f9603ce234e1ecccb6fe382ae",
+                "reference": "e1e1184779cd163f9603ce234e1ecccb6fe382ae",
+                "shasum": ""
             },
             "require": {
                 "hyperf/di": "~3.1.0",
@@ -1366,11 +1512,7 @@
                     "Hyperf\\Constants\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Constants\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1382,22 +1524,36 @@
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/context",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/context.git",
+                "reference": "ac666862d644db7d813342c880826a1fda599bdf"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/context",
-                "reference": "3301d87e5660b5ceec7a69cc3c819e988bc873ca"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/context/zipball/ac666862d644db7d813342c880826a1fda599bdf",
+                "reference": "ac666862d644db7d813342c880826a1fda599bdf",
+                "shasum": ""
             },
             "require": {
                 "hyperf/engine": "^2.0",
@@ -1417,39 +1573,49 @@
                     "Hyperf\\Context\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Context\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "A coroutine/application context library.",
             "homepage": "https://hyperf.io",
             "keywords": [
-                "context",
+                "Context",
                 "hyperf",
                 "php",
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/contract",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/contract.git",
+                "reference": "6ef2c7f98917c52ccda3a37ae65b190848dde6c4"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/contract",
-                "reference": "f301a1b066ee8a3fb6de3b9a45ee7e3bfe589da8"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/contract/zipball/6ef2c7f98917c52ccda3a37ae65b190848dde6c4",
+                "reference": "6ef2c7f98917c52ccda3a37ae65b190848dde6c4",
+                "shasum": ""
             },
             "require": {
                 "php": ">=8.1"
@@ -1465,6 +1631,7 @@
                     "Hyperf\\Contract\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1476,22 +1643,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/coordinator",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/coordinator.git",
+                "reference": "a0497d2a260f166ab53fed2eca6bb4e48b49ef56"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/coordinator",
-                "reference": "2eaffcf2594d0b85f287ec0b98946c35aadd8253"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/coordinator/zipball/a0497d2a260f166ab53fed2eca6bb4e48b49ef56",
+                "reference": "a0497d2a260f166ab53fed2eca6bb4e48b49ef56",
+                "shasum": ""
             },
             "require": {
                 "hyperf/engine": "^2.0",
@@ -1504,46 +1685,56 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Hyperf\\Coordinator\\": "src/"
-                },
                 "files": [
                     "src/Functions.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "HyperfTest\\Coordinator\\": "tests/"
+                    "Hyperf\\Coordinator\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Hyperf Coordinator",
             "homepage": "https://hyperf.io",
             "keywords": [
-                "coordinator",
+                "Coordinator",
                 "hyperf",
                 "php",
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/coroutine",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/coroutine.git",
+                "reference": "1dd56202a97bce60df644ea1a8c87ea7a0888a08"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/coroutine",
-                "reference": "bc85367407a9702182ad156a073c22d1739ecd10"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/coroutine/zipball/1dd56202a97bce60df644ea1a8c87ea7a0888a08",
+                "reference": "1dd56202a97bce60df644ea1a8c87ea7a0888a08",
+                "shasum": ""
             },
             "require": {
                 "hyperf/context": "~3.1.0",
@@ -1558,18 +1749,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Hyperf\\Coroutine\\": "src/"
-                },
                 "files": [
                     "src/Functions.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "HyperfTest\\Coroutine\\": "tests/"
+                    "Hyperf\\Coroutine\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1582,22 +1769,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/crontab",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/crontab.git",
+                "reference": "be1187515aabbfe96b2f6a5330b4ddd742e971c7"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/crontab",
-                "reference": "e761a0af00d06f660968deb14be358ddb0520a24"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/crontab/zipball/be1187515aabbfe96b2f6a5330b4ddd742e971c7",
+                "reference": "be1187515aabbfe96b2f6a5330b4ddd742e971c7",
+                "shasum": ""
             },
             "require": {
                 "hyperf/conditionable": "~3.1.0",
@@ -1626,11 +1827,7 @@
                     "Hyperf\\Crontab\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Crontab\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1643,22 +1840,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/dag",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/dag.git",
+                "reference": "0ed488b55cfa97b50f4837c8c28a68f2d7284a58"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/dag",
-                "reference": "97debb6c4ebc6cd22be8bcb223f98eb94eaedfe3"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/dag/zipball/0ed488b55cfa97b50f4837c8c28a68f2d7284a58",
+                "reference": "0ed488b55cfa97b50f4837c8c28a68f2d7284a58",
+                "shasum": ""
             },
             "require": {
                 "hyperf/support": "~3.1.0",
@@ -1679,11 +1890,7 @@
                     "Hyperf\\Dag\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Dag\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1694,22 +1901,36 @@
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/database",
-            "version": "dev-master",
+            "version": "v3.1.47",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/database.git",
+                "reference": "a53d2616486e0a77923542bb5cc363e207e5003d"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/database",
-                "reference": "c48bf6d95cfa300fbbfd7fe6ffa9425d7e4b50a5"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/database/zipball/a53d2616486e0a77923542bb5cc363e207e5003d",
+                "reference": "a53d2616486e0a77923542bb5cc363e207e5003d",
+                "shasum": ""
             },
             "require": {
                 "hyperf/code-parser": "~3.1.0",
@@ -1741,11 +1962,7 @@
                     "Hyperf\\Database\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Database\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1757,22 +1974,36 @@
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-11-28T01:51:55+00:00"
         },
         {
             "name": "hyperf/db",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/db.git",
+                "reference": "20e5b99b6d7b0c8df8901624d2dd3f0ef3620c8e"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/db",
-                "reference": "cfc5fc6ec97bc2ef7b832e8e558f0bf60f1e1b14"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/db/zipball/20e5b99b6d7b0c8df8901624d2dd3f0ef3620c8e",
+                "reference": "20e5b99b6d7b0c8df8901624d2dd3f0ef3620c8e",
+                "shasum": ""
             },
             "require": {
                 "hyperf/config": "~3.1.0",
@@ -1800,11 +2031,7 @@
                     "Hyperf\\DB\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\DB\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1812,17 +2039,35 @@
                 "hyperf",
                 "php"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/hyperf/db/issues",
+                "source": "https://github.com/hyperf/db/tree/v3.1.42"
+            },
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/db-connection",
-            "version": "dev-master",
+            "version": "v3.1.44",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/db-connection.git",
+                "reference": "95dbb713fda5556106b803d0201e1631645985b5"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/db-connection",
-                "reference": "a5ce88ec5fa488703540c890c3a1f41f90f0aa28"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/db-connection/zipball/95dbb713fda5556106b803d0201e1631645985b5",
+                "reference": "95dbb713fda5556106b803d0201e1631645985b5",
+                "shasum": ""
             },
             "require": {
                 "hyperf/database": "~3.1.0",
@@ -1849,39 +2094,49 @@
                     "Hyperf\\DbConnection\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\DbConnection\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "A hyperf db connection handler for hyperf/database.",
             "homepage": "https://hyperf.io",
             "keywords": [
-                "connection",
+                "Connection",
                 "database",
                 "hyperf",
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-10-11T08:58:16+00:00"
         },
         {
             "name": "hyperf/di",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/di.git",
+                "reference": "72b65de5022e3dca79ae1902c058048b9519aa72"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/di",
-                "reference": "80f9681a7ad8e77a1054034846f5c7210d342a6f"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/di/zipball/72b65de5022e3dca79ae1902c058048b9519aa72",
+                "reference": "72b65de5022e3dca79ae1902c058048b9519aa72",
+                "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.0",
@@ -1914,11 +2169,7 @@
                     "Hyperf\\Di\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Di\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1932,22 +2183,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/dispatcher",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/dispatcher.git",
+                "reference": "5cbdfd586bb8c3bbbabed5a23cec7faf52b744b0"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/dispatcher",
-                "reference": "8795de47b3cc5b182ba5c05594ec7e00a28a957c"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/dispatcher/zipball/5cbdfd586bb8c3bbbabed5a23cec7faf52b744b0",
+                "reference": "5cbdfd586bb8c3bbbabed5a23cec7faf52b744b0",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -1970,11 +2235,7 @@
                     "Hyperf\\Dispatcher\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Dispatcher\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1989,22 +2250,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/elasticsearch",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/elasticsearch.git",
+                "reference": "ed654ef85e1b53deca8b128bb1ebbdc6cdba52b0"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/elasticsearch",
-                "reference": "ed1baacd7863ae5103b689f6183da0bdb112ca74"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/elasticsearch/zipball/ed654ef85e1b53deca8b128bb1ebbdc6cdba52b0",
+                "reference": "ed654ef85e1b53deca8b128bb1ebbdc6cdba52b0",
+                "shasum": ""
             },
             "require": {
                 "elasticsearch/elasticsearch": "^7.0",
@@ -2022,11 +2297,7 @@
                     "Hyperf\\Elasticsearch\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Elasticsearch\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2036,9 +2307,21 @@
                 "php",
                 "swoole"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/hyperf/elasticsearch/issues",
+                "source": "https://github.com/hyperf/elasticsearch/tree/v3.1.42"
+            },
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/engine",
@@ -2189,11 +2472,17 @@
         },
         {
             "name": "hyperf/event",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/event.git",
+                "reference": "2b5fbbc94674a1a5e1622896eb3f7ecc80aa38c4"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/event",
-                "reference": "8d0307186319f9ac5733a00951cf9721150380c3"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/event/zipball/2b5fbbc94674a1a5e1622896eb3f7ecc80aa38c4",
+                "reference": "2b5fbbc94674a1a5e1622896eb3f7ecc80aa38c4",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -2218,11 +2507,7 @@
                     "Hyperf\\Event\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Event\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2235,22 +2520,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/exception-handler",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/exception-handler.git",
+                "reference": "df2135fb0ffe0bb61032911038aea6488077cdef"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/exception-handler",
-                "reference": "9fd549f9a7aa3e101e196f2cd56e7fe53e5c331c"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/exception-handler/zipball/df2135fb0ffe0bb61032911038aea6488077cdef",
+                "reference": "df2135fb0ffe0bb61032911038aea6488077cdef",
+                "shasum": ""
             },
             "require": {
                 "hyperf/context": "~3.1.0",
@@ -2284,11 +2583,7 @@
                     "Hyperf\\ExceptionHandler\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\ExceptionHandler\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2300,22 +2595,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/framework",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/framework.git",
+                "reference": "7b317d3891698a1eb0308e7306730d2ada1d6ff4"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/framework",
-                "reference": "9fcd982681f0fc9c38a857e5d10bc203ad669b15"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/framework/zipball/7b317d3891698a1eb0308e7306730d2ada1d6ff4",
+                "reference": "7b317d3891698a1eb0308e7306730d2ada1d6ff4",
+                "shasum": ""
             },
             "require": {
                 "fig/http-message-util": "^1.1.2",
@@ -2348,41 +2657,51 @@
                     "Hyperf\\Framework\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Framework\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "A coroutine framework that focuses on hyperspeed and flexible, specifically use for build microservices and middlewares.",
             "homepage": "https://hyperf.io",
             "keywords": [
+                "Microservice",
                 "framework",
                 "hyperf",
-                "microservice",
                 "middleware",
                 "php",
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/guzzle",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/guzzle.git",
+                "reference": "fe838557530bf7b2d39dc604563c3a3ff8d5618f"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/guzzle",
-                "reference": "4de3c79914dd045d4dafb5e37e6028b6637c7ee8"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/guzzle/zipball/fe838557530bf7b2d39dc604563c3a3ff8d5618f",
+                "reference": "fe838557530bf7b2d39dc604563c3a3ff8d5618f",
+                "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.3 || ^7.0",
@@ -2408,32 +2727,46 @@
                     "Hyperf\\Guzzle\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Guzzle\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Swoole coroutine handler for guzzle",
             "keywords": [
-                "guzzle",
+                "Guzzle",
                 "handler",
                 "php",
                 "swoole"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/hyperf/guzzle/issues",
+                "source": "https://github.com/hyperf/guzzle/tree/v3.1.42"
+            },
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/http-message",
-            "version": "dev-master",
+            "version": "v3.1.47",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/http-message.git",
+                "reference": "53a7caa616ee7a196d2974348b1acbf75305bf7e"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/http-message",
-                "reference": "77cc5c175f0f16f0285fec45e8b8d3ba9be47a33"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/http-message/zipball/53a7caa616ee7a196d2974348b1acbf75305bf7e",
+                "reference": "53a7caa616ee7a196d2974348b1acbf75305bf7e",
+                "shasum": ""
             },
             "require": {
                 "hyperf/codec": "~3.1.0",
@@ -2449,11 +2782,11 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "3.1-dev"
-                },
                 "hyperf": {
                     "config": "Hyperf\\HttpMessage\\ConfigProvider"
+                },
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -2461,11 +2794,7 @@
                     "Hyperf\\HttpMessage\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\HttpMessage\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2476,17 +2805,35 @@
                 "php",
                 "swoole"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/hyperf/http-message/issues",
+                "source": "https://github.com/hyperf/http-message/tree/v3.1.47"
+            },
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-11-28T02:09:19+00:00"
         },
         {
             "name": "hyperf/http-server",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/http-server.git",
+                "reference": "4727f15a743c6e9ca0a6b3c8494c5c62bae82f5a"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/http-server",
-                "reference": "669a4b8e09a764fdae4a00d89db574b81e319478"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/http-server/zipball/4727f15a743c6e9ca0a6b3c8494c5c62bae82f5a",
+                "reference": "4727f15a743c6e9ca0a6b3c8494c5c62bae82f5a",
+                "shasum": ""
             },
             "require": {
                 "hyperf/codec": "~3.1.0",
@@ -2525,11 +2872,7 @@
                     "Hyperf\\HttpServer\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\HttpServer\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2543,22 +2886,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/logger",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/logger.git",
+                "reference": "c96d32fae44bf350ef903ebca19c91a315458d72"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/logger",
-                "reference": "0d1364ee120c3a1edba896959a39e65a74f26711"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/logger/zipball/c96d32fae44bf350ef903ebca19c91a315458d72",
+                "reference": "c96d32fae44bf350ef903ebca19c91a315458d72",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -2583,11 +2940,7 @@
                     "Hyperf\\Logger\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Logger\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2599,22 +2952,36 @@
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/macroable",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/macroable.git",
+                "reference": "0be650165b9e8ea073e199fac788ece70f16b6a4"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/macroable",
-                "reference": "8ddd17a10e98331b9ee861c1bf8218bbeea1f5ea"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/macroable/zipball/0be650165b9e8ea073e199fac788ece70f16b6a4",
+                "reference": "0be650165b9e8ea073e199fac788ece70f16b6a4",
+                "shasum": ""
             },
             "require": {
                 "php": ">=8.1"
@@ -2630,11 +2997,7 @@
                     "Hyperf\\Macroable\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Macroable\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2647,22 +3010,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/memory",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/memory.git",
+                "reference": "ccf25783d63a2610a4d797ec34c1e0093b755da2"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/memory",
-                "reference": "ee4dcc905fb4d018f462e5cfae7fa9898ca11f58"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/memory/zipball/ccf25783d63a2610a4d797ec34c1e0093b755da2",
+                "reference": "ccf25783d63a2610a4d797ec34c1e0093b755da2",
+                "shasum": ""
             },
             "require": {
                 "php": ">=8.1"
@@ -2681,9 +3058,7 @@
                     "Hyperf\\Memory\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": []
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2696,22 +3071,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/model-cache",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/model-cache.git",
+                "reference": "f1af97e63d12f9e2149bdef478541689cd31775f"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/model-cache",
-                "reference": "5936facf5552b8fa8165b6ba00695d61728076c7"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/model-cache/zipball/f1af97e63d12f9e2149bdef478541689cd31775f",
+                "reference": "f1af97e63d12f9e2149bdef478541689cd31775f",
+                "shasum": ""
             },
             "require": {
                 "hyperf/codec": "~3.1.0",
@@ -2740,11 +3129,7 @@
                     "Hyperf\\ModelCache\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\ModelCache\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2756,22 +3141,36 @@
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/model-listener",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/model-listener.git",
+                "reference": "0181882fb6034cf2eac81b84b5c65c187af9f3a4"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/model-listener",
-                "reference": "47fd40a4e1a055f770284cffbf163d55ad792c21"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/model-listener/zipball/0181882fb6034cf2eac81b84b5c65c187af9f3a4",
+                "reference": "0181882fb6034cf2eac81b84b5c65c187af9f3a4",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -2797,11 +3196,7 @@
                     "Hyperf\\ModelListener\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\ModelListener\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2814,22 +3209,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/pipeline",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/pipeline.git",
+                "reference": "096d9a9f87ddea33209f134d30ae8d8867a195c7"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/pipeline",
-                "reference": "a35a639576356bcfb527ba69bdf83d4aaff00f59"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/pipeline/zipball/096d9a9f87ddea33209f134d30ae8d8867a195c7",
+                "reference": "096d9a9f87ddea33209f134d30ae8d8867a195c7",
+                "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
@@ -2846,11 +3255,7 @@
                     "Hyperf\\Pipeline\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Pipeline\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2863,22 +3268,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/pool",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/pool.git",
+                "reference": "004dd811bf760ea0032913a31284102742abb737"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/pool",
-                "reference": "b2f0fee210d2a5bf0e3f4eef99ab118951a9798a"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/pool/zipball/004dd811bf760ea0032913a31284102742abb737",
+                "reference": "004dd811bf760ea0032913a31284102742abb737",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -2904,11 +3323,7 @@
                     "Hyperf\\Pool\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Pool\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2921,22 +3336,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/process",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/process.git",
+                "reference": "2b2286cff615989f01cb87691882b61c4c931ea3"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/process",
-                "reference": "80bbf43786191a4c2e14ada6205901b371b445df"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/process/zipball/2b2286cff615989f01cb87691882b61c4c931ea3",
+                "reference": "2b2286cff615989f01cb87691882b61c4c931ea3",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -2965,11 +3394,7 @@
                     "Hyperf\\Process\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Process\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2981,22 +3406,36 @@
                 "process"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/redis",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/redis.git",
+                "reference": "973a92c34be60353e978d85c434e65f366a817dd"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/redis",
-                "reference": "40806ff779bd2df05602358883a9834e75763ca0"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/redis/zipball/973a92c34be60353e978d85c434e65f366a817dd",
+                "reference": "973a92c34be60353e978d85c434e65f366a817dd",
+                "shasum": ""
             },
             "require": {
                 "ext-redis": "^5.0 || ^6.0",
@@ -3026,11 +3465,7 @@
                     "Hyperf\\Redis\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Redis\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3043,22 +3478,36 @@
                 "redis"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/serializer",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/serializer.git",
+                "reference": "03c8a4840e0a7be83670c2fb0f850a2204fad076"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/serializer",
-                "reference": "3fd2bfa93b9531f230e31e98553cd681ae4a8854"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/serializer/zipball/03c8a4840e0a7be83670c2fb0f850a2204fad076",
+                "reference": "03c8a4840e0a7be83670c2fb0f850a2204fad076",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -3083,11 +3532,7 @@
                     "Hyperf\\Serializer\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Serializer\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3100,22 +3545,36 @@
                 "tappable"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/server",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/server.git",
+                "reference": "e10c5ce6d9b72d3ca9ad16d36977e2e64d975460"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/server",
-                "reference": "c72c3b80fae60d989b294190bdddeb4c3d2d6222"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/server/zipball/e10c5ce6d9b72d3ca9ad16d36977e2e64d975460",
+                "reference": "e10c5ce6d9b72d3ca9ad16d36977e2e64d975460",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -3147,11 +3606,7 @@
                     "Hyperf\\Server\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Server\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3164,22 +3619,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/signal",
-            "version": "dev-master",
+            "version": "v3.1.47",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/signal.git",
+                "reference": "ec812045cdf0dde4d9a9c2b7fb47ea8b16de6534"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/signal",
-                "reference": "1e7c68175fa54f7e6f9ff3ac9723da08d012fa1e"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/signal/zipball/ec812045cdf0dde4d9a9c2b7fb47ea8b16de6534",
+                "reference": "ec812045cdf0dde4d9a9c2b7fb47ea8b16de6534",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -3192,11 +3661,11 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "3.1-dev"
-                },
                 "hyperf": {
                     "config": "Hyperf\\Signal\\ConfigProvider"
+                },
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -3204,11 +3673,7 @@
                     "Hyperf\\Signal\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Signal\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3221,22 +3686,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-11-28T01:51:55+00:00"
         },
         {
             "name": "hyperf/stdlib",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/stdlib.git",
+                "reference": "13393734a4cc6c9878390b1f6b0fc7e5202c6b59"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/stdlib",
-                "reference": "965598d1b77927613e7eee85d4d73211a89940b6"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/stdlib/zipball/13393734a4cc6c9878390b1f6b0fc7e5202c6b59",
+                "reference": "13393734a4cc6c9878390b1f6b0fc7e5202c6b59",
+                "shasum": ""
             },
             "require": {
                 "php": ">=8.1"
@@ -3252,11 +3731,7 @@
                     "Hyperf\\Stdlib\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Stdlib\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3269,22 +3744,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/stringable",
-            "version": "dev-master",
+            "version": "v3.1.43",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/stringable.git",
+                "reference": "5467fc81559ae93b2b7a938a5e75c16645e49755"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/stringable",
-                "reference": "de66bfa61ca45e6a805ac3daf029a7006d06497e"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/stringable/zipball/5467fc81559ae93b2b7a938a5e75c16645e49755",
+                "reference": "5467fc81559ae93b2b7a938a5e75c16645e49755",
+                "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
@@ -3306,18 +3795,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Hyperf\\Stringable\\": "src/"
-                },
                 "files": [
                     "src/Functions.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "HyperfTest\\Stringable\\": "tests/"
+                    "Hyperf\\Stringable\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3330,22 +3815,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-10-09T02:28:40+00:00"
         },
         {
             "name": "hyperf/support",
-            "version": "dev-master",
+            "version": "v3.1.47",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/support.git",
+                "reference": "e0b68073d7015c43f89eed6d29f5605256d46dcc"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/support",
-                "reference": "19df45658cdb0de20ab64eb26250198e7d00ffdf"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/support/zipball/e0b68073d7015c43f89eed6d29f5605256d46dcc",
+                "reference": "e0b68073d7015c43f89eed6d29f5605256d46dcc",
+                "shasum": ""
             },
             "require": {
                 "hyperf/collection": "~3.1.0",
@@ -3366,18 +3865,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Hyperf\\Support\\": "src/"
-                },
                 "files": [
                     "src/Functions.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "HyperfTest\\Support\\": "tests/"
+                    "Hyperf\\Support\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3390,22 +3885,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-11-28T01:51:55+00:00"
         },
         {
             "name": "hyperf/tappable",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/tappable.git",
+                "reference": "f5c5d343c95238dcb3fe500876ceadc175e221f8"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/tappable",
-                "reference": "5e5e9ead7397ceee5c9b70f11f757f4699e24cec"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/tappable/zipball/f5c5d343c95238dcb3fe500876ceadc175e221f8",
+                "reference": "f5c5d343c95238dcb3fe500876ceadc175e221f8",
+                "shasum": ""
             },
             "require": {
                 "php": ">=8.1"
@@ -3417,18 +3926,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Hyperf\\Tappable\\": "src/"
-                },
                 "files": [
                     "src/Functions.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "HyperfTest\\Tappable\\": "tests/"
+                    "Hyperf\\Tappable\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3441,22 +3946,36 @@
                 "tappable"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/tracer",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/tracer.git",
+                "reference": "8ec4b4f2499592a3d748e3760aa63bca31c78883"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/tracer",
-                "reference": "22c9e02fb3a8a778e3538a9d1bed9400c2b8c87f"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/tracer/zipball/8ec4b4f2499592a3d748e3760aa63bca31c78883",
+                "reference": "8ec4b4f2499592a3d748e3760aa63bca31c78883",
+                "shasum": ""
             },
             "require": {
                 "hyperf/contract": "~3.1.0",
@@ -3488,11 +4007,7 @@
                     "Hyperf\\Tracer\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Tracer\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3505,22 +4020,36 @@
                 "zipkin"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/utils",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/utils.git",
+                "reference": "4b13a567a61d08a3c4d058499e28a5b26fc18f1c"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/utils",
-                "reference": "6faeed6bb2186a34fd1b0a443b890807f9328199"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/utils/zipball/4b13a567a61d08a3c4d058499e28a5b26fc18f1c",
+                "reference": "4b13a567a61d08a3c4d058499e28a5b26fc18f1c",
+                "shasum": ""
             },
             "require": {
                 "doctrine/inflector": "^2.0",
@@ -3544,6 +4073,7 @@
                     "dev-master": "3.1-dev"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3556,14 +4086,22 @@
                 "utils"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "jcchavezs/zipkin-opentracing",
@@ -3810,6 +4348,7 @@
                     "type": "community_bridge"
                 }
             ],
+            "abandoned": "symfony/mime",
             "time": "2023-11-02T16:47:19+00:00"
         },
         {
@@ -4264,118 +4803,6 @@
                 }
             ],
             "time": "2024-09-09T07:06:30+00:00"
-        },
-        {
-            "name": "onetech/sp-api-sdk",
-            "version": "dev-develop",
-            "dist": {
-                "type": "path",
-                "url": "../sp-api-sdk",
-                "reference": "37a77387ddc28c10f27f8b22f2406ed9e9bac288"
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "php": "~8.1 || ~8.2",
-                "psr/http-client": "^1.0.1",
-                "psr/http-factory": "^1.0",
-                "psr/log": "^1.1||^2.0||^3.0"
-            },
-            "require-dev": {
-                "kriswallsmith/buzz": "^1.2",
-                "monolog/monolog": "^3.3",
-                "nyholm/psr7": "^1.4",
-                "symfony/dotenv": "^6.1",
-                "symfony/var-dumper": "^6.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "AmazonPHP\\": "src/AmazonPHP/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "AmazonPHP\\Test\\": "tests/"
-                }
-            },
-            "scripts": {
-                "clean": [
-                    "rm -rf src/AmazonPHP/SellingPartner/Api",
-                    "rm -rf src/AmazonPHP/SellingPartner/Model"
-                ],
-                "generate": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "@clean",
-                    "bin/generate.sh",
-                    "@rector:process:force:php",
-                    "@cs:php:fix"
-                ],
-                "build": [
-                    "@static:analyze"
-                ],
-                "static:analyze": [
-                    "tools/vendor/bin/php-cs-fixer fix --dry-run",
-                    "tools/vendor/bin/psalm"
-                ],
-                "test": [
-                    "@test:unit"
-                ],
-                "test:unit": [
-                    "tools/vendor/bin/phpunit --testsuite unit"
-                ],
-                "test:functional": [
-                    "tools/vendor/bin/phpunit --testsuite functional"
-                ],
-                "rector:process:php": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "tools/vendor/bin/rector process --config=rector-php.php --dry-run"
-                ],
-                "rector:process:force:php": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "tools/vendor/bin/rector process --no-diffs --no-progress-bar --config=rector-php.php"
-                ],
-                "cs:php:fix": [
-                    "tools/vendor/bin/php-cs-fixer fix"
-                ],
-                "tools:install": [
-                    "composer install --working-dir=./tools"
-                ],
-                "post-install-cmd": [
-                    "@tools:install"
-                ],
-                "post-update-cmd": [
-                    "@tools:install"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Norbert Orzechowicz",
-                    "homepage": "https://norbert.tech"
-                },
-                {
-                    "name": "OpenAPI-Generator contributors",
-                    "homepage": "https://openapi-generator.tech"
-                }
-            ],
-            "description": "Amazon Selling Partner API - PHP SDK",
-            "homepage": "https://openapi-generator.tech",
-            "keywords": [
-                "amazon",
-                "api",
-                "php",
-                "rest",
-                "sdk",
-                "selling-partner-api"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
         },
         {
             "name": "opentracing/opentracing",
@@ -5510,16 +5937,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v7.1.8",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "ff04e5b5ba043d2badfb308197b9e6b42883fcd5"
+                "reference": "23c8aae6d764e2bae02d2a99f7532a7f6ed619cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/ff04e5b5ba043d2badfb308197b9e6b42883fcd5",
-                "reference": "ff04e5b5ba043d2badfb308197b9e6b42883fcd5",
+                "url": "https://api.github.com/repos/symfony/console/zipball/23c8aae6d764e2bae02d2a99f7532a7f6ed619cf",
+                "reference": "23c8aae6d764e2bae02d2a99f7532a7f6ed619cf",
                 "shasum": ""
             },
             "require": {
@@ -5583,7 +6010,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v7.1.8"
+                "source": "https://github.com/symfony/console/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -5599,20 +6026,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-06T14:23:19+00:00"
+            "time": "2024-11-06T14:24:19+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v3.5.0",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
-                "reference": "0e0d29ce1f20deffb4ab1b016a7257c4f1e789a1"
+                "reference": "74c71c939a79f7d5bf3c1ce9f5ea37ba0114c6f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/0e0d29ce1f20deffb4ab1b016a7257c4f1e789a1",
-                "reference": "0e0d29ce1f20deffb4ab1b016a7257c4f1e789a1",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/74c71c939a79f7d5bf3c1ce9f5ea37ba0114c6f6",
+                "reference": "74c71c939a79f7d5bf3c1ce9f5ea37ba0114c6f6",
                 "shasum": ""
             },
             "require": {
@@ -5650,7 +6077,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.5.0"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.5.1"
             },
             "funding": [
                 {
@@ -5666,20 +6093,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-18T09:32:20+00:00"
+            "time": "2024-09-25T14:20:29+00:00"
         },
         {
             "name": "symfony/finder",
-            "version": "v7.1.6",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "2cb89664897be33f78c65d3d2845954c8d7a43b8"
+                "reference": "6de263e5868b9a137602dd1e33e4d48bfae99c49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/2cb89664897be33f78c65d3d2845954c8d7a43b8",
-                "reference": "2cb89664897be33f78c65d3d2845954c8d7a43b8",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/6de263e5868b9a137602dd1e33e4d48bfae99c49",
+                "reference": "6de263e5868b9a137602dd1e33e4d48bfae99c49",
                 "shasum": ""
             },
             "require": {
@@ -5714,7 +6141,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v7.1.6"
+                "source": "https://github.com/symfony/finder/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -5730,20 +6157,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-01T08:31:23+00:00"
+            "time": "2024-10-23T06:56:12+00:00"
         },
         {
             "name": "symfony/options-resolver",
-            "version": "v7.1.6",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/options-resolver.git",
-                "reference": "85e95eeede2d41cd146146e98c9c81d9214cae85"
+                "reference": "7da8fbac9dcfef75ffc212235d76b2754ce0cf50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/85e95eeede2d41cd146146e98c9c81d9214cae85",
-                "reference": "85e95eeede2d41cd146146e98c9c81d9214cae85",
+                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/7da8fbac9dcfef75ffc212235d76b2754ce0cf50",
+                "reference": "7da8fbac9dcfef75ffc212235d76b2754ce0cf50",
                 "shasum": ""
             },
             "require": {
@@ -5781,7 +6208,7 @@
                 "options"
             ],
             "support": {
-                "source": "https://github.com/symfony/options-resolver/tree/v7.1.6"
+                "source": "https://github.com/symfony/options-resolver/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -5797,7 +6224,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-25T14:20:29+00:00"
+            "time": "2024-11-20T11:17:29+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -6199,16 +6626,16 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v3.5.0",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "bd1d9e59a81d8fa4acdcea3f617c581f7475a80f"
+                "reference": "e53260aabf78fb3d63f8d79d69ece59f80d5eda0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/bd1d9e59a81d8fa4acdcea3f617c581f7475a80f",
-                "reference": "bd1d9e59a81d8fa4acdcea3f617c581f7475a80f",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/e53260aabf78fb3d63f8d79d69ece59f80d5eda0",
+                "reference": "e53260aabf78fb3d63f8d79d69ece59f80d5eda0",
                 "shasum": ""
             },
             "require": {
@@ -6262,7 +6689,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/v3.5.0"
+                "source": "https://github.com/symfony/service-contracts/tree/v3.5.1"
             },
             "funding": [
                 {
@@ -6278,20 +6705,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-18T09:32:20+00:00"
+            "time": "2024-09-25T14:20:29+00:00"
         },
         {
             "name": "symfony/string",
-            "version": "v7.1.8",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "591ebd41565f356fcd8b090fe64dbb5878f50281"
+                "reference": "446e0d146f991dde3e73f45f2c97a9faad773c82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/591ebd41565f356fcd8b090fe64dbb5878f50281",
-                "reference": "591ebd41565f356fcd8b090fe64dbb5878f50281",
+                "url": "https://api.github.com/repos/symfony/string/zipball/446e0d146f991dde3e73f45f2c97a9faad773c82",
+                "reference": "446e0d146f991dde3e73f45f2c97a9faad773c82",
                 "shasum": ""
             },
             "require": {
@@ -6349,7 +6776,7 @@
                 "utf8"
             ],
             "support": {
-                "source": "https://github.com/symfony/string/tree/v7.1.8"
+                "source": "https://github.com/symfony/string/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -6365,7 +6792,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-13T13:31:21+00:00"
+            "time": "2024-11-13T13:31:26+00:00"
         },
         {
             "name": "symfony/translation",
@@ -6464,16 +6891,16 @@
         },
         {
             "name": "symfony/translation-contracts",
-            "version": "v3.5.0",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation-contracts.git",
-                "reference": "b9d2189887bb6b2e0367a9fc7136c5239ab9b05a"
+                "reference": "4667ff3bd513750603a09c8dedbea942487fb07c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/b9d2189887bb6b2e0367a9fc7136c5239ab9b05a",
-                "reference": "b9d2189887bb6b2e0367a9fc7136c5239ab9b05a",
+                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/4667ff3bd513750603a09c8dedbea942487fb07c",
+                "reference": "4667ff3bd513750603a09c8dedbea942487fb07c",
                 "shasum": ""
             },
             "require": {
@@ -6522,7 +6949,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/translation-contracts/tree/v3.5.0"
+                "source": "https://github.com/symfony/translation-contracts/tree/v3.5.1"
             },
             "funding": [
                 {
@@ -6538,7 +6965,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-18T09:32:20+00:00"
+            "time": "2024-09-25T14:20:29+00:00"
         },
         {
             "name": "thewirecutter/paapi5-php-sdk",
@@ -7235,16 +7662,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.64.0",
+            "version": "v3.65.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "58dd9c931c785a79739310aef5178928305ffa67"
+                "reference": "79d4f3e77b250a7d8043d76c6af8f0695e8a469f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/58dd9c931c785a79739310aef5178928305ffa67",
-                "reference": "58dd9c931c785a79739310aef5178928305ffa67",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/79d4f3e77b250a7d8043d76c6af8f0695e8a469f",
+                "reference": "79d4f3e77b250a7d8043d76c6af8f0695e8a469f",
                 "shasum": ""
             },
             "require": {
@@ -7254,7 +7681,7 @@
                 "ext-filter": "*",
                 "ext-json": "*",
                 "ext-tokenizer": "*",
-                "fidry/cpu-core-counter": "^1.0",
+                "fidry/cpu-core-counter": "^1.2",
                 "php": "^7.4 || ^8.0",
                 "react/child-process": "^0.6.5",
                 "react/event-loop": "^1.0",
@@ -7274,18 +7701,18 @@
                 "symfony/stopwatch": "^5.4 || ^6.0 || ^7.0"
             },
             "require-dev": {
-                "facile-it/paraunit": "^1.3 || ^2.3",
-                "infection/infection": "^0.29.5",
-                "justinrainbow/json-schema": "^5.2",
+                "facile-it/paraunit": "^1.3.1 || ^2.4",
+                "infection/infection": "^0.29.8",
+                "justinrainbow/json-schema": "^5.3 || ^6.0",
                 "keradus/cli-executor": "^2.1",
-                "mikey179/vfsstream": "^1.6.11",
+                "mikey179/vfsstream": "^1.6.12",
                 "php-coveralls/php-coveralls": "^2.7",
                 "php-cs-fixer/accessible-object": "^1.1",
                 "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.5",
                 "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.5",
-                "phpunit/phpunit": "^9.6.19 || ^10.5.21 || ^11.2",
-                "symfony/var-dumper": "^5.4 || ^6.0 || ^7.0",
-                "symfony/yaml": "^5.4 || ^6.0 || ^7.0"
+                "phpunit/phpunit": "^9.6.21 || ^10.5.38 || ^11.4.3",
+                "symfony/var-dumper": "^5.4.47 || ^6.4.15 || ^7.1.8",
+                "symfony/yaml": "^5.4.45 || ^6.4.13 || ^7.1.6"
             },
             "suggest": {
                 "ext-dom": "For handling output formats in XML",
@@ -7326,7 +7753,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.64.0"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.65.0"
             },
             "funding": [
                 {
@@ -7334,7 +7761,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-08-30T23:09:38+00:00"
+            "time": "2024-11-25T00:39:24+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -7389,11 +7816,17 @@
         },
         {
             "name": "hyperf/devtool",
-            "version": "dev-master",
+            "version": "v3.1.42",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/devtool.git",
+                "reference": "ae1c8f547c21eb591a94ae3fbacf054542de82d3"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/devtool",
-                "reference": "b45af2c7d60b7991bb7d1e863cb1fbafef6f1e63"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/devtool/zipball/ae1c8f547c21eb591a94ae3fbacf054542de82d3",
+                "reference": "ae1c8f547c21eb591a94ae3fbacf054542de82d3",
+                "shasum": ""
             },
             "require": {
                 "hyperf/code-parser": "~3.1.0",
@@ -7418,11 +7851,7 @@
                     "Hyperf\\Devtool\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Devtool\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -7436,22 +7865,36 @@
                 "swoole"
             ],
             "support": {
-                "issues": "https://github.com/hyperf/hyperf/issues",
-                "source": "https://github.com/hyperf/hyperf",
                 "docs": "https://hyperf.wiki",
-                "pull-request": "https://github.com/hyperf/hyperf/pulls"
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-09-25T02:54:12+00:00"
         },
         {
             "name": "hyperf/testing",
-            "version": "dev-master",
+            "version": "v3.1.46",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/testing.git",
+                "reference": "d703d287817c577acfee0cec108dc2f4217ac9fa"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/testing",
-                "reference": "234a668458e618b95d766982e1a573eee89b37cf"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/testing/zipball/d703d287817c577acfee0cec108dc2f4217ac9fa",
+                "reference": "d703d287817c577acfee0cec108dc2f4217ac9fa",
+                "shasum": ""
             },
             "require": {
                 "hyperf/codec": "~3.1.0",
@@ -7484,11 +7927,7 @@
                     "Hyperf\\Testing\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "HyperfTest\\Testing\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -7499,17 +7938,34 @@
                 "swoole",
                 "testing"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/hyperf/testing/tree/v3.1.46"
+            },
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-11-20T07:42:54+00:00"
         },
         {
             "name": "hyperf/watcher",
-            "version": "dev-master",
+            "version": "v3.1.43",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/watcher.git",
+                "reference": "a5f41a66a8b8f651335b4a7c403e03ff0b0f4802"
+            },
             "dist": {
-                "type": "path",
-                "url": "../hyperf/src/watcher",
-                "reference": "cc19509181eb1d7358f6db61ae2945c74d1fa74a"
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/watcher/zipball/a5f41a66a8b8f651335b4a7c403e03ff0b0f4802",
+                "reference": "a5f41a66a8b8f651335b4a7c403e03ff0b0f4802",
+                "shasum": ""
             },
             "require": {
                 "ext-posix": "*",
@@ -7530,18 +7986,14 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Hyperf\\Watcher\\": "src/"
-                },
                 "files": [
                     "src/Functions.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "HyperfTest\\Watcher\\": "tests/"
+                    "Hyperf\\Watcher\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -7551,9 +8003,21 @@
                 "hyperf",
                 "php"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/hyperf/watcher/issues",
+                "source": "https://github.com/hyperf/watcher/tree/v3.1.43"
+            },
+            "funding": [
+                {
+                    "url": "https://hyperf.wiki/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://opencollective.com/hyperf",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2024-10-06T12:33:12+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -8179,16 +8643,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.11",
+            "version": "1.12.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "0d1fc20a962a91be578bcfe7cf939e6e1a2ff733"
+                "reference": "b5ae1b88f471d3fd4ba1aa0046234b5ca3776dd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/0d1fc20a962a91be578bcfe7cf939e6e1a2ff733",
-                "reference": "0d1fc20a962a91be578bcfe7cf939e6e1a2ff733",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b5ae1b88f471d3fd4ba1aa0046234b5ca3776dd0",
+                "reference": "b5ae1b88f471d3fd4ba1aa0046234b5ca3776dd0",
                 "shasum": ""
             },
             "require": {
@@ -8233,7 +8697,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-17T14:08:01+00:00"
+            "time": "2024-11-28T22:13:23+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -9169,12 +9633,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "b33a18b5d222c63472a4b41f6fa3e15e591c9595"
+                "reference": "fff26f7a91a7458bf6eea5afdd71b4aba1f1d3ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/b33a18b5d222c63472a4b41f6fa3e15e591c9595",
-                "reference": "b33a18b5d222c63472a4b41f6fa3e15e591c9595",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/fff26f7a91a7458bf6eea5afdd71b4aba1f1d3ea",
+                "reference": "fff26f7a91a7458bf6eea5afdd71b4aba1f1d3ea",
                 "shasum": ""
             },
             "conflict": {
@@ -9755,6 +10219,7 @@
                 "socialiteproviders/steam": "<1.1",
                 "spatie/browsershot": "<3.57.4",
                 "spatie/image-optimizer": "<1.7.3",
+                "spencer14420/sp-php-email-handler": "<1",
                 "spipu/html2pdf": "<5.2.8",
                 "spoon/library": "<1.4.1",
                 "spoonity/tcpdf": "<6.2.22",
@@ -9825,7 +10290,7 @@
                 "t3s/content-consent": "<1.0.3|>=2,<2.0.2",
                 "tastyigniter/tastyigniter": "<3.3",
                 "tcg/voyager": "<=1.4",
-                "tecnickcom/tcpdf": "<=6.7.4",
+                "tecnickcom/tcpdf": "<=6.7.5",
                 "terminal42/contao-tablelookupwizard": "<3.3.5",
                 "thelia/backoffice-default-template": ">=2.1,<2.1.2",
                 "thelia/thelia": ">=2.1,<2.1.3",
@@ -10003,7 +10468,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-19T21:04:39+00:00"
+            "time": "2024-11-27T22:05:07+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -11068,16 +11533,16 @@
         },
         {
             "name": "swoole/ide-helper",
-            "version": "5.1.5",
+            "version": "5.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swoole/ide-helper.git",
-                "reference": "a4207701bb55fe0cea06f840d2054cbc4a90b943"
+                "reference": "c5149a01c00e4ed56fc7b3ffeb6823e69acb4a76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swoole/ide-helper/zipball/a4207701bb55fe0cea06f840d2054cbc4a90b943",
-                "reference": "a4207701bb55fe0cea06f840d2054cbc4a90b943",
+                "url": "https://api.github.com/repos/swoole/ide-helper/zipball/c5149a01c00e4ed56fc7b3ffeb6823e69acb4a76",
+                "reference": "c5149a01c00e4ed56fc7b3ffeb6823e69acb4a76",
                 "shasum": ""
             },
             "type": "library",
@@ -11094,22 +11559,22 @@
             "description": "IDE help files for Swoole.",
             "support": {
                 "issues": "https://github.com/swoole/ide-helper/issues",
-                "source": "https://github.com/swoole/ide-helper/tree/5.1.5"
+                "source": "https://github.com/swoole/ide-helper/tree/5.1.6"
             },
-            "time": "2024-11-05T07:35:30+00:00"
+            "time": "2024-11-29T07:21:36+00:00"
         },
         {
             "name": "symfony/cache",
-            "version": "v7.1.7",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache.git",
-                "reference": "23b61c9592ee72233c31625f0ae805dd1571e928"
+                "reference": "2c926bc348184b4b235f2200fcbe8fcf3c8c5b8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache/zipball/23b61c9592ee72233c31625f0ae805dd1571e928",
-                "reference": "23b61c9592ee72233c31625f0ae805dd1571e928",
+                "url": "https://api.github.com/repos/symfony/cache/zipball/2c926bc348184b4b235f2200fcbe8fcf3c8c5b8a",
+                "reference": "2c926bc348184b4b235f2200fcbe8fcf3c8c5b8a",
                 "shasum": ""
             },
             "require": {
@@ -11137,6 +11602,7 @@
                 "doctrine/dbal": "^3.6|^4",
                 "predis/predis": "^1.1|^2.0",
                 "psr/simple-cache": "^1.0|^2.0|^3.0",
+                "symfony/clock": "^6.4|^7.0",
                 "symfony/config": "^6.4|^7.0",
                 "symfony/dependency-injection": "^6.4|^7.0",
                 "symfony/filesystem": "^6.4|^7.0",
@@ -11177,7 +11643,7 @@
                 "psr6"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache/tree/v7.1.7"
+                "source": "https://github.com/symfony/cache/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -11193,20 +11659,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-05T15:34:55+00:00"
+            "time": "2024-11-25T15:21:05+00:00"
         },
         {
             "name": "symfony/cache-contracts",
-            "version": "v3.5.0",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache-contracts.git",
-                "reference": "df6a1a44c890faded49a5fca33c2d5c5fd3c2197"
+                "reference": "15a4f8e5cd3bce9aeafc882b1acab39ec8de2c1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache-contracts/zipball/df6a1a44c890faded49a5fca33c2d5c5fd3c2197",
-                "reference": "df6a1a44c890faded49a5fca33c2d5c5fd3c2197",
+                "url": "https://api.github.com/repos/symfony/cache-contracts/zipball/15a4f8e5cd3bce9aeafc882b1acab39ec8de2c1b",
+                "reference": "15a4f8e5cd3bce9aeafc882b1acab39ec8de2c1b",
                 "shasum": ""
             },
             "require": {
@@ -11253,7 +11719,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache-contracts/tree/v3.5.0"
+                "source": "https://github.com/symfony/cache-contracts/tree/v3.5.1"
             },
             "funding": [
                 {
@@ -11269,20 +11735,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-18T09:32:20+00:00"
+            "time": "2024-09-25T14:20:29+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v7.1.6",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "87254c78dd50721cfd015b62277a8281c5589702"
+                "reference": "910c5db85a5356d0fea57680defec4e99eb9c8c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/87254c78dd50721cfd015b62277a8281c5589702",
-                "reference": "87254c78dd50721cfd015b62277a8281c5589702",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/910c5db85a5356d0fea57680defec4e99eb9c8c1",
+                "reference": "910c5db85a5356d0fea57680defec4e99eb9c8c1",
                 "shasum": ""
             },
             "require": {
@@ -11333,7 +11799,7 @@
             "description": "Provides tools that allow your application components to communicate with each other by dispatching events and listening to them",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/event-dispatcher/tree/v7.1.6"
+                "source": "https://github.com/symfony/event-dispatcher/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -11349,20 +11815,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-25T14:20:29+00:00"
+            "time": "2024-09-25T14:21:43+00:00"
         },
         {
             "name": "symfony/event-dispatcher-contracts",
-            "version": "v3.5.0",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher-contracts.git",
-                "reference": "8f93aec25d41b72493c6ddff14e916177c9efc50"
+                "reference": "7642f5e970b672283b7823222ae8ef8bbc160b9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher-contracts/zipball/8f93aec25d41b72493c6ddff14e916177c9efc50",
-                "reference": "8f93aec25d41b72493c6ddff14e916177c9efc50",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher-contracts/zipball/7642f5e970b672283b7823222ae8ef8bbc160b9f",
+                "reference": "7642f5e970b672283b7823222ae8ef8bbc160b9f",
                 "shasum": ""
             },
             "require": {
@@ -11409,7 +11875,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/event-dispatcher-contracts/tree/v3.5.0"
+                "source": "https://github.com/symfony/event-dispatcher-contracts/tree/v3.5.1"
             },
             "funding": [
                 {
@@ -11425,20 +11891,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-18T09:32:20+00:00"
+            "time": "2024-09-25T14:20:29+00:00"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v7.1.6",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "c835867b3c62bb05c7fe3d637c871c7ae52024d4"
+                "reference": "b8dce482de9d7c9fe2891155035a7248ab5c7fdb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/c835867b3c62bb05c7fe3d637c871c7ae52024d4",
-                "reference": "c835867b3c62bb05c7fe3d637c871c7ae52024d4",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/b8dce482de9d7c9fe2891155035a7248ab5c7fdb",
+                "reference": "b8dce482de9d7c9fe2891155035a7248ab5c7fdb",
                 "shasum": ""
             },
             "require": {
@@ -11475,7 +11941,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v7.1.6"
+                "source": "https://github.com/symfony/filesystem/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -11491,30 +11957,31 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-25T15:11:02+00:00"
+            "time": "2024-10-25T15:15:23+00:00"
         },
         {
             "name": "symfony/http-client",
-            "version": "v7.1.8",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
-                "reference": "c30d91a1deac0dc3ed5e604683cf2e1dfc635b8a"
+                "reference": "955e43336aff03df1e8a8e17daefabb0127a313b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/c30d91a1deac0dc3ed5e604683cf2e1dfc635b8a",
-                "reference": "c30d91a1deac0dc3ed5e604683cf2e1dfc635b8a",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/955e43336aff03df1e8a8e17daefabb0127a313b",
+                "reference": "955e43336aff03df1e8a8e17daefabb0127a313b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.2",
                 "psr/log": "^1|^2|^3",
                 "symfony/deprecation-contracts": "^2.5|^3",
-                "symfony/http-client-contracts": "^3.4.1",
+                "symfony/http-client-contracts": "~3.4.3|^3.5.1",
                 "symfony/service-contracts": "^2.5|^3"
             },
             "conflict": {
+                "amphp/amp": "<2.5",
                 "php-http/discovery": "<1.15",
                 "symfony/http-foundation": "<6.4"
             },
@@ -11525,14 +11992,14 @@
                 "symfony/http-client-implementation": "3.0"
             },
             "require-dev": {
-                "amphp/amp": "^2.5",
-                "amphp/http-client": "^4.2.1",
-                "amphp/http-tunnel": "^1.0",
+                "amphp/http-client": "^4.2.1|^5.0",
+                "amphp/http-tunnel": "^1.0|^2.0",
                 "amphp/socket": "^1.1",
                 "guzzlehttp/promises": "^1.4|^2.0",
                 "nyholm/psr7": "^1.0",
                 "php-http/httplug": "^1.0|^2.0",
                 "psr/http-client": "^1.0",
+                "symfony/amphp-http-client-meta": "^1.0|^2.0",
                 "symfony/dependency-injection": "^6.4|^7.0",
                 "symfony/http-kernel": "^6.4|^7.0",
                 "symfony/messenger": "^6.4|^7.0",
@@ -11569,7 +12036,7 @@
                 "http"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client/tree/v7.1.8"
+                "source": "https://github.com/symfony/http-client/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -11585,20 +12052,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-13T13:40:27+00:00"
+            "time": "2024-11-29T08:22:02+00:00"
         },
         {
             "name": "symfony/http-client-contracts",
-            "version": "v3.5.0",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client-contracts.git",
-                "reference": "20414d96f391677bf80078aa55baece78b82647d"
+                "reference": "c2f3ad828596624ca39ea40f83617ef51ca8bbf9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/20414d96f391677bf80078aa55baece78b82647d",
-                "reference": "20414d96f391677bf80078aa55baece78b82647d",
+                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/c2f3ad828596624ca39ea40f83617ef51ca8bbf9",
+                "reference": "c2f3ad828596624ca39ea40f83617ef51ca8bbf9",
                 "shasum": ""
             },
             "require": {
@@ -11647,7 +12114,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client-contracts/tree/v3.5.0"
+                "source": "https://github.com/symfony/http-client-contracts/tree/v3.5.1"
             },
             "funding": [
                 {
@@ -11663,20 +12130,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-18T09:32:20+00:00"
+            "time": "2024-11-25T12:02:18+00:00"
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v6.4.15",
+            "version": "v6.4.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "9b3165eb2f04aeaa1a5a2cfef73e63fe3b22dff6"
+                "reference": "431771b7a6f662f1575b3cfc8fd7617aa9864d57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/9b3165eb2f04aeaa1a5a2cfef73e63fe3b22dff6",
-                "reference": "9b3165eb2f04aeaa1a5a2cfef73e63fe3b22dff6",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/431771b7a6f662f1575b3cfc8fd7617aa9864d57",
+                "reference": "431771b7a6f662f1575b3cfc8fd7617aa9864d57",
                 "shasum": ""
             },
             "require": {
@@ -11724,7 +12191,7 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-foundation/tree/v6.4.15"
+                "source": "https://github.com/symfony/http-foundation/tree/v6.4.16"
             },
             "funding": [
                 {
@@ -11740,7 +12207,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-08T16:09:24+00:00"
+            "time": "2024-11-13T18:58:10+00:00"
         },
         {
             "name": "symfony/polyfill-php81",
@@ -11896,16 +12363,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v7.1.8",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "42783370fda6e538771f7c7a36e9fa2ee3a84892"
+                "reference": "d34b22ba9390ec19d2dd966c40aa9e8462f27a7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/42783370fda6e538771f7c7a36e9fa2ee3a84892",
-                "reference": "42783370fda6e538771f7c7a36e9fa2ee3a84892",
+                "url": "https://api.github.com/repos/symfony/process/zipball/d34b22ba9390ec19d2dd966c40aa9e8462f27a7e",
+                "reference": "d34b22ba9390ec19d2dd966c40aa9e8462f27a7e",
                 "shasum": ""
             },
             "require": {
@@ -11937,7 +12404,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v7.1.8"
+                "source": "https://github.com/symfony/process/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -11953,20 +12420,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-06T14:23:19+00:00"
+            "time": "2024-11-06T14:24:19+00:00"
         },
         {
             "name": "symfony/stopwatch",
-            "version": "v7.1.6",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/stopwatch.git",
-                "reference": "8b4a434e6e7faf6adedffb48783a5c75409a1a05"
+                "reference": "696f418b0d722a4225e1c3d95489d262971ca924"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/stopwatch/zipball/8b4a434e6e7faf6adedffb48783a5c75409a1a05",
-                "reference": "8b4a434e6e7faf6adedffb48783a5c75409a1a05",
+                "url": "https://api.github.com/repos/symfony/stopwatch/zipball/696f418b0d722a4225e1c3d95489d262971ca924",
+                "reference": "696f418b0d722a4225e1c3d95489d262971ca924",
                 "shasum": ""
             },
             "require": {
@@ -11999,7 +12466,7 @@
             "description": "Provides a way to profile code",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/stopwatch/tree/v7.1.6"
+                "source": "https://github.com/symfony/stopwatch/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -12015,20 +12482,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-25T14:20:29+00:00"
+            "time": "2024-09-25T14:21:43+00:00"
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v7.1.6",
+            "version": "v7.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "90173ef89c40e7c8c616653241048705f84130ef"
+                "reference": "1a6a89f95a46af0f142874c9d650a6358d13070d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/90173ef89c40e7c8c616653241048705f84130ef",
-                "reference": "90173ef89c40e7c8c616653241048705f84130ef",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/1a6a89f95a46af0f142874c9d650a6358d13070d",
+                "reference": "1a6a89f95a46af0f142874c9d650a6358d13070d",
                 "shasum": ""
             },
             "require": {
@@ -12075,7 +12542,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v7.1.6"
+                "source": "https://github.com/symfony/var-exporter/tree/v7.2.0"
             },
             "funding": [
                 {
@@ -12091,7 +12558,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-25T14:20:29+00:00"
+            "time": "2024-10-18T07:58:17+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -12147,7 +12614,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "onetech/sp-api-sdk": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
