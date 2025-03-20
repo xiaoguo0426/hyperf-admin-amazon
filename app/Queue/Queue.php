@@ -124,6 +124,14 @@ class Queue extends AbstractQueue
         return true;
     }
 
+    /**
+     * @throws \RedisException
+     */
+    public function len(): int
+    {
+        return (int) $this->redis->llen($this->queue_name);
+    }
+
     public function handleQueueData(QueueDataInterface $queueData): bool
     {
         throw new \RuntimeException('请在子类实现 handleQueueData 方法');

@@ -1,16 +1,21 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  *
  * @author   xiaoguo0426
  * @contact  740644717@qq.com
  * @license  MIT
  */
+
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\SlackWebhookHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
+
+use function Hyperf\Support\env;
 
 /*
  * @contact  740644717@qq.com
@@ -324,4 +329,31 @@ return [
             ],
         ],
     ],
+    'slack' => [
+        'handler' => [
+            'class' => SlackWebhookHandler::class,
+            'constructor' => [
+                'webhookUrl' => env('LOG_SLACK_WEBHOOK_URL'),
+                'channel' => 'hyperf-admin',
+                'username' => 'hyperf-bot',
+                'useAttachment' => true,
+                'iconEmoji' => null,
+                'useShortAttachment' => false,
+                'includeContextAndExtra' => false,
+                'level' => Level::Info,
+                'bubble' => true,
+                'excludeFields' => [],
+            ],
+        ],
+        'formatter' => [
+            'class' => Monolog\Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => null,
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
 ];
+
+

@@ -17,6 +17,7 @@ use Hyperf\Redis\RedisProxy;
 use Hyperf\Stringable\Str;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use function Hyperf\Config\config;
 
 class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
 {
@@ -26,13 +27,9 @@ class AbstractRedisHash implements \ArrayAccess, Arrayable, Jsonable
 
     private RedisProxy $redis;
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     public function __construct()
     {
-        $this->key = \Hyperf\Config\config('app_name') . ':' . $this->name;
+        $this->key = config('app_name') . ':' . $this->name;
 
         $connect = 'default';
         $this->redis = di(RedisFactory::class)->get($connect);

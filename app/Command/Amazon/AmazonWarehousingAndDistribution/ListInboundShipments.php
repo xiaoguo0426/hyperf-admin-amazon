@@ -56,7 +56,7 @@ class ListInboundShipments extends HyperfCommand
             while (true) {
                 try {
 
-                    $response = $sdk->amazonWarehousingAndDistribution()->listInboundShipments($accessToken, $region, $sort_by, $sort_order, $shipment_status, $updated_after, $updated_before, $max_results, $next_token);
+                    $response = $sdk->warehousingDistribution()->listInboundShipments($accessToken, $region, $sort_by, $sort_order, $shipment_status, $updated_after, $updated_before, $max_results, $next_token);
 
                     $inboundShipmentSummaryList = $response->getShipments();
                     foreach ($inboundShipmentSummaryList as $inboundShipmentSummary) {

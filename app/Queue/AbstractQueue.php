@@ -45,6 +45,8 @@ abstract class AbstractQueue implements QueueInterface
 
     abstract public function handleQueueData(QueueDataInterface $queueData): bool;
 
+    abstract public function len(): int;
+
     /**
      * 队列安全线  0为不检测。大于0则会判断该队列当前长度是否超过安全线设置.
      */

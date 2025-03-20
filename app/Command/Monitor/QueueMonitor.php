@@ -62,9 +62,9 @@ class QueueMonitor extends HyperfCommand
                 continue;
             }
 
-            $len = $instance->safetyLine();
-            if ($instance->safetyLine() > $safety_line) {
-                // TODO LOG
+            $len = $instance->len();
+            if ($len > $safety_line) {
+                // TODO 当前队列长度超过阈值
             }
         }
     }

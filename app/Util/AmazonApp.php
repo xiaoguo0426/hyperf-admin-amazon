@@ -13,7 +13,6 @@ namespace App\Util;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Regions;
 use App\Exception\AmazonAppException;
-use App\Exception\BusinessException;
 use App\Model\AmazonAppModel;
 use App\Model\AmazonAppRegionModel;
 use App\Util\RedisHash\AmazonAppHash;

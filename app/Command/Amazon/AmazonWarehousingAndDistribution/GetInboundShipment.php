@@ -5,7 +5,6 @@ namespace App\Command\Amazon\AmazonWarehousingAndDistribution;
 use AmazonPHP\SellingPartner\AccessToken;
 use AmazonPHP\SellingPartner\Exception\ApiException;
 use AmazonPHP\SellingPartner\Exception\InvalidArgumentException;
-use AmazonPHP\SellingPartner\Model\DataKiosk\CreateQuerySpecification;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
@@ -50,7 +49,7 @@ class GetInboundShipment extends HyperfCommand
                 try {
                     $shipment_id = '';
 
-                    $response = $sdk->amazonWarehousingAndDistribution()->getInboundShipment($accessToken, $region, $shipment_id);
+                    $response = $sdk->warehousingDistribution()->getInboundShipment($accessToken, $region, $shipment_id);
 
                     break;
                 } catch (ApiException $exception) {

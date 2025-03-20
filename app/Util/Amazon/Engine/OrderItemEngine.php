@@ -147,8 +147,7 @@ class OrderItemEngine implements EngineInterface
             $list = [];
 
             $is_vine_order_flag_list = []; // 是否为vine订单标识集合
-            var_dump($orderItems);
-            die();
+
 //            $order_status = $amazonOrderCollection->order_status; // 当前订单状态
 //            $marketplace_id = $amazonOrderCollection->marketplace_id; // 当前订单市场id
 

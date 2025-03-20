@@ -1,12 +1,14 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  *
  * @author   xiaoguo0426
  * @contact  740644717@qq.com
  * @license  MIT
  */
+
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -20,7 +22,7 @@ return [
         'log_level' => [
             LogLevel::ALERT,
             LogLevel::CRITICAL,
-            //            LogLevel::DEBUG,
+//            LogLevel::DEBUG,
             LogLevel::EMERGENCY,
             LogLevel::ERROR,
             LogLevel::INFO,
