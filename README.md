@@ -59,5 +59,23 @@ Hyperf框架与ThinkPHP5相同逻辑处理同一个报告，差距也太大了�
 
 2. 基于Redis List队列封装
 
-3. 基于Redis Hash的封装
+以[拉取亚马逊周期报告队列](./app/Command/Amazon/Report/ReportGetDocument.php)为例
+
+```php
+
+//(new AmazonGetReportDocumentQueue())->pop();//单个请求拉取报告
+(new AmazonGetReportDocumentQueue())->coPop(30);//并行拉取30个报告
+```
+AmazonGetReportDocumentQueue继承[Queue](./app/Queue/Queue.php)类，**handleQueueData**方法为处理队列数据的方法。每个队列类都需要实现**handleQueueData**方法和定义队列名称即可。
+
+Queue类封装了Redis List的常用操作，包括：
+1. 入队[push()](./app/Queue/Queue.php#L35)方法
+2. 出队单个消费[pop()](./app/Queue/Queue.php#L46)方法和并行消费[coPop()](./app/Queue/Queue.php#L130)方法。其中coPop()方法使用了协程来实现并行消费。（实测性能提升非常大）
+3. 获取队列长度[len()](./app/Queue/Queue.php#L227)方法
+
+
+
+
+
+5. 基于Redis Hash的封装
 

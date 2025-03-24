@@ -22,5 +22,7 @@ interface QueueInterface
 
     public function pop(): bool;
 
+    public function coPop(): bool;
+
     public function handleQueueData(QueueDataInterface $queueData): bool;
 }

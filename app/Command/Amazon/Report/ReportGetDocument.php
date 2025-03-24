@@ -37,6 +37,8 @@ class ReportGetDocument extends HyperfCommand
      */
     public function handle(): void
     {
+
+//        (new AmazonGetReportDocumentQueue())->pop();//单个请求拉取报告
         (new AmazonGetReportDocumentQueue())->coPop(30);//并行请求的数量
     }
 }
