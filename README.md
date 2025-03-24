@@ -17,7 +17,7 @@
 - ``app/Queue`` **存放队列类与队列Data类**
 - ``app/Util``  **存放一些工具类与逻辑处理类**
 
-本项目设计时考虑了多商户多店铺的情况，所以大部分表都需要有`merchant_id`与`merchant_store_id`字段。项目初始化时请把相应配置填入`amazon_app`表中(**后续会调整该表结构，把不同地区的refresh_token放到amazon_app_region中**)。
+本项目设计时考虑了多商户多店铺的情况，所以大部分表都需要有`merchant_id`与`merchant_store_id`字段。项目初始化时请把相应配置填入`amazon_app`表和`amazon_app_region`表中。
 
 
 ### 常用命令
@@ -26,29 +26,27 @@
 
 crontab:amazon:refresh-app-token
 
-
-
 # 创建报告
 ### 强制创建销售与流量报告， 时间范围为2023-12-01到2023-12-20，循环创建每一天的报告
 > php bin/hyperf.php amazon:report:create 1 1 GET_SALES_AND_TRAFFIC_REPORT --report_start_date=2023-12-01 --report_end_date=2023-12-20 --is_range_date=1 --is_force_create=1
-
 # 拉取报告
 > php bin/hyperf.php amazon:report:get
-
 # 处理报告
 > php bin/hyperf.php amazon:report:action
 
 # 获取周期报告
 > php bin/hyperf.php amazon:report:gets 1 1 us-east-1 GET_DATE_RANGE_FINANCIAL_TRANSACTION_DATA
 # 拉取周期报告
-> 
+> php bin/hyperf.php amazon:report:gets-document
 # 处理周期报告
->
+> php bin/hyperf.php amazon:report:action-document
 
 ```
+[即时报告类型报告和周期报告定义](./config/autoload/amazon_reports.php)
 
+##### 项目亮点
 
-##### 一些题外话
+1. 性能对比
 
 Hyperf框架与ThinkPHP5相同逻辑处理同一个报告，差距也太大了。Swoole真的强
 
@@ -56,4 +54,10 @@ Hyperf框架与ThinkPHP5相同逻辑处理同一个报告，差距也太大了�
 
 ![Hyperf](assets/markdown-img-paste-20240207022923459.png)
 
-![Think5](assets/markdown-img-paste-20240207023112869.png)
+![ThinkPHP6](assets/markdown-img-paste-20240207023112869.png)
+
+
+2. 基于Redis List队列封装
+
+3. 基于Redis Hash的封装
+

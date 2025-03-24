@@ -9,6 +9,7 @@ declare(strict_types=1);
  */
 return [
     // 即时报告
+    //主动请求亚马逊的创建报告接口生成的报告类型。部分报告类型在请求创建时可能需要指定时间范围。
     'requested' => [
         'GET_COUPON_PERFORMANCE_REPORT',
         'GET_PROMOTION_PERFORMANCE_REPORT',
@@ -103,6 +104,7 @@ return [
         'GET_VENDOR_REAL_TIME_INVENTORY_REPORT',
     ],
     // 周期报告
+    //该类型报告由亚马逊周期性生成，程序不能指定时间范围生成所需要的数据
     'scheduled' => [
         'GET_V2_SETTLEMENT_REPORT_DATA_FLAT_FILE_V2', // 付款报告
         'GET_DATE_RANGE_FINANCIAL_TRANSACTION_DATA', // 日期范围报告
