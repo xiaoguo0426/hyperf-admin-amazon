@@ -32,13 +32,11 @@ class ReportActionDocument extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @throws \RedisException
      * @throws \JsonException
+     * @return void
      */
     public function handle(): void
     {
-        (new AmazonReportDocumentActionQueue())->pop();
+        (new AmazonReportDocumentActionQueue())->coPop(30);
     }
 }

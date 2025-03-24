@@ -16,6 +16,7 @@ use App\Util\Log\QueueLog;
 use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Exception\ParallelExecutionException;
 use Hyperf\Coroutine\Parallel;
 use Hyperf\Engine\Coroutine;
 use Psr\Container\ContainerExceptionInterface;
@@ -149,6 +150,8 @@ class Queue extends AbstractQueue
         while ($this->len()) {
             $collections = new Collection();
 
+            $count = 0;
+
             while (true) {
                 try {
                     $pop = $this->redis->brpop($this->queue_name, $timeout);
@@ -161,12 +164,11 @@ class Queue extends AbstractQueue
                     break;
                 }
 
-                if ($collections->count() >= $parallel_num) {
+                $count = $collections->count();
+                if ($count >= $parallel_num) {
                     break;
                 }
             }
-
-            $count = $collections->count();
 
             $console->notice(sprintf('进程[%s] pid:%s 消费数据长度%s', cli_get_process_title(), $pid, $count));
             if ($count === 0) {
@@ -208,7 +210,13 @@ class Queue extends AbstractQueue
                 });
             });
 
-            $results = $parallel->wait();
+            try{
+                $results = $parallel->wait();
+            } catch(ParallelExecutionException $e){
+                // $e->getResults() 获取协程中的返回值。
+                // $e->getThrowables() 获取协程中出现的异常。
+            }
+
         }
         return true;
     }

@@ -239,7 +239,7 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
         // 数据分片处理
         $collection->chunk(1000)->each(static function (Collection $list) use ($merchant_id, $merchant_store_id, $console): void {
             $page_date_length = $list->count();
-            $console->info(sprintf('开始处理分页数据. 当前分页长度:%s', $page_date_length));
+//            $console->info(sprintf('开始处理分页数据. 当前分页长度:%s', $page_date_length));
             $runtimeCalculator = new RuntimeCalculator();
             $runtimeCalculator->start();
 
@@ -271,12 +271,12 @@ class DateRangeFinancialTransactionDataReport extends ReportBase
                 AmazonReportDateRangeFinancialTransactionDataModel::insert($final);
                 // 当前分页数量与实际写入数量不相等时才需要高亮提示
                 if ($page_date_length !== $final_data_length) {
-                    $console->warning(sprintf('当前分页实际写入数据长度 %s.', $final_data_length));
-                    $console->newLine();
+//                    $console->warning(sprintf('当前分页实际写入数据长度 %s.', $final_data_length));
+//                    $console->newLine();
                 }
             }
-            $console->info(sprintf('结束处理分页数据. 耗时:%s', $runtimeCalculator->stop()));
-            $console->newLine();
+//            $console->info(sprintf('结束处理分页数据. 耗时:%s', $runtimeCalculator->stop()));
+//            $console->newLine();
         });
 
         $console->notice(sprintf('报告ID:%s 结束处理数据. 耗时:%s', $report_id, $runtimeCalculator->stop()));

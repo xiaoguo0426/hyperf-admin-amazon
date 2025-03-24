@@ -32,10 +32,8 @@ class ReportGetDocument extends HyperfCommand
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws \JsonException
-     * @throws \RedisException
+     * @return void
      */
     public function handle(): void
     {
