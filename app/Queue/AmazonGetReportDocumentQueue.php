@@ -103,7 +103,7 @@ class AmazonGetReportDocumentQueue extends Queue
                 })();
             } elseif (file_exists($file_path)) {
                 $log = sprintf('Get Document 报告已存在，直接进入队列. report_type: %s  report_document_id: %s  file_path:%s merchant_id: %s merchant_store_id: %s', $report_type, $report_document_id, $file_path, $merchant_id, $merchant_store_id);
-                $console->highlight($log);
+                $console->warning($log);
                 goto end;
             } else {
                 $retry = 10;

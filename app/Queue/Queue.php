@@ -13,8 +13,11 @@ namespace App\Queue;
 use App\Queue\Data\QueueData;
 use App\Queue\Data\QueueDataInterface;
 use App\Util\Log\QueueLog;
+use Hyperf\Collection\Collection;
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coroutine\Parallel;
+use Hyperf\Engine\Coroutine;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -64,11 +67,10 @@ class Queue extends AbstractQueue
         $timeout = $this->timeout;
 
         $retryInterval = $this->retryInterval; // 消息重试次数
-
         while (true) {
             try {
                 $pop = $this->redis->brpop($this->queue_name, $timeout);
-                if (is_array($pop)) {
+                if (empty($pop)) {
                     pcntl_signal_dispatch();
                     $console->info(sprintf('进程[%s] pid:%s 队列为空，自动退出', cli_get_process_title(), $pid));
                     break;
@@ -120,6 +122,93 @@ class Queue extends AbstractQueue
             }
 
             pcntl_signal_dispatch();
+        }
+        return true;
+    }
+
+    public function coPop(int $parallel_num = 100): bool
+    {
+
+        $console = ApplicationContext::getContainer()->get(StdoutLoggerInterface::class);
+        $logger = ApplicationContext::getContainer()->get(QueueLog::class);
+
+        if ($parallel_num < 1) {
+            $console->error(sprintf('队列:%s 并行消费数量不能小于1。当前并行数量为:%s', $this->queue_name, $parallel_num));
+            return false;
+        }
+
+        $pid = posix_getpid();
+
+        $process_title = $this->queue_name . '-' . $pid;
+        cli_set_process_title($process_title);
+
+        $timeout = $this->timeout;
+
+        $retryInterval = $this->retryInterval; // 消息重试次数
+
+        while ($this->len()) {
+            $collections = new Collection();
+
+            while (true) {
+                try {
+                    $pop = $this->redis->brpop($this->queue_name, $timeout);
+                    if (empty($pop)) {
+                        break;
+                    }
+                    $collections->push($pop[1]);
+                } catch (\RedisException $exception) {
+                    $logger->error(sprintf('队列：%s 连接Redis异常.%s', $this->queue_name, $exception->getMessage()));
+                    break;
+                }
+
+                if ($collections->count() >= $parallel_num) {
+                    break;
+                }
+            }
+
+            $count = $collections->count();
+
+            $console->notice(sprintf('进程[%s] pid:%s 消费数据长度%s', cli_get_process_title(), $pid, $count));
+            if ($count === 0) {
+                return true;
+            }
+
+            $class = $this->getQueueDataClass();
+
+            $parallel = new Parallel($parallel_num);
+
+            $that = $this;
+            /**
+             * @var QueueData $dataObject
+             */
+            $collections->each(function ($item) use ($that, $class, $parallel, $logger, $console) {
+                /**
+                 * @var QueueData $dataObject
+                 */
+                $dataObject = new $class();
+
+                $arr = $dataObject->toArr($item);
+                $dataObject->parse($arr);
+
+                $parallel->add(function () use ($that, $dataObject, $item, $console) {
+
+                    $t1 = microtime(true);
+
+                    $handle = $that->handleQueueData($dataObject);
+                    if ($handle === false) {
+                    }
+
+                    $t2 = microtime(true);
+
+                    $co_id = Coroutine::id();//当前协程id
+
+                    $console->info(sprintf('队列：%s 消费数据. data:%s  耗时:%s 秒 co_id:%s', $this->queue_name, json_encode($item, JSON_THROW_ON_ERROR), round($t2 - $t1, 3), $co_id));
+
+                    return $co_id;
+                });
+            });
+
+            $results = $parallel->wait();
         }
         return true;
     }

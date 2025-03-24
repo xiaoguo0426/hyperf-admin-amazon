@@ -43,6 +43,8 @@ abstract class AbstractQueue implements QueueInterface
 
     abstract public function pop(): bool;
 
+    abstract public function coPop(): bool;
+
     abstract public function handleQueueData(QueueDataInterface $queueData): bool;
 
     abstract public function len(): int;

@@ -30,9 +30,9 @@ return [
         'prefix' => env('DB_PREFIX', ''),
         'pool' => [
             'min_connections' => 1,
-            'max_connections' => 10,
+            'max_connections' => 50,
             'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
+            'wait_timeout' => 10.0,
             'heartbeat' => -1,
             'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
         ],

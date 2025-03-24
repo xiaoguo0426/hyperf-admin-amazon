@@ -94,6 +94,7 @@ class AmazonApp
             $amazonAppRegionCollections = AmazonAppRegionModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('status', Constants::STATUS_ACTIVE)
                 ->get();
             if ($amazonAppRegionCollections->isEmpty()) {
                 return false;
@@ -170,6 +171,7 @@ class AmazonApp
                     ->where('merchant_id', $merchant_id)
                     ->where('merchant_store_id', $merchant_store_id)
                     ->where('region', $region)
+                    ->where('status', Constants::STATUS_ACTIVE)
                     ->firstOrFail();
             } catch (ModelNotFoundException $modelNotFoundException) {
                 $log = sprintf('Amazon App SDK构建失败，AmazonAppRegion查询失败. 错误信息:%s merchant_id:%s merchant_store_id:%s region:%s ', $modelNotFoundException->getMessage(), $merchant_id, $merchant_store_id, $region);

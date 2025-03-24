@@ -272,7 +272,7 @@ class AmazonSDK
     public function getSdk(string $region, bool $force_refresh = false): SellingPartnerSDK
     {
         $factory = new Psr17Factory();
-        $client = new Curl($factory);
+        $client = new Curl($factory, ['timeout' => 10]);// 超时时间 单位：秒
 
         $sts = new STSClient(
             $client,

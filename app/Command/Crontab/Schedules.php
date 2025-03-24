@@ -28,9 +28,6 @@ class Schedules extends HyperfCommand
     public function handle(): void
     {
 
-        set_time_limit(0);
-        ini_set('memory_limit', '1024M');
-
         $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
         // 指令输出

@@ -15,6 +15,7 @@ use App\Model\AmazonAppModel;
 use App\Model\AmazonAppRegionModel;
 use App\Util\AmazonApp;
 use App\Util\AmazonSDK;
+use App\Util\Constants;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Context\ApplicationContext;
@@ -56,6 +57,7 @@ class RefreshAppToken extends HyperfCommand
             $amazonAppRegionCollections = AmazonAppRegionModel::query()
                 ->where('merchant_id', $merchant_id)
                 ->where('merchant_store_id', $merchant_store_id)
+                ->where('status', Constants::STATUS_ACTIVE)
                 ->get();
             if ($amazonAppRegionCollections->isEmpty()) {
                 return false;
