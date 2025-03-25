@@ -147,6 +147,11 @@ class ReportCreate extends HyperfCommand
             $instance->requestReport($marketplace_ids, static function (ReportBase $instance, $report_type, CreateReportSpecification $body, array $marketplace_ids) use ($sdk, $accessToken, $region, $logger, $merchant_id, $merchant_store_id, $is_force_create) {
                 $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
 
+                $console->info();
+                $console->error();
+                $console->warning();
+                $console->notice();
+
                 // 注意匿名函数里的$marketplace_ids的值
                 if ($instance->checkDir() === false) {
                     $console->error('报告保存路径有误，请检查 ' . $instance->getDir());

@@ -1,7 +1,7 @@
 ## hyperf-admin-amazon
 
 #### 背景
-> 此项目仅作为本人在公司项目对接SP-API开发过程中的经验总结归纳，本人不保证此项目代码的正确性，请注意甄别。此项目只是完成了整体架构搭建，以及对接了部分API，**其中有些只是对接了但数据并未完成入库**
+> 此项目仅作为本人在公司项目对接SP-API开发过程中的经验总结归纳，包括经历过的项目中写的不错的代码，本人不保证此项目代码的正确性，请注意甄别。
 
 #### 介绍
 > 此项目基于PHP的Hyperf框架开发，需要你对Hyperf框架有一定的了解。
@@ -66,16 +66,74 @@ Hyperf框架与ThinkPHP5相同逻辑处理同一个报告，差距也太大了�
 //(new AmazonGetReportDocumentQueue())->pop();//单个请求拉取报告
 (new AmazonGetReportDocumentQueue())->coPop(30);//并行拉取30个报告
 ```
-AmazonGetReportDocumentQueue继承[Queue](./app/Queue/Queue.php)类，**handleQueueData**方法为处理队列数据的方法。每个队列类都需要实现**handleQueueData**方法和定义队列名称即可。
+[AmazonGetReportDocumentQueue](./app/Queue/AmazonGetReportDocumentQueue.php)继承[Queue](./app/Queue/Queue.php)类，**handleQueueData**方法为处理队列数据的方法。每个队列类都需要实现**handleQueueData**方法和定义队列名称即可。
 
 Queue类封装了Redis List的常用操作，包括：
-1. 入队[push()](./app/Queue/Queue.php#L35)方法
-2. 出队单个消费[pop()](./app/Queue/Queue.php#L46)方法和并行消费[coPop()](./app/Queue/Queue.php#L130)方法。其中coPop()方法使用了协程来实现并行消费。（实测性能提升非常大）
-3. 获取队列长度[len()](./app/Queue/Queue.php#L227)方法
+- 入队[push()](./app/Queue/Queue.php#L35)方法
+- 出队单个消费[pop()](./app/Queue/Queue.php#L46)方法和并行消费[coPop()](./app/Queue/Queue.php#L130)方法。其中coPop()方法使用了协程来实现并行消费。（实测性能提升非常大）
+- 获取队列长度[len()](./app/Queue/Queue.php#L227)方法
 
 
+投递到队列中的数据需要是实现[QueueDataInterface](./app/Queue/Data/QueueDataInterface.php)接口的对象[AmazonReportDocumentActionData](./app/Queue/Data/AmazonReportDocumentActionData.php) 
+```php
+
+    $amazonGetReportDocumentData = new AmazonGetReportDocumentData();
+    $amazonGetReportDocumentData->setMerchantId($merchant_id);
+    $amazonGetReportDocumentData->setMerchantStoreId($merchant_store_id);
+    $amazonGetReportDocumentData->setRegion($region);
+    $amazonGetReportDocumentData->setMarketplaceIds($report_marketplace_ids);
+    $amazonGetReportDocumentData->setReportDocumentId($report_document_id);
+    $amazonGetReportDocumentData->setReportType($report_type);
+
+    $queue = new AmazonGetReportDocumentQueue();
+    // 将同一报告类型 的文档id投递到队列，异步拉取报告
+    $queue->push($amazonGetReportDocumentData);
+
+```
 
 
+3. 基于Redis Hash的封装
 
-5. 基于Redis Hash的封装
+以[AmazonAccessTokenHash](./app/Util/RedisHash/AmazonAccessTokenHash.php)为例，继承[AbstractRedisHash](./app/Util/RedisHash/AbstractRedisHash.php)类，结合类的@proterty 属性，可以实现类访问属性的方式操作Redis Hash。
+```php
+        $hash = make(AmazonAccessTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
+        
+        $hash->token;
+        $hash->refreshToken;
+        $hash->type;
+        $hash->expiresIn;
+        $hash->grantType;
+```
 
+这样封装的好处是，可以非常方便的操作Redis Hash，避免了手动拼接Redis Key的麻烦。
+
+
+4. 日志的封装
+    
+- 控制台日志：[ConsoleLog](./app/Util/ConsoleLog.php)。实际实现的日志类为[StdoutLogger](./app/Util/StdoutLogger.php)
+    主要的目的是输出日志到控制台，并附带时间数据，方便调试。
+    日志格式为：`[时间] [日志级别] [日志内容] [上下文数据]`
+```php
+    $console = ApplicationContext::getContainer()->get(ConsoleLog::class);
+
+    $console->debug('这是一个debug日志',['data'=>'123']);
+    $console->info('这是一个info日志');
+    $console->notice('这是一个notice日志');
+    $console->warning('这是一个warning日志');
+    $console->error('这是一个error日志');
+    $console->critical('这是一个critical日志');
+    $console->alert('这是一个alert日志');
+```
+
+![console log](./assets/console-log-preview.png)
+
+- 文件类日志
+    > 文件类日志，默认会记录到`runtime/logs/`目录下，不同业务的文件夹下日志文件名以日期命名，如：`2025-01-01.log`
+
+    以[AmazonFinanceLog](./app/Util/Log/AmazonFinanceLog.php)文件为例，继承[AbstractLog](./app/Util/Log/AbstractLog.php)类，同样提供标准的日志接口。
+```php
+    $log = ApplicationContext::getContainer()->get(AmazonFinanceLog::class);
+    $log->debug('这是一个debug日志',['data'=>'123']);
+    $log->info('这是一个info日志');
+
+```

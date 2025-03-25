@@ -370,6 +370,7 @@ class AmazonSDK
                 'grantType' => $accessToken->grantType(),
             ]);
             $hash->ttl(50 * 60);
+
         }
 
         return $accessToken;

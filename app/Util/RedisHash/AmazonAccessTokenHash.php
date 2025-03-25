@@ -12,6 +12,13 @@ namespace App\Util\RedisHash;
 
 use App\Util\Prefix;
 
+/**
+ * @property $token
+ * @property $refreshToken
+ * @property $type
+ * @property $expiresIn
+ * @property $grantType
+ */
 class AmazonAccessTokenHash extends AbstractRedisHash
 {
     public function __construct(int $merchant_id, int $merchant_store_id, string $region)
