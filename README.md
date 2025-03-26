@@ -19,7 +19,6 @@
 
 本项目设计时考虑了多商户多店铺的情况，所以大部分表都需要有`merchant_id`与`merchant_store_id`字段。项目初始化时请把相应配置填入`amazon_app`表和`amazon_app_region`表中。
 
-
 ### 常用命令
 ```
 # 刷新Token缓存
@@ -74,7 +73,7 @@ Queue类封装了Redis List的常用操作，包括：
 - 获取队列长度[len()](./app/Queue/Queue.php#L227)方法
 
 
-投递到队列中的数据需要是实现[QueueDataInterface](./app/Queue/Data/QueueDataInterface.php)接口的对象[AmazonReportDocumentActionData](./app/Queue/Data/AmazonReportDocumentActionData.php) 
+投递到队列中的数据需要是实现[QueueDataInterface](./app/Queue/Data/QueueDataInterface.php)接口的对象[AmazonReportDocumentActionData](./app/Queue/Data/AmazonReportDocumentActionData.php)
 ```php
 
     $amazonGetReportDocumentData = new AmazonGetReportDocumentData();
@@ -97,7 +96,7 @@ Queue类封装了Redis List的常用操作，包括：
 以[AmazonAccessTokenHash](./app/Util/RedisHash/AmazonAccessTokenHash.php)为例，继承[AbstractRedisHash](./app/Util/RedisHash/AbstractRedisHash.php)类，结合类的@proterty 属性，可以实现类访问属性的方式操作Redis Hash。
 ```php
         $hash = make(AmazonAccessTokenHash::class, ['merchant_id' => $this->getMerchantId(), 'merchant_store_id' => $this->getMerchantStoreId(), 'region' => $region]);
-        
+
         $hash->token;
         $hash->refreshToken;
         $hash->type;
@@ -109,7 +108,7 @@ Queue类封装了Redis List的常用操作，包括：
 
 
 4. 日志的封装
-    
+
 - 控制台日志：[ConsoleLog](./app/Util/ConsoleLog.php)。实际实现的日志类为[StdoutLogger](./app/Util/StdoutLogger.php)
     主要的目的是输出日志到控制台，并附带时间数据，方便调试。
     日志格式为：`[时间] [日志级别] [日志内容] [上下文数据]`
@@ -137,3 +136,64 @@ Queue类封装了Redis List的常用操作，包括：
     $log->info('这是一个info日志');
 
 ```
+
+5. AmazonApp的封装
+
+    [AmazonApp](./app/Util/AmazonApp.php)提供了tick(),tok(),tok2(),single(),each()等方法，其中
+
+    ```php
+        //tick() 需要传递merchant_id,merchant_store_id,callback函数这三个参数，匿名函数中回传的是AmazonAppModel对象
+
+        AmazonApp::tick($merchant_id,$merchant_store_id,function(AmazonAppModel $amazonAppCollection){
+            //用于指定商户ID+指定店铺ID 下的一些操作。
+        });
+
+    ```
+    [tick()暂无参考例子]()
+    ```php
+        //tok() 需要传递merchant_id,merchant_store_id,callback函数这三个参数，匿名函数中回传的是AmazonSDK对象, $merchant_id商户ID, $merchant_store_id店铺ID, SellingPartnerSDK对象, AccessToken对象, $region当前地区, $marketplace_ids当前地区的站点ID集合。
+
+        AmazonApp::tok($merchant_id,$merchant_store_id,function($merchant_id, $merchant_store_id, SellingPartnerSDK $spApi, AccessToken $accessToken, $region, $marketplace_ids){
+            //用于指定商户ID+指定店铺ID下所有的所有地区的操作。
+        });
+
+        //例如，我需要请求刷新指定商户ID+指定店铺ID下所有地区的Pending状态订单，那么就可以使用这个方法。
+    ```
+    [tok()参考例子](./app/Command/Crontab/Amazon/RefreshPendingOrder.php#L62)
+
+    ```php
+        //tok2() 需要传递merchant_id,merchant_store_id,region,callback函数这四个参数，匿名函数中回传的是AmazonSDK对象, $merchant_id商户ID, $merchant_store_id店铺ID, SellingPartnerSDK对象, AccessToken对象, $region当前地区, $marketplace_ids当前地区的站点ID集合。
+
+        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
+            //用于指定商户ID+指定店铺ID+指定地区下的操作。
+        });
+
+        //例如，我需要请求拉取指定商户ID+指定店铺ID+指定地区下某些订单的订单项数据
+    ```
+    [tok2()参考例子](./app/Command/Amazon/Order/GetOrderItems.php#L60)
+
+    ```php
+      //single() 和 tick()类似，但不需要指定**商户ID+指定店铺ID**，会遍历`amazon_app`表的数据并在callback匿名函数中传递AmazonAppModel对象。
+
+      AmazonApp::tick(function(AmazonAppModel $amazonAppCollection){
+            //执行当前商户ID+当前店铺ID 下的一些操作。
+      });
+    ```
+
+    [single()参考例子](./app/Command/Crontab/Amazon/RefreshAppToken.php#L51)
+
+    ```php
+      //each() 和 tok() 类似，但不需要指定**商户ID+指定店铺ID**，会遍历`amazon_app`表和`amazon_app_region`表，会自动构建好有效AmazonSDK对象和AccessToken对象，并在callback匿名函数中传递AmazonSDK对象, $merchant_id商户ID, $merchant_store_id店铺ID, SellingPartnerSDK对象, AccessToken对象, $region当前地区, $marketplace_ids当前地区的站点ID集合
+
+      AmazonApp::each(static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
+          //执行当前商户ID+当前店铺ID+当前地区 下请求SP-API操作
+      });
+    ```
+    [each()参考例子](./app/Command/Crontab/Amazon/AmazonReportCreate.php#L55)
+
+
+    亚马逊应用存在一个店铺存在多个地区(每个地区的refresh_token值不一样)的情况，结合实际开发过程中来看，会有以下场景：
+    1. 定时任务执行某些以店铺维度划分的任务，不需要考虑地区和市场和不需要请求SP-API，可以使用single()方法
+    2. 定时任务执行某些以店铺维度划分的任务，需要考虑地区和市场和需要请求SP-API，可以使用each()方法
+    3. 定时任务执行已知商户ID+店铺ID，且亚马逊应用下所有的地区同时需要请求SP-API，可以使用tick()方法
+    4. 定时任务执行已知商户ID+店铺ID+地区，同时需要请求SP-API，可以使用tok()方法
