@@ -43,9 +43,9 @@ crontab:amazon:refresh-app-token
 ```
 [即时报告类型报告和周期报告定义](./config/autoload/amazon_reports.php)
 
-##### 项目亮点
+### 项目亮点
 
-1. 性能对比
+##### 性能对比
 
 Hyperf框架与ThinkPHP5相同逻辑处理同一个报告，差距也太大了。Swoole真的强
 
@@ -56,7 +56,7 @@ Hyperf框架与ThinkPHP5相同逻辑处理同一个报告，差距也太大了�
 ![ThinkPHP6](assets/markdown-img-paste-20240207023112869.png)
 
 
-2. 基于Redis List队列封装
+##### 基于Redis List队列封装
 
 以[拉取亚马逊周期报告队列](./app/Command/Amazon/Report/ReportGetDocument.php)为例
 
@@ -91,7 +91,7 @@ Queue类封装了Redis List的常用操作，包括：
 ```
 
 
-3. 基于Redis Hash的封装
+##### 基于Redis Hash的封装
 
 以[AmazonAccessTokenHash](./app/Util/RedisHash/AmazonAccessTokenHash.php)为例，继承[AbstractRedisHash](./app/Util/RedisHash/AbstractRedisHash.php)类，结合类的@proterty 属性，可以实现类访问属性的方式操作Redis Hash。
 ```php
@@ -107,7 +107,7 @@ Queue类封装了Redis List的常用操作，包括：
 这样封装的好处是，可以非常方便的操作Redis Hash，避免了手动拼接Redis Key的麻烦。
 
 
-4. 日志的封装
+##### 日志的封装
 
 - 控制台日志：[ConsoleLog](./app/Util/ConsoleLog.php)。实际实现的日志类为[StdoutLogger](./app/Util/StdoutLogger.php)
     主要的目的是输出日志到控制台，并附带时间数据，方便调试。
@@ -137,63 +137,113 @@ Queue类封装了Redis List的常用操作，包括：
 
 ```
 
-5. AmazonApp的封装
+#### AmazonApp的封装
 
-    [AmazonApp](./app/Util/AmazonApp.php)提供了tick(),tok(),tok2(),single(),each()等方法，其中
+[AmazonApp](./app/Util/AmazonApp.php)提供了tick(),tok(),tok2(),single(),each()等方法，其中
 
-    ```php
-        //tick() 需要传递merchant_id,merchant_store_id,callback函数这三个参数，匿名函数中回传的是AmazonAppModel对象
+```php
+//tick() 需要传递merchant_id,merchant_store_id,callback函数这三个参数，匿名函数中回传的是AmazonAppModel对象
 
-        AmazonApp::tick($merchant_id,$merchant_store_id,function(AmazonAppModel $amazonAppCollection){
-            //用于指定商户ID+指定店铺ID 下的一些操作。
-        });
+AmazonApp::tick($merchant_id,$merchant_store_id,function(AmazonAppModel $amazonAppCollection){
+    //用于指定商户ID+指定店铺ID 下的一些操作。
+});
 
-    ```
-    [tick()暂无参考例子]()
-    ```php
-        //tok() 需要传递merchant_id,merchant_store_id,callback函数这三个参数，匿名函数中回传的是AmazonSDK对象, $merchant_id商户ID, $merchant_store_id店铺ID, SellingPartnerSDK对象, AccessToken对象, $region当前地区, $marketplace_ids当前地区的站点ID集合。
+```
+[tick()暂无参考例子]()
 
-        AmazonApp::tok($merchant_id,$merchant_store_id,function($merchant_id, $merchant_store_id, SellingPartnerSDK $spApi, AccessToken $accessToken, $region, $marketplace_ids){
-            //用于指定商户ID+指定店铺ID下所有的所有地区的操作。
-        });
+```php
+//tok() 需要传递merchant_id,merchant_store_id,callback函数这三个参数，匿名函数中回传的是AmazonSDK对象, $merchant_id商户ID, $merchant_store_id店铺ID, SellingPartnerSDK对象, AccessToken对象, $region当前地区, $marketplace_ids当前地区的站点ID集合。
 
-        //例如，我需要请求刷新指定商户ID+指定店铺ID下所有地区的Pending状态订单，那么就可以使用这个方法。
-    ```
-    [tok()参考例子](./app/Command/Crontab/Amazon/RefreshPendingOrder.php#L62)
+AmazonApp::tok($merchant_id,$merchant_store_id,function($merchant_id, $merchant_store_id, SellingPartnerSDK $spApi, AccessToken $accessToken, $region, $marketplace_ids){
+    //用于指定商户ID+指定店铺ID下所有的所有地区的操作。
+});
 
-    ```php
-        //tok2() 需要传递merchant_id,merchant_store_id,region,callback函数这四个参数，匿名函数中回传的是AmazonSDK对象, $merchant_id商户ID, $merchant_store_id店铺ID, SellingPartnerSDK对象, AccessToken对象, $region当前地区, $marketplace_ids当前地区的站点ID集合。
+//例如，我需要请求刷新指定商户ID+指定店铺ID下所有地区的Pending状态订单，那么就可以使用这个方法。
+```
+[tok()参考例子](./app/Command/Crontab/Amazon/RefreshPendingOrder.php#L62)
 
-        AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
-            //用于指定商户ID+指定店铺ID+指定地区下的操作。
-        });
+```php
+//tok2() 需要传递merchant_id,merchant_store_id,region,callback函数这四个参数，匿名函数中回传的是AmazonSDK对象, $merchant_id商户ID, $merchant_store_id店铺ID, SellingPartnerSDK对象, AccessToken对象, $region当前地区, $marketplace_ids当前地区的站点ID集合。
 
-        //例如，我需要请求拉取指定商户ID+指定店铺ID+指定地区下某些订单的订单项数据
-    ```
-    [tok2()参考例子](./app/Command/Amazon/Order/GetOrderItems.php#L60)
+AmazonApp::tok2($merchant_id, $merchant_store_id, $region, static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) use ($amazon_order_ids) {
+    //用于指定商户ID+指定店铺ID+指定地区下的操作。
+});
 
-    ```php
-      //single() 和 tick()类似，但不需要指定**商户ID+指定店铺ID**，会遍历`amazon_app`表的数据并在callback匿名函数中传递AmazonAppModel对象。
+//例如，我需要请求拉取指定商户ID+指定店铺ID+指定地区下某些订单的订单项数据
+```
+[tok2()参考例子](./app/Command/Amazon/Order/GetOrderItems.php#L60)
 
-      AmazonApp::tick(function(AmazonAppModel $amazonAppCollection){
-            //执行当前商户ID+当前店铺ID 下的一些操作。
-      });
-    ```
+```php
+//single() 和 tick()类似，但不需要指定**商户ID+指定店铺ID**，会遍历`amazon_app`表的数据并在callback匿名函数中传递AmazonAppModel对象。
 
-    [single()参考例子](./app/Command/Crontab/Amazon/RefreshAppToken.php#L51)
+AmazonApp::tick(function(AmazonAppModel $amazonAppCollection){
+    //执行当前商户ID+当前店铺ID 下的一些操作。
+});
+```
 
-    ```php
-      //each() 和 tok() 类似，但不需要指定**商户ID+指定店铺ID**，会遍历`amazon_app`表和`amazon_app_region`表，会自动构建好有效AmazonSDK对象和AccessToken对象，并在callback匿名函数中传递AmazonSDK对象, $merchant_id商户ID, $merchant_store_id店铺ID, SellingPartnerSDK对象, AccessToken对象, $region当前地区, $marketplace_ids当前地区的站点ID集合
+[single()参考例子](./app/Command/Crontab/Amazon/RefreshAppToken.php#L51)
 
-      AmazonApp::each(static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
-          //执行当前商户ID+当前店铺ID+当前地区 下请求SP-API操作
-      });
-    ```
-    [each()参考例子](./app/Command/Crontab/Amazon/AmazonReportCreate.php#L55)
+```php
+//each() 和 tok() 类似，但不需要指定**商户ID+指定店铺ID**，会遍历`amazon_app`表和`amazon_app_region`表，会自动构建好有效AmazonSDK对象和AccessToken对象，并在callback匿名函数中传递AmazonSDK对象, $merchant_id商户ID, $merchant_store_id店铺ID, SellingPartnerSDK对象, AccessToken对象, $region当前地区, $marketplace_ids当前地区的站点ID集合
+
+AmazonApp::each(static function (AmazonSDK $amazonSDK, int $merchant_id, int $merchant_store_id, SellingPartnerSDK $sdk, AccessToken $accessToken, string $region, array $marketplace_ids) {
+    //执行当前商户ID+当前店铺ID+当前地区 下请求SP-API操作
+});
+```
+[each()参考例子](./app/Command/Crontab/Amazon/AmazonReportCreate.php#L55)
 
 
-    亚马逊应用存在一个店铺存在多个地区(每个地区的refresh_token值不一样)的情况，结合实际开发过程中来看，会有以下场景：
-    1. 定时任务执行某些以店铺维度划分的任务，不需要考虑地区和市场和不需要请求SP-API，可以使用single()方法
-    2. 定时任务执行某些以店铺维度划分的任务，需要考虑地区和市场和需要请求SP-API，可以使用each()方法
-    3. 定时任务执行已知商户ID+店铺ID，且亚马逊应用下所有的地区同时需要请求SP-API，可以使用tick()方法
-    4. 定时任务执行已知商户ID+店铺ID+地区，同时需要请求SP-API，可以使用tok()方法
+亚马逊应用存在一个店铺存在多个地区(每个地区的refresh_token值不一样)的情况，结合实际开发过程中来看，会有以下场景：
+  1. 定时任务执行某些以店铺维度划分的任务，不需要考虑地区和市场和不需要请求SP-API，可以使用single()方法
+  2. 定时任务执行某些以店铺维度划分的任务，需要考虑地区和市场和需要请求SP-API，可以使用each()方法
+  3. 定时任务执行已知商户ID+店铺ID，且亚马逊应用下所有的地区同时需要请求SP-API，可以使用tick()方法
+  4. 定时任务执行已知商户ID+店铺ID+地区，同时需要请求SP-API，可以使用tok()方法
+
+##### 对SP-API同一个接口在不同场景下传递不同参数的解决办法
+  以[亚马逊订单接口](https://developer-docs.amazon.com/sp-api/lang-zh_CN/docs/orders-api-v0-reference#getorders)为例，有以下使用场景：
+
+  1. 定时任务每30分钟更新一次以当前商户+当前店铺+当前地区的最后一条订单的创建时间为准减去1个小时作为API中CreatedAfter的查询条件，检索数据。
+  2. 查询指定商户+指定店铺+指定地区+指定订单ID数据。
+
+  基于类似这种场景，可以创建一个Creator对象, 由Engine对象来调用API，这样做就很好地做到适配不同的查询条件下请求同一个API的需求。具体如下：
+
+[GetOrders](./app/Command/Amazon/Order/GetOrders.php)
+![GetOrders](./assets/get-orders.png)
+[GetOrder](./app/Command/Amazon/Order/GetOrder.php)
+![GetOrder](./assets/get-order.png)
+
+
+##### 对SP-API接口存在翻页数据的解决办法
+    
+以亚马逊财务接口为例，分为[listFinancialEventsByGroupId](https://developer-docs.amazon.com/sp-api/lang-zh_CN/docs/finances-api-reference#listfinancialeventsbygroupid), [listFinancialEventsByOrderId](https://developer-docs.amazon.com/sp-api/lang-zh_CN/docs/finances-api-reference#listfinancialeventsbyorderid),[listFinancialEvents](https://developer-docs.amazon.com/sp-api/lang-zh_CN/docs/finances-api-reference#listfinancialevents), 这三个接口都存在翻页数据，且不同的维度的翻页数量和每页数据长度会不一样。
+
+以[listFinancialEventsByGroupId](https://developer-docs.amazon.com/sp-api/lang-zh_CN/docs/finances-api-reference#listfinancialeventsbygroupid)接口为例，存在以下问题：
+- 每次请求成功当前页数据就立即处理，处理完后再请求下一页数据。如果处理时间过长，会导致nextToken过期，请求失败。
+- 每页的数据包含的是很多不同类型的财务事件数据，比如配送类，退款类，税费类等，每个财务事件的数据结构都不同。逐个处理财务事件数据会非常耗时。
+
+基于以上的问题，解决如下：
+
+```php
+//拉取一页就处理一页数据，这里可能会有点问题。如果处理时间过长，可能会导致next_token过期。Only for debug
+//make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
+
+// 直接把每一页的数据都存起来，翻页完成后最后再处理数据。
+$financialEventsActionList[] = make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents]);
+
+foreach ($financialEventsActionList as $financialEventsAction) {
+    /**
+    * @var FinancialEventsAction $financialEventsAction
+    */
+    $financialEventsAction->run();
+}
+```
+[FinancialEventsAction](./app/Util/Amazon/Action/FinancialEventsAction.php) 的run()方法会并行地处理当前页的所有财务事件数据。改造完后实测性能提升非常大。
+
+
+##### 自定义 CoreMiddleWare 的行为
+
+  [CoreMiddleWare](./app/Middleware/CoreMiddleware.php) 继承了 \Hyperf\HttpServer\CoreMiddleware类，
+
+  1. 重写了dispatch()方法，实现 类似/product-category/get-list 风格路由
+  2. 重写handleNotFound()方法，实现了当路由找不到时在控制台输出错误级详细日志，包括Host， Method，Path， Query， X-Real-PORT， X-Forwarded-For，x-real-ip， referer等信息，方便调试排查。
+  3. 重写handleFound()方法，实现了统计每一个请求的耗时，方便排查性能问题。

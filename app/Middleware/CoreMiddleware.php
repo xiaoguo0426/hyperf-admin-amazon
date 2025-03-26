@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use App\Util\RuntimeCalculator;
 use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
@@ -73,7 +74,8 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
      */
     protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
-        $t1 = microtime(true);
+        $runtimeCalculator = new RuntimeCalculator();
+        $runtimeCalculator->start();
 
         if ($dispatched->handler->callback instanceof \Closure) {
             $response = call($dispatched->handler->callback);
@@ -88,10 +90,8 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
             $response = $controllerInstance->{$action}(...$parameters);
         }
 
-        $t2 = microtime(true);
-
         $uri = $request->getUri();
-        $this->stdLogger()->info(sprintf('[%s ms] [%s] %s', number_format(($t2 - $t1) * 1000, 3), $request->getMethod(), $uri->getPath() . ($uri->getQuery() ? '?' . $uri->getQuery() : '')));
+        $this->stdLogger()->info(sprintf('[%s ms] [%s] %s', $runtimeCalculator->stop(), $request->getMethod(), $uri->getPath() . ($uri->getQuery() ? '?' . $uri->getQuery() : '')));
 
         return $response;
     }

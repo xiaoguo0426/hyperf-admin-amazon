@@ -67,7 +67,7 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
 
         $region = $this->amazonSDK->getRegion();
 
-        //        $financialEventsActionList = [];
+        $financialEventsActionList = [];
 
         while (true) {
             try {
@@ -96,10 +96,10 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
                 if (is_null($financialEvents)) {
                     break;
                 }
-                // TODO 拉取一页就处理一页数据，这里可能会有点问题。如果处理时间过长，可能会导致next_token过期。Only for debug
-                make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
+                //拉取一页就处理一页数据，这里可能会有点问题。如果处理时间过长，可能会导致next_token过期。Only for debug
+//                make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents])->run();
                 // 直接把每一页的数据都存起来，最后再处理。
-                //                $financialEventsActionList[] = make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents]);
+                $financialEventsActionList[] = make(FinancialEventsAction::class, [$merchant_id, $merchant_store_id, $financialEvents]);
 
                 // 如果下一页没有数据，nextToken 会变成null
                 $next_token = $payload->getNextToken();
@@ -146,13 +146,13 @@ class ListFinancialEventsByGroupIdEngine implements EngineInterface
             }
         }
 
-        // 处理所有分页的数据
-        //        foreach ($financialEventsActionList as $financialEventsAction) {
-        //            /**
-        //             * @var FinancialEventsAction $financialEventsAction
-        //             */
-        //            $financialEventsAction->run();
-        //        }
+        // 处理所有分页的数据 TODO 结合Parallel 特性处理
+        foreach ($financialEventsActionList as $financialEventsAction) {
+            /**
+             * @var FinancialEventsAction $financialEventsAction
+             */
+            $financialEventsAction->run();
+        }
 
         $console->notice(sprintf('当前财务组id:%s 处理完成,耗时:%s  merchant_id:%s merchant_store_id:%s ', $group_id, $runtimeCalculator->stop(), $merchant_id, $merchant_store_id));
         return true;

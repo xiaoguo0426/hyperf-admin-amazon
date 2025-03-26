@@ -66,7 +66,7 @@ class ListFinancialEventGroups extends HyperfCommand
 
             $retry = 10;
             $max_results_per_page = 100;
-            $financial_event_group_started_after = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -30 day')));
+            $financial_event_group_started_after = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -90 day')));
             $financial_event_group_started_before = date_create_from_format(DATE_ATOM, date(DATE_ATOM, strtotime('now -3 minute')));
             $next_token = null;
 
