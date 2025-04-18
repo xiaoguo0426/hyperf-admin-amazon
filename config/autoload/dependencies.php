@@ -13,5 +13,5 @@ use Hyperf\HttpServer\CoreMiddleware;
 
 return [
     CoreMiddleware::class => App\Middleware\CoreMiddleware::class,
-    StdoutLoggerInterface::class => StdoutLogger::class,
+//    StdoutLoggerInterface::class => StdoutLogger::class,
 ];
