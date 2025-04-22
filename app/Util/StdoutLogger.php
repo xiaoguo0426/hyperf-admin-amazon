@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Util;
 
 use Carbon\Carbon;
+use DateTime;
 use Psr\Log\LogLevel;
 
 /**
@@ -29,7 +30,8 @@ final class StdoutLogger extends \Hyperf\Framework\Logger\StdoutLogger
             default => 'info',
         };
 
-        $datetime = Carbon::now()->format('Y-m-d H:i:s-v');
+        $datetime = (new DateTime())->format('Y-m-d H:i:s-v');
+//        $datetime = Carbon::now()->format('Y-m-d H:i:s-v');
 
         $template = \sprintf('[%s] <%s>[%s]</>', $datetime, $tag, strtoupper($level));
 
