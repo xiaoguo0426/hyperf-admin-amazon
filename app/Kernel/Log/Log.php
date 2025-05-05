@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @license  MIT
  */
 
-namespace App\Kernel;
+namespace App\Kernel\Log;
 
 use Hyperf\Context\ApplicationContext;
 use Hyperf\Logger\LoggerFactory;

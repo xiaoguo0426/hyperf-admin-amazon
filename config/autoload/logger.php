@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @license  MIT
  */
 
+use App\Kernel\Log\AppendRequestIdProcessor;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\SlackWebhookHandler;
@@ -36,6 +37,11 @@ return [
                 'format' => null,
                 'dateFormat' => 'Y-m-d H:i:s',
                 'allowInlineLineBreaks' => true,
+            ],
+        ],
+        'processors' => [
+            [
+                'class' => AppendRequestIdProcessor::class,
             ],
         ],
     ],

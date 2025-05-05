@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Util\Log;
 
-use App\Kernel\Log;
+use App\Kernel\Log\Log;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;

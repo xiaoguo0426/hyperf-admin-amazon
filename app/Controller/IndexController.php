@@ -10,12 +10,17 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Kernel\Log\Log;
+
 class IndexController extends AbstractController
 {
     public function index()
     {
         $user = $this->request->input('user', 'Hyperf');
         $method = $this->request->getMethod();
+
+        Log::get('test','default')->debug("User {$user} -> {$method} {$method}");
+        Log::get('test','default')->debug("User {$user} -> {$method} {$method}");
 
         return [
             'method' => $method,

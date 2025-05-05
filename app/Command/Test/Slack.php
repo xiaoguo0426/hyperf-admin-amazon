@@ -2,12 +2,10 @@
 
 namespace App\Command\Test;
 
-use App\Kernel\Log;
+use App\Kernel\Log\Log;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerInterface;
-
-use function Hyperf\Support\env;
 
 #[Command]
 class Slack extends HyperfCommand
