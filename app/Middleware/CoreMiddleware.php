@@ -13,6 +13,7 @@ namespace App\Middleware;
 use App\Util\RuntimeCalculator;
 use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\HttpMessage\Exception\MethodNotAllowedHttpException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\Dispatched;
 use Psr\Container\ContainerExceptionInterface;
@@ -66,6 +67,26 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 
         // 重写路由找不到的处理逻辑
         return $this->response()->withStatus(404);
+    }
+
+    /**
+     * Handle the response when the routes found but doesn't match any available methods.
+     */
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request): mixed
+    {
+        $std = $this->stdLogger();
+        $std->error('REQUEST Method Not Allowed!');
+        $std->error('Host: ' . $request->getHeaderLine('Host'));
+        $std->error('Method: ' . $request->getMethod());
+        $std->error('Allow Methods: ' . implode(', ', $methods));
+        $std->error('Path: ' . $request->getUri()->getPath());
+        $std->error('Query: ' . $request->getUri()->getQuery());
+        $std->error('X-Real-PORT: ' . $request->getHeaderLine('X-Real-PORT'));
+        $std->error('X-Forwarded-For: ' . $request->getHeaderLine('X-Forwarded-For'));
+        $std->error('x-real-ip: ' . $request->getHeaderLine('x-real-ip'));
+        $std->error('referer: ' . $request->getHeaderLine('referer'));
+
+        return $this->response()->withBody(new SwooleStream('Method Not Allowed.'))->withStatus(405);
     }
 
     /**
